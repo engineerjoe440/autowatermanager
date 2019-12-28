@@ -1,30 +1,21 @@
 <!DOCTYPE html><!-- HTML5 -->
-<html prefix="og: http://ogp.me/ns#" lang="en-GB" dir="ltr">
+<html lang="en-GB" dir="ltr">
 	<head>
-		<title>Settings - HorseTest</title>
+		<title>AutoWaterManager</title>
 		<meta charset="utf-8" />
-		<!--[if IE]><meta http-equiv="ImageToolbar" content="False" /><![endif]-->
 		<meta name="author" content="JoeStanley" />
-		<meta name="generator" content="Incomedia WebSite X5 Free 14.0.6.2 - www.websitex5.com" />
-		<meta property="og:image" content="http://dummy.com/favImage.png" />
-		<meta property="og:image:type" content="image/png">
-		<meta property="og:image:width" content="225">
-		<meta property="og:image:height" content="225">
 		<meta name="viewport" content="width=1150" />
 		
-		<link rel="stylesheet" type="text/css" href="style/reset.css?14-0-6-2" media="screen,print" />
-		<link rel="stylesheet" type="text/css" href="style/print.css?14-0-6-2" media="print" />
-		<link rel="stylesheet" type="text/css" href="style/style.css?14-0-6-2" media="screen,print" />
-		<link rel="stylesheet" type="text/css" href="style/template.css?14-0-6-2" media="screen" />
-		<link rel="stylesheet" type="text/css" href="pcss/settings.css?14-0-6-2-637127266427817378" media="screen,print" />
-		<script type="text/javascript" src="res/jquery.js?14-0-6-2"></script>
-		<script type="text/javascript" src="res/x5engine.js?14-0-6-2" data-files-version="14-0-6-2"></script>
+		<link rel="stylesheet" type="text/css" href="/static/reset.css"/>
+		<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+		<link rel="stylesheet" type="text/css" href="/static/template.css"/>
+		<link rel="stylesheet" type="text/css" href="/static/index.css"/>
 		<script type="text/javascript">
 			window.onload = function(){ checkBrowserCompatibility('Your browser does not support the features necessary to display this website.','Your browser may not support the features necessary to display this website.','[1]Update your browser[/1] or [2]continue without updating[/2].','http://outdatedbrowser.com/'); };
-			x5engine.utils.currentPagePath = 'settings.html';
+			x5engine.utils.currentPagePath = 'index.html';
 			x5engine.boot.push(function () { x5engine.imPageToTop.initializeButton({}); });
 		</script>
-		<link rel="icon" href="favicon.ico?14-0-6-2-637127266427817378" type="image/vnd.microsoft.icon" />
+		<link rel="icon" href="/static/favicon.ico" type="image/vnd.microsoft.icon" />
 	</head>
 	<body>
 		<div id="imPageExtContainer">
@@ -33,8 +24,8 @@
 				<div id="imFooterBg"></div>
 				<div id="imPage">
 					<div id="imHeader">
-						<h1 class="imHidden">Settings - HorseTest</h1>
-						<div id="imHeaderObjects"><div id="imHeader_imObjectImage_04_wrapper" class="template-object-wrapper"><div id="imHeader_imCell_4" class="" > <div id="imHeader_imCellStyleGraphics_4"></div><div id="imHeader_imCellStyle_4" ><img id="imHeader_imObjectImage_04" src="images/horselogo_txp_neg.png" title="" alt="" /></div></div></div><div id="imHeader_imObjectTitle_03_wrapper" class="template-object-wrapper"><div id="imHeader_imCell_3" class="" > <div id="imHeader_imCellStyleGraphics_3"></div><div id="imHeader_imCellStyle_3" ><div id="imHeader_imObjectTitle_03"><span id ="imHeader_imObjectTitle_03_text" >AutoWaterManager</span > </div></div></div></div><div id="imHeader_imMenuObject_01_wrapper" class="template-object-wrapper"><div id="imHeader_imCell_1" class="" > <div id="imHeader_imCellStyleGraphics_1"></div><div id="imHeader_imCellStyle_1" ><div id="imHeader_imMenuObject_01"><div class="hamburger-menu-background-container hamburger-component">
+						<h1 class="imHidden">AutoWaterManager</h1>
+						<div id="imHeaderObjects"><div id="imHeader_imObjectImage_04_wrapper" class="template-object-wrapper"><div id="imHeader_imCell_4" class="" > <div id="imHeader_imCellStyleGraphics_4"></div><div id="imHeader_imCellStyle_4" ><img id="imHeader_imObjectImage_04" src="/static/horselogo_txp_neg.png" title="" alt="" /></div></div></div><div id="imHeader_imObjectTitle_03_wrapper" class="template-object-wrapper"><div id="imHeader_imCell_3" class="" > <div id="imHeader_imCellStyleGraphics_3"></div><div id="imHeader_imCellStyle_3" ><div id="imHeader_imObjectTitle_03"><span id ="imHeader_imObjectTitle_03_text" >AutoWaterManager</span > </div></div></div></div><div id="imHeader_imMenuObject_01_wrapper" class="template-object-wrapper"><div id="imHeader_imCell_1" class="" > <div id="imHeader_imCellStyleGraphics_1"></div><div id="imHeader_imCellStyle_1" ><div id="imHeader_imMenuObject_01"><div class="hamburger-menu-background-container hamburger-component">
 	<div class="hamburger-menu-background menu-mobile menu-mobile-animated hidden">
 		<div class="hamburger-menu-close-button"><span>&times;</span></div>
 	</div>
@@ -93,16 +84,56 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
 						</div>
 					</div>
 					<a class="imHidden" href="#imGoToCont" title="Skip the main menu">Go to content</a>
-					<div id="imSideBarContainer">
-						<div id="imSideBarGraphics"></div>
-						<div id="imSideBar">
-							<div id="imSideBarObjects"><div id="imSideBar_imObjectImage_01_wrapper" class="template-object-wrapper"><div id="imSideBar_imCell_1" class="" > <div id="imSideBar_imCellStyleGraphics_1"></div><div id="imSideBar_imCellStyle_1" ><img id="imSideBar_imObjectImage_01" src="images/empty-GT_imagea-1-.png" title="" alt="" /></div></div></div></div>
-						</div>
-					</div>
 					<div id="imContentContainer">
 						<div id="imContentGraphics"></div>
 						<div id="imContent">
 							<a id="imGoToCont"></a>
+				<div id="imPageRow_1" class="imPageRow">
+				
+				<div id="imPageRowContent_1" class="imContentDataContainer">
+				<div id="imCell_1" class="" > <div id="imCellStyleGraphics_1"></div><div id="imCellStyle_1" ><div id="imTextObject_01">
+					<div class="text-tab-content"  id="imTextObject_01_tab0" style="">
+						<div class="text-inner">
+							
+                            <table style="width:100%">
+                                <tr>
+                                    <th colspan="2">Current Temperature:</th>
+                                    <th style="text-align:left;">&nbsp {{PAGE['temp']}}ºF</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="6"> &nbsp &nbsp &nbsp </th>
+                                </tr>
+                                <tr>
+                                    <td>{{PAGE['pole1a']}}</td>
+                                    <td>{{PAGE['pole1b']}}</td>
+                                    <td>{{PAGE['pole2a']}}</td>
+                                    <td>{{PAGE['pole2b']}}</td>
+                                    <td>{{PAGE['pole3a']}}</td>
+                                    <td>{{PAGE['pole3b']}}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{PAGE['pole4a']}}</td>
+                                    <td>{{PAGE['pole4b']}}</td>
+                                    <td>{{PAGE['pole5a']}}</td>
+                                    <td>{{PAGE['pole5b']}}</td>
+                                    <td>{{PAGE['pole6a']}}</td>
+                                    <td>{{PAGE['pole6b']}}</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="6"> &nbsp &nbsp &nbsp </th>
+                                </tr>
+                                <tr>
+                                    <th colspan="5"> &nbsp </th>
+                                    <td>{{PAGE['stockpole']}}</td>
+                                </tr>
+                            </table>
+                            
+						</div>
+					</div>
+				
+				</div>
+				</div></div></div>
+				</div>
 				
 							<div class="imClear"></div>
 						</div>
