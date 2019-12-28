@@ -158,7 +158,7 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
 				<div id="imCell_1" class="" > <div id="imCellStyleGraphics_1"></div><div id="imCellStyle_1" ><div id="imTextObject_01">
 					<div class="text-tab-content"  id="imTextObject_01_tab0" style="">
 						<div class="text-inner">
-							<form action="/autowater_update">
+							<form action="/autowater_update" method="get">
                             <table style="width:100%">
                                 <tr>
                                     <th>Stall Index</th>
@@ -166,6 +166,7 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                     <th>Manual Turn On</th>
                                     <th>Manual Turn Off</th>
                                     <th>Heater Power</th>
+                                    <th>Animal Name</th>
                                 </tr>
                                 <tr>
                                     <th colspan="5"> &nbsp &nbsp &nbsp </th>
@@ -174,145 +175,157 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                     <th>Pole 1 - Side A</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" name="pole1aservice">
+                                          <input type="checkbox" name="pole1aservice" value="checked" {{PAGE['p1acheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="pole1aon" value="Turn On"></td>
                                     <td><input type="submit" name="pole1aoff" value="Turn Off"></td>
-                                    <td><input type="text" maxlength="4" name="pole1apower" value="{{PAGE['1apower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" maxlength="4" name="power1a" value="{{PAGE['1apower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animal1a" value="{{PAGE['animal1a']}}"></td>
                                 </tr>
                                 <tr>
                                     <th>Pole 1 - Side B</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" name="pole1bservice">
+                                          <input type="checkbox" name="pole1bservice" value="checked" {{PAGE['p1bcheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="pole1bon" value="Turn On"></td>
                                     <td><input type="submit" name="pole1boff" value="Turn Off"></td>
-                                    <td><input type="text" maxlength="4" name="pole1bpower" value="{{PAGE['1bpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" maxlength="4" name="power1b" value="{{PAGE['1bpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animal1b" value="{{PAGE['animal1b']}}"></td>
                                 </tr>
                                 <tr>
                                     <th>Pole 2 - Side A</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" name="pole2aservice">
+                                          <input type="checkbox" name="pole2aservice" value="checked" {{PAGE['p2acheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="pole2aon" value="Turn On"></td>
                                     <td><input type="submit" name="pole2aoff" value="Turn Off"></td>
-                                    <td><input type="text" maxlength="4" name="pole2apower" value="{{PAGE['2apower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" maxlength="4" name="power2a" value="{{PAGE['2apower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animal2a" value="{{PAGE['animal2a']}}"></td>
                                 </tr>
                                 <tr>
                                     <th>Pole 2 - Side B</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" name="pole2bservice">
+                                          <input type="checkbox" name="pole2bservice" value="checked" {{PAGE['p2bcheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="pole2bon" value="Turn On"></td>
                                     <td><input type="submit" name="pole2boff" value="Turn Off"></td>
-                                    <td><input type="text" maxlength="4" name="pole2bpower" value="{{PAGE['2bpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" maxlength="4" name="power2b" value="{{PAGE['2bpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animal2b" value="{{PAGE['animal2b']}}"></td>
                                 </tr>
                                 <tr>
                                     <th>Pole 3 - Side A</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" name="pole3aservice">
+                                          <input type="checkbox" name="pole3aservice" value="checked" {{PAGE['p3acheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="pole3aon" value="Turn On"></td>
                                     <td><input type="submit" name="pole3aoff" value="Turn Off"></td>
-                                    <td><input type="text" maxlength="4" name="pole3apower" value="{{PAGE['3apower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" maxlength="4" name="power3a" value="{{PAGE['3apower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animal3a" value="{{PAGE['animal3a']}}"></td>
                                 </tr>
                                 <tr>
                                     <th>Pole 3 - Side B</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" name="pole3bservice">
+                                          <input type="checkbox" name="pole3bservice" value="checked" {{PAGE['p3bcheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="pole3bon" value="Turn On"></td>
                                     <td><input type="submit" name="pole3boff" value="Turn Off"></td>
-                                    <td><input type="text" maxlength="4" name="pole3bpower" value="{{PAGE['3bpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" maxlength="4" name="power3b" value="{{PAGE['3bpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animal3b" value="{{PAGE['animal3b']}}"></td>
                                 </tr>
                                 <tr>
                                     <th>Pole 4 - Side A</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" name="pole4aservice">
+                                          <input type="checkbox" name="pole4aservice" value="checked" {{PAGE['p4acheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="pole4aon" value="Turn On"></td>
                                     <td><input type="submit" name="pole4aoff" value="Turn Off"></td>
-                                    <td><input type="text" maxlength="4" name="pole4apower" value="{{PAGE['4apower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" maxlength="4" name="power4a" value="{{PAGE['4apower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animal4a" value="{{PAGE['animal4a']}}"></td>
                                 </tr>
                                 <tr>
                                     <th>Pole 4 - Side B</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" name="pole4bservice">
+                                          <input type="checkbox" name="pole4bservice" value="checked" {{PAGE['p4bcheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="pole4bon" value="Turn On"></td>
                                     <td><input type="submit" name="pole4boff" value="Turn Off"></td>
-                                    <td><input type="text" maxlength="4" name="pole4bpower" value="{{PAGE['4bpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" maxlength="4" name="power4b" value="{{PAGE['4bpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animal4b" value="{{PAGE['animal4b']}}"></td>
                                 </tr>
                                 <tr>
                                     <th>Pole 5 - Side A</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" name="pole5aservice">
+                                          <input type="checkbox" name="pole5aservice" value="checked" {{PAGE['p5acheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="pole5aon" value="Turn On"></td>
                                     <td><input type="submit" name="pole5aoff" value="Turn Off"></td>
-                                    <td><input type="text" maxlength="4" name="pole5apower" value="{{PAGE['5apower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" maxlength="4" name="power5a" value="{{PAGE['5apower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animal5a" value="{{PAGE['animal5a']}}"></td>
                                 </tr>
                                 <tr>
                                     <th>Pole 5 - Side B</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" value="on" name="pole5bservice">
+                                          <input type="checkbox" name="pole5bservice" value="checked" {{PAGE['p5bcheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="pole5bon" value="Turn On"></td>
                                     <td><input type="submit" name="pole5boff" value="Turn Off"></td>
-                                    <td><input type="text" maxlength="4" name="pole5bpower" value="{{PAGE['5bpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" maxlength="4" name="power5b" value="{{PAGE['5bpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animal5b" value="{{PAGE['animal5b']}}"></td>
                                 </tr>
                                 <tr>
                                     <th>Pole 6 - Side A</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" name="pole6aservice">
+                                          <input type="checkbox" name="pole6aservice" value="checked" {{PAGE['p6acheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="pole6aon" value="Turn On"></td>
                                     <td><input type="submit" name="pole6aoff" value="Turn Off"></td>
-                                    <td><input type="text" maxlength="4" name="pole6apower" value="{{PAGE['6apower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" maxlength="4" name="power6a" value="{{PAGE['6apower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animal6a" value="{{PAGE['animal6a']}}"></td>
                                 </tr>
                                 <tr>
                                     <th>Pole 6 - Side B</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" name="pole6bservice">
+                                          <input type="checkbox" name="pole6bservice" value="checked" {{PAGE['p6bcheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="pole6bon" value="Turn On"></td>
                                     <td><input type="submit" name="pole6boff" value="Turn Off"></td>
-                                    <td><input type="text" maxlength="4" name="pole6bpower" value="{{PAGE['6bpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" maxlength="4" name="power6b" value="{{PAGE['6bpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animal6b" value="{{PAGE['animal6b']}}"></td>
                                 </tr>
                                 <tr>
                                     <th colspan="5"> &nbsp &nbsp &nbsp </th>
@@ -321,13 +334,14 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                     <th>Stock Pole</th>
                                     <td>
                                         <label class="switch">
-                                          <input type="checkbox" name="stockpoleservice">
+                                          <input type="checkbox" name="stockpoleservice" value="checked"  {{PAGE['stockcheck']}}>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
                                     <td><input type="submit" name="stockpoleon" value="Turn On"></td>
                                     <td><input type="submit" name="stockpoleoff" value="Turn Off"></td>
                                     <td><input type="text" maxlength="4" name="stockpolepower" value="{{PAGE['stockpower']}}" size="4">&nbsp Watts</td>
+                                    <td><input type="text" name="animalstock" value="{{PAGE['animalstock']}}"></td>
                                 </tr>
                                 <tr>
                                     <th colspan="5"> &nbsp &nbsp &nbsp </th>

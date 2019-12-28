@@ -97,34 +97,43 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
 							
                             <table style="width:100%">
                                 <tr>
-                                    <th colspan="2">Current Temperature:</th>
+                                    <th colspan="2">Current Outside Air Temperature:</th>
                                     <th style="text-align:left;">&nbsp {{PAGE['temp']}}ºF</th>
                                 </tr>
                                 <tr>
                                     <th colspan="6"> &nbsp &nbsp &nbsp </th>
                                 </tr>
                                 <tr>
-                                    <td>{{PAGE['pole1a']}}</td>
-                                    <td>{{PAGE['pole1b']}}</td>
-                                    <td>{{PAGE['pole2a']}}</td>
-                                    <td>{{PAGE['pole2b']}}</td>
-                                    <td>{{PAGE['pole3a']}}</td>
-                                    <td>{{PAGE['pole3b']}}</td>
+                                    <td align="right"><img src="/static/{{PAGE['pole1a']}}.png" alt="Stall Status"><br/>Stall 1A - {{PAGE['pole1a']}} - {{PAGE['nam1a']}}</td>
+                                    <td align="left" ><img src="/static/{{PAGE['pole1b']}}.png" alt="Stall Status"><br/>Stall 1B - {{PAGE['pole1b']}} - {{PAGE['nam1b']}}</td>
+                                    <td align="right"><img src="/static/{{PAGE['pole2a']}}.png" alt="Stall Status"><br/>Stall 2A - {{PAGE['pole2a']}} - {{PAGE['nam2a']}}</td>
+                                    <td align="left" ><img src="/static/{{PAGE['pole2b']}}.png" alt="Stall Status"><br/>Stall 2B - {{PAGE['pole2b']}} - {{PAGE['nam2b']}}</td>
+                                    <td align="right"><img src="/static/{{PAGE['pole3a']}}.png" alt="Stall Status"><br/>Stall 3A - {{PAGE['pole3a']}} - {{PAGE['nam3a']}}</td>
+                                    <td align="left" ><img src="/static/{{PAGE['pole3b']}}.png" alt="Stall Status"><br/>Stall 3B - {{PAGE['pole3b']}} - {{PAGE['nam3b']}}</td>
                                 </tr>
                                 <tr>
-                                    <td>{{PAGE['pole4a']}}</td>
-                                    <td>{{PAGE['pole4b']}}</td>
-                                    <td>{{PAGE['pole5a']}}</td>
-                                    <td>{{PAGE['pole5b']}}</td>
-                                    <td>{{PAGE['pole6a']}}</td>
-                                    <td>{{PAGE['pole6b']}}</td>
+                                    <th colspan="6"> &nbsp &nbsp &nbsp </th>
+                                </tr>
+                                <tr>
+                                    <td align="right"><img src="/static/{{PAGE['pole4a']}}.png" alt="Stall Status"><br/>Stall 4A - {{PAGE['pole4a']}} - {{PAGE['nam4a']}}</td>
+                                    <td align="left" ><img src="/static/{{PAGE['pole4b']}}.png" alt="Stall Status"><br/>Stall 4B - {{PAGE['pole4b']}} - {{PAGE['nam4b']}}</td>
+                                    <td align="right"><img src="/static/{{PAGE['pole5a']}}.png" alt="Stall Status"><br/>Stall 5A - {{PAGE['pole5a']}} - {{PAGE['nam5a']}}</td>
+                                    <td align="left" ><img src="/static/{{PAGE['pole5b']}}.png" alt="Stall Status"><br/>Stall 5B - {{PAGE['pole5b']}} - {{PAGE['nam5b']}}</td>
+                                    <td align="right"><img src="/static/{{PAGE['pole6a']}}.png" alt="Stall Status"><br/>Stall 6A - {{PAGE['pole6a']}} - {{PAGE['nam6a']}}</td>
+                                    <td align="left" ><img src="/static/{{PAGE['pole6b']}}.png" alt="Stall Status"><br/>Stall 6B - {{PAGE['pole6b']}} - {{PAGE['nam6b']}}</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="6"> &nbsp &nbsp &nbsp </th>
+                                </tr>
+                                <tr>
+                                    <th colspan="6"> &nbsp &nbsp &nbsp </th>
                                 </tr>
                                 <tr>
                                     <th colspan="6"> &nbsp &nbsp &nbsp </th>
                                 </tr>
                                 <tr>
                                     <th colspan="5"> &nbsp </th>
-                                    <td>{{PAGE['stockpole']}}</td>
+                                    <td><img src="/static/{{PAGE['stockpole']}}.png" alt="Stall Status"><br/>Stock Pole - {{PAGE['stockpole']}} - {{PAGE['namstock']}}</td>
                                 </tr>
                             </table>
                             
