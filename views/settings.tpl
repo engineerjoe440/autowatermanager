@@ -351,6 +351,30 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                 </tr>
                             </table>
                             </form>
+                            
+                            </br>
+                            </br>
+                            </br>
+                            
+                            <form action="/email_update" method="get">
+                            <table style="width:100%">
+                                <tr>
+                                    <th>Email Address 1: &nbsp <input type="text" name="emailadd1" size="95" value="{{PAGE['emailadd1']}}"></th>
+                                </tr>
+                                <tr>
+                                    <th>Email Address 2: &nbsp <input type="text" name="emailadd2" size="95" value="{{PAGE['emailadd2']}}"></th>
+                                </tr>
+                                <tr>
+                                    <th>Email Address 3: &nbsp <input type="text" name="emailadd3" size="95" value="{{PAGE['emailadd3']}}"></th>
+                                </tr>
+                                <tr>
+                                    <th> &nbsp &nbsp &nbsp </th>
+                                </tr>
+                                <tr>
+                                    <th align="left"> <input type="submit" value="Update Email Addresses"> </th>
+                                </tr>
+                            </table>
+                            </form>
 						</div>
 					</div>
 				

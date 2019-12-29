@@ -99,6 +99,8 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                 <tr>
                                     <th colspan="2">Current Outside Air Temperature:</th>
                                     <th style="text-align:left;">&nbsp {{PAGE['temp']}}ºF</th>
+                                    <th>System Battery:</th>
+                                    <th style="text-align:left;">&nbsp {{PAGE['bat']}}</th>
                                 </tr>
                                 <tr>
                                     <th colspan="6"> &nbsp &nbsp &nbsp </th>
@@ -136,6 +138,14 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                     <td><img src="/static/{{PAGE['stockpole']}}.png" alt="Stall Status"><br/>Stock Pole - {{PAGE['stockpole']}} - {{PAGE['namstock']}}</td>
                                 </tr>
                             </table>
+                            
+                            </br>
+                            </br>
+                            </br>
+                            
+                            <form action='/set_light'>
+                                <input type="submit" value="Barn Light &nbsp &nbsp ({{PAGE['light']}})">
+                            </form>
                             
 						</div>
 					</div>

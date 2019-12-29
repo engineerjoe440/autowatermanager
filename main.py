@@ -38,6 +38,16 @@ def get_temp():
     temp = 32
     return(str(temp))
 
+# Define Light Status Retrieval Function
+def get_light():
+    light = "ON"
+    return(light)
+
+# Define Batter Status Retrieval Function
+def get_battery():
+    battery = "OK"
+    return(battery)
+
 # Define Tri-State Status Function
 def tristatus(trough):
     if trough==1:
@@ -79,6 +89,8 @@ def tristatus(trough):
     elif trough==13:
         if stockserv == "None":
             return("DISABLED")
+    # Catch All
+    return("ERROR")
 
 # Define and route Static Files (Images):
 @route('/static/<page>/<filename>')
@@ -108,7 +120,7 @@ def index():
     # Validate Service State
     # Define Template Dictionary
     tags = {
-        'temp':   get_temp(),
+        'temp':get_temp(),'light':get_light(),'bat':get_battery(),
         'pole1a': tristatus(1), 'nam1a':animal1a,
         'pole1b': tristatus(2), 'nam1b':animal1b,
         'pole2a': tristatus(3), 'nam2a':animal2a,
@@ -145,12 +157,13 @@ def setpage():
         'p6acheck':p6aserv, '6apower':power6a, 'animal6a':animal6a,
         'p6bcheck':p6bserv, '6bpower':power6b, 'animal6b':animal6b,
         'stockcheck':stockserv, 'stockpower':stockpower, 'animalstock':animalstock,
+        'emailadd1':emailadd1, 'emailadd2':emailadd2, 'emailadd3':emailadd3,
     }
     html = serve_template( tags, settings_page )
     return( html )
 
 @route('/autowater_update', method='GET')
-def update():
+def update_settings():
     # Define all Global Variables
     global p1aserv, p1bserv, p2aserv, p2bserv, p3aserv, p3bserv
     global p4aserv, p4bserv, p5aserv, p5bserv, p6aserv, p6bserv
@@ -204,7 +217,7 @@ def update():
     animal6b = get('animal6b')
     animalstock = get('animalstock')
     # Prepare Settings
-    for section in parser.sections():
+    for section in ["in-service","heaters","names"]:
         for setting, value in parser.items(section):
             exec( 'parser.set("'+str(section)+'","'+
                   str(setting)+'", str('+str(setting)+'))' )
@@ -214,6 +227,28 @@ def update():
     # Identify Manual Control
     
     redirect('/settings')
+
+@route('/email_update', method='GET')
+def update_email():
+    # Define all Global Variables
+    global emailadd1, emailadd2, emailadd3
+    # Update Variables
+    emailadd1 = request.query.get('emailadd1')
+    emailadd2 = request.query.get('emailadd2')
+    emailadd3 = request.query.get('emailadd3')
+    # Save Settings
+    parser.set('email','emailadd1', emailadd1)
+    parser.set('email','emailadd2', emailadd2)
+    parser.set('email','emailadd3', emailadd3)
+    # Write File
+    with open( configfile, 'w' ) as file:
+                parser.write( file )
+    redirect('/settings')
+
+@route('/set_light', method='get')
+def control_barn_light():
+    # Toggle the Barn Light
+    redirect('/')
 
 @error(404)
 def error404(error):
