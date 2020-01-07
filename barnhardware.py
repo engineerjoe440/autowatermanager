@@ -2,17 +2,20 @@
 import threading
 import time
 import sys
+import glob
 
 try:
     from RPLCD import CharLCD
     import RPi.GPIO as GPIO
+    GPIO.setwarnings(False)
 except:
     print("Failed to import. Testing on Windows? Try on RPi!")
     time.sleep(5)
     sys.exit()
 
 # Define Shared (Global) Variable
-lcdmsg = ''
+lcdmsg1 = ''
+lcdmsg2 = ''
 
 # Define LCD Shape
 col = 24
@@ -25,16 +28,44 @@ d5 = 35
 d6 = 31
 d7 = 33
 # Define Add'l GPIO Pins
-gLED = 15
+gLED = 16
 rLED = 19
-gBTN = 11
-rBTN = 13
+gBTN = 13
+rBTN = 11
 # Define Add'l Parameters
-start_time = 0.1
+start_time = 0.01
 
+# Define Temperature Probe Parameters
+base_dir = '/sys/bus/w1/devices/'
+device_folder = glob.glob(base_dir + '28*')[0]
+device_file = device_folder + '/w1_slave'
+
+# Define Functions Required to Read Ambient Temperature
+def read_temp_raw():
+    f = open(device_file, 'r')
+    lines = f.readlines()
+    f.close()
+    return lines
+def read_temp(scale='f'):
+    lines = read_temp_raw()
+    while lines[0].strip()[-3:] != 'YES':
+        time.sleep(0.2)
+        lines = read_temp_raw()
+    equals_pos = lines[1].find('t=')
+    if equals_pos != -1:
+        temp_string = lines[1][equals_pos+2:]
+        temp_c = float(temp_string) / 1000.0
+        temp_f = temp_c * 9.0 / 5.0 + 32.0
+        if scale.upper() == 'F':
+            return( temp_f )
+        elif scale.upper() == 'C':
+            return( temp_c )
+        else:
+            return
+
+# Define Hardware Control Class
 class BarnHardware:
-    def __init__(self,td=0.5):
-        self.time = td
+    def __init__(self):
         # Initialize LCD Display
         self.lcd = CharLCD(numbering_mode=GPIO.BOARD, cols=col, rows=row,
                            pin_rs=rs, pin_e=en, pins_data=[d4,d5,d6,d7])
@@ -55,8 +86,8 @@ class BarnHardware:
         red = GPIO.input(rBTN) == GPIO.HIGH
         return(grn,red)
     def get_lcd(self):
-        global lcdmsg
-        return(lcdmsg.replace('\0',' ').replace('\x10','\n'))
+        global lcdmsg1, lcdmsg2
+        return(lcdmsg1.replace('\0',' '),lcdmsg2.replace('\0',' '))
     
     # Define Callback Specifiers
     def set_grn_callback(self,func,opt=GPIO.HIGH):
@@ -66,40 +97,45 @@ class BarnHardware:
     
     # Define Set Functions for LED's and LCD
     def set_led(self,grn=False,red=False):
-        global lcdmsg
         # Set LEDs
         GPIO.output(gLED,grn)
         GPIO.output(rLED,red)
     def set_lcd(self,LINE1,LINE2):
-        global lcdmsg
+        global lcdmsg1, lcdmsg2
         NL = 16*' ' # 16 Spaces
-        # Condition Inputs
-        LINE1 = LINE1[:col].replace(' ','\0')
-        LINE2 = LINE2[:col].replace(' ','\0')
-        msg = NL + LINE2 + '\r' + LINE1
-        lcdmsg = msg
+        L2MX = 8
+        # Condition and Test Inputs
+        LINE1 = str(LINE1)
+        LINE2 = str(LINE2)
+        if len(LINE1) > col:
+            print("WARNING: Line 1 is longer than "+str(col)+" characters.")
+        if len(LINE2) > L2MX:
+            print("WARNING: Line 2 is longer than "+str(L2MX)+" characters.")
+        # Manage LCD Strings
+        lcdmsg1 = '\r'+LINE1[:col].replace(' ','\0')
+        lcdmsg2 = NL+LINE2[:L2MX].replace(' ','\0')
+        # Run Display Update
+        self.run()
     
     # Define LCD Operating Function
     def run(self):
-        global lcdmsg
-        try:
-            if __name__ == '__main__':
-                print("testing...",len(lcdmsg))
-            # Clear LCD
-            self.lcd.clear()
-            # Write Message
-            self.lcd.write_string(lcdmsg)
-            # Start Threading Timer
-            threading.Timer(self.time, self.run).start()
-        except:
-            GPIO.cleanup()
+        global lcdmsg1, lcdmsg2
+        if __name__ == '__main__':
+            print("testing...",len(lcdmsg1),len(lcdmsg2))
+        # Clear LCD
+        self.lcd.clear()
+        # Write Message
+        self.lcd.write_string(lcdmsg2)
+        self.lcd.write_string(lcdmsg1)
 
 # Define Test Method
 if __name__ == '__main__':
-    try:
-        hdw = BarnHardware()
-        hdw.set_lcd("Hello World! TESTING...","From:_Joe_Stanley")
-        while(True):
-            time.sleep(1)
-    finally:
-        GPIO.cleanup()
+    print("Testing Script Operation...")
+    print("Temperature:",read_temp(),"°F")
+    hdw = BarnHardware()
+    hdw.set_lcd("Outside Temperature:",str(round(read_temp(),2))+"'F")
+    while(True):
+        time.sleep(1)
+        hdw.set_lcd("Outside Temperature:",str(round(read_temp(),2))+"'F")
+        g,r = hdw.get_btn()
+        hdw.set_led(g,r)
