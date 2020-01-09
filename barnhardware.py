@@ -86,8 +86,6 @@ class BarnHardware:
         GPIO.setup(phto, GPIO.IN)
         GPIO.setup(gBTN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(rBTN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        # Init Complete, Start Running
-        self.run()
     
     # Define Get Functions
     def get_btn(self):
