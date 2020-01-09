@@ -1,0 +1,14 @@
+[Unit]
+Description=Auto Water Manager autonomous livestock water trough heater control web service
+After=multi-user.target
+
+[Service]
+Type=idle
+WorkingDirectory=/home/tech/BarnAuto
+ExecStart=/usr/bin/python3 /home/tech/BarnAuto/main.py
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=AutoWaterWeb
+
+[Install]
+WantedBy=multi-user.target
