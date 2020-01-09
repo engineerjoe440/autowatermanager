@@ -27,11 +27,16 @@ d4 = 29
 d5 = 35
 d6 = 31
 d7 = 33
+# Define Relay Control GPIO Pins
+RLY1 = 37
+RLY2 = 38
+RLY3 = 40
 # Define Add'l GPIO Pins
 gLED = 16
 rLED = 19
 gBTN = 13
 rBTN = 11
+phto = 12
 # Define Add'l Parameters
 start_time = 0.01
 
@@ -75,6 +80,10 @@ class BarnHardware:
         # Initialize Button and LED GPIO Pins
         GPIO.setup(gLED, GPIO.OUT, initial=0)
         GPIO.setup(rLED, GPIO.OUT, initial=0)
+        GPIO.setup(RLY1, GPIO.OUT, initial=0)
+        GPIO.setup(RLY2, GPIO.OUT, initial=0)
+        GPIO.setup(RLY3, GPIO.OUT, initial=0)
+        GPIO.setup(phto, GPIO.IN)
         GPIO.setup(gBTN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(rBTN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         # Init Complete, Start Running
@@ -85,9 +94,23 @@ class BarnHardware:
         grn = GPIO.input(gBTN) == GPIO.HIGH
         red = GPIO.input(rBTN) == GPIO.HIGH
         return(grn,red)
+    def get_photo(self):
+        light = GPIO.input(phto) == GPIO.HIGH
+        return(light)
     def get_lcd(self):
         global lcdmsg1, lcdmsg2
         return(lcdmsg1.replace('\0',' '),lcdmsg2.replace('\0',' '))
+    def get_led(self):
+        L1 = GPIO.input(gLED) == GPIO.HIGH
+        L2 = GPIO.input(rLED) == GPIO.HIGH
+    def get_rly(self):
+        r1 = GPIO.input(RLY1) == GPIO.HIGH
+        r2 = GPIO.input(RLY2) == GPIO.HIGH
+        r3 = GPIO.input(RLY3) == GPIO.HIGH
+        return(r1,r2,r3)
+    def get_temp(self,scale='f'):
+        # Mask Temperature Function for Ease
+        return(read_temp(scale=scale))
     
     # Define Callback Specifiers
     def set_grn_callback(self,func,opt=GPIO.HIGH):
@@ -100,6 +123,11 @@ class BarnHardware:
         # Set LEDs
         GPIO.output(gLED,grn)
         GPIO.output(rLED,red)
+    def set_rly(self,rly1,rly2,rly3):
+        # Set Relays
+        GPIO.output(RLY1,rly1)
+        GPIO.output(RLY2,rly2)
+        GPIO.output(RLY3,rly3)
     def set_lcd(self,LINE1,LINE2):
         global lcdmsg1, lcdmsg2
         NL = 16*' ' # 16 Spaces
@@ -114,12 +142,7 @@ class BarnHardware:
         # Manage LCD Strings
         lcdmsg1 = '\r'+LINE1[:col].replace(' ','\0')
         lcdmsg2 = NL+LINE2[:L2MX].replace(' ','\0')
-        # Run Display Update
-        self.run()
-    
-    # Define LCD Operating Function
-    def run(self):
-        global lcdmsg1, lcdmsg2
+        # Update LCD
         if __name__ == '__main__':
             print("testing...",len(lcdmsg1),len(lcdmsg2))
         # Clear LCD
@@ -139,3 +162,4 @@ if __name__ == '__main__':
         hdw.set_lcd("Outside Temperature:",str(round(read_temp(),2))+"'F")
         g,r = hdw.get_btn()
         hdw.set_led(g,r)
+        print("Light:",hdw.get_photo())
