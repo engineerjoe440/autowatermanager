@@ -151,30 +151,36 @@ class BarnHardware:
 
 # Define Test Method
 if __name__ == '__main__':
-    print("Testing Script Operation...")
-    print("Temperature:",read_temp(),"°F")
-    hdw = BarnHardware()
-    hdw.set_lcd("Outside Temperature:",str(round(read_temp(),2))+"'F")
-    ctr = 0
-    while(True):
-        time.sleep(1)
+    try:
+        print("Testing Script Operation...")
+        print("Temperature:",read_temp(),"°F")
+        hdw = BarnHardware()
         hdw.set_lcd("Outside Temperature:",str(round(read_temp(),2))+"'F")
-        g,r = hdw.get_btn()
-        hdw.set_led(g,r)
-        print("Light:",hdw.get_photo())
-        if ctr == 0:
-            hdw.set_rly(False,False,False)
-            ctr += 1
-        elif ctr == 1:
-            hdw.set_rly(True,False,False)
-            ctr += 1
-        elif ctr == 2:
-            hdw.set_rly(False,True,False)
-            ctr += 1
-        elif ctr == 3:
-            hdw.set_rly(False,False,True)
-            ctr += 1
-        else:
-            ctr = 0
+        ctr = 0
+        while(True):
+            time.sleep(1)
+            hdw.set_lcd("Outside Temperature:",str(round(read_temp(),2))+"'F")
+            g,r = hdw.get_btn()
+            hdw.set_led(g,r)
+            print("Light:",hdw.get_photo())
+            if ctr == 0:
+                hdw.set_rly(False,False,False)
+                ctr += 1
+            elif ctr == 1:
+                hdw.set_rly(True,False,False)
+                ctr += 1
+            elif ctr == 2:
+                hdw.set_rly(False,True,False)
+                ctr += 1
+            elif ctr == 3:
+                hdw.set_rly(False,False,True)
+                ctr += 1
+            else:
+                ctr = 0
+    finally:
+        hdw.set_lcd('','')
+        hdw.set_rly(False,False,False)
+        time.sleep(0.5)
+        GPIO.cleanup()
 
 # END
