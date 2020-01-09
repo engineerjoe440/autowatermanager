@@ -5,9 +5,11 @@ import sys
 import glob
 
 try:
-    from RPLCD import CharLCD
-    import RPi.GPIO as GPIO
-    GPIO.setwarnings(False)
+    from pijuice import PiJuice # Import pijuice module
+    from RPLCD import CharLCD # Import Raspberry Pi LCD Controller
+    import RPi.GPIO as GPIO # Import GPIO Controller
+    GPIO.setwarnings(False) # Disable GPIO Warnings
+    pijuice = PiJuice(1, 0x14) # Instantiate PiJuice interface object
 except:
     print("Failed to import. Testing on Windows? Try on RPi!")
     time.sleep(5)
@@ -106,6 +108,30 @@ class BarnHardware:
         r2 = GPIO.input(RLY2) == GPIO.HIGH
         r3 = GPIO.input(RLY3) == GPIO.HIGH
         return(r1,r2,r3)
+    def get_bat_sta(self):
+        # Collect data structure and extract error
+        sta = pijuice.status.GetStatus()['data']
+        err = not( sta['error'] == 'NO_ERROR' )
+        return(err)
+    def get_bag_chg(self):
+        chg = pijuice.status.GetChargeLevel()['data']
+        return(chg) # percent charged
+    def get_voltage(self):
+        v = pijuice.status.GetBatteryVoltage()['data']
+        return(float(v)*0.001)
+    def get_current(self):
+        i = pijuice.status.GetBatteryCurrent()['data']
+        return(float(i))
+    def get_vbus_5v(self):
+        v = pijuice.status.GetIoVoltage()['data']
+        return(float(v)*0.001)
+    def get_ibus_5v(self):
+        i = pijuice.status.GetIoCurrent()['data']
+        return(float(i))
+    def get_bat_led(self,LED):
+        if isinstance(LED, int): # Condition Input
+            LED = {1:'D1', 2:'D2', 3:'D3'}[LED]
+        return(pijuice.status.GetLedState(LED)['data'])
     def get_temp(self,scale='f'):
         # Mask Temperature Function for Ease
         return(read_temp(scale=scale))
@@ -121,6 +147,10 @@ class BarnHardware:
         # Set LEDs
         GPIO.output(gLED,grn)
         GPIO.output(rLED,red)
+    def set_bat_led(self,LED,r,g,b):
+        if isinstance(LED, int): # Condition Input
+            LED = {1:'D1', 2:'D2', 3:'D3'}[LED]
+        pijuice.status.SetLedState(LED, [r,g,b])
     def set_rly(self,rly1,rly2,rly3):
         # Set Relays
         GPIO.output(RLY1,rly1)
