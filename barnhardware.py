@@ -49,9 +49,8 @@ device_file = device_folder + '/w1_slave'
 
 # Define Functions Required to Read Ambient Temperature
 def read_temp_raw():
-    f = open(device_file, 'r')
-    lines = f.readlines()
-    f.close()
+    with open(device_file, 'r') as f:
+        lines = f.readlines()
     return lines
 def read_temp(scale='f'):
     lines = read_temp_raw()
