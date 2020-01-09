@@ -192,7 +192,7 @@ if __name__ == '__main__':
             hdw.set_lcd("Outside Temperature:",str(round(read_temp(),2))+"'F")
             g,r = hdw.get_btn()
             hdw.set_led(g,r)
-            print("Light:",hdw.get_photo())
+            print("Light:",hdw.get_photo(),"\tBat:",hdw.get_bag_chg(),"%")
             if ctr == 0:
                 hdw.set_rly(False,False,False)
                 ctr += 1
