@@ -74,11 +74,7 @@ input:checked + .slider:before {
 		<link rel="stylesheet" type="text/css" href="/static/style.css"/>
 		<link rel="stylesheet" type="text/css" href="/static/template.css"/>
 		<link rel="stylesheet" type="text/css" href="/static/index.css"/>
-		<script type="text/javascript">
-			window.onload = function(){ checkBrowserCompatibility('Your browser does not support the features necessary to display this website.','Your browser may not support the features necessary to display this website.','[1]Update your browser[/1] or [2]continue without updating[/2].','http://outdatedbrowser.com/'); };
-			x5engine.utils.currentPagePath = 'settings.html';
-			x5engine.boot.push(function () { x5engine.imPageToTop.initializeButton({}); });
-		</script>
+		<script type="text/javascript" src="/static/scripts.js"></script>
 		<link rel="icon" href="/static/favicon.ico" type="image/vnd.microsoft.icon" />
 	</head>
 	<body>

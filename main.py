@@ -14,9 +14,18 @@ settings_page = 'settings.tpl'
 
 # Import Dependencies
 import os
-from bottle import route, run, template, static_file
-from bottle import request, error, redirect
+import git
+from bottle import route, run, template, static_file, error
+from bottle import request, redirect, Bottle, auth_basic, abort
 import configparser
+try:
+    import pam
+    from barnhardware import BarnHardware
+except:
+    print("WARNING! Seems you're testing on Windows. Some features won't work.")
+
+# Instantiate Objects
+Webapp = Bottle()
 
 # Define Working Directory and Static Directory
 base = os.getcwd()
@@ -93,8 +102,8 @@ def tristatus(trough):
     return("ERROR")
 
 # Define and route Static Files (Images):
-@route('/static/<page>/<filename>')
-@route('/static/<filename>')
+@Webapp.route('/static/<page>/<filename>')
+@Webapp.route('/static/<filename>')
 def serve_static(filename,page=None):
     if(page==None):
         return(static_file(filename, root=staticdir))
@@ -112,10 +121,10 @@ def serve_template( label, layer0, layer1=None, layer2=None):
         body = ''
     return( template(layer0, BODY = body, PAGE = label) )
 
-@route('/')
-@route('/index')
-@route('/index/')
-@route('/index.html')
+@Webapp.route('/')
+@Webapp.route('/index')
+@Webapp.route('/index/')
+@Webapp.route('/index.html')
 def index():
     # Validate Service State
     # Define Template Dictionary
@@ -138,9 +147,9 @@ def index():
     html = serve_template( tags, index_page )
     return( html )
 
-@route('/settings')
-@route('/settings/')
-@route('/settings.html')
+@Webapp.route('/settings')
+@Webapp.route('/settings/')
+@Webapp.route('/settings.html')
 def setpage():
     # Define Template Dictionary
     tags = {
@@ -162,7 +171,7 @@ def setpage():
     html = serve_template( tags, settings_page )
     return( html )
 
-@route('/autowater_update', method='GET')
+@Webapp.route('/autowater_update', method='GET')
 def update_settings():
     # Define all Global Variables
     global p1aserv, p1bserv, p2aserv, p2bserv, p3aserv, p3bserv
@@ -228,7 +237,7 @@ def update_settings():
     
     redirect('/settings')
 
-@route('/email_update', method='GET')
+@Webapp.route('/email_update', method='GET')
 def update_email():
     # Define all Global Variables
     global emailadd1, emailadd2, emailadd3
@@ -245,14 +254,48 @@ def update_email():
                 parser.write( file )
     redirect('/settings')
 
-@route('/set_light', method='get')
+@Webapp.route('/set_light', method='get')
 def control_barn_light():
     # Toggle the Barn Light
     redirect('/')
 
-@error(404)
+# Define Authenticator Function Using PAM
+def confirm_user(user, password):
+    try:
+        auth = pam.pam()
+        if not (auth.authenticate(user, password)):
+            print("Unauthorized Control Attempt!")
+            abort(code=403)
+        else:
+            return(True)
+    except:
+        abort(code=403)
+# Define Refresh Code Functional Operation
+@Webapp.route('/gitpull')
+@auth_basic(confirm_user)
+def upgrade_code():
+    # Passed Credentials, Perform Update
+    repo = git.Git()
+    status = repo.pull()
+    return(status)
+# Define Upgrade Routing and Functional Operation for Upgrade
+@Webapp.route('/upgrade')
+@Webapp.route('/update')
+@auth_basic(confirm_user)
+def upgrade_server():
+    # Passed Credentials, Perform Upgrade
+    upgrade_code()
+    
+
+@Webapp.error(404)
 def error404(error):
     return( serve_static("404err.html") )
+@Webapp.error(403)
+def error403(error):
+    return( serve_static("403err.html") )
+@Webapp.error(500)
+def error500(error):
+    return( serve_static("500err.html") )
 
 # Run Main Server
-run(host=hostname, port=port)
+Webapp.run(host=hostname, port=port)
