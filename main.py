@@ -54,8 +54,15 @@ def get_light():
 
 # Define Batter Status Retrieval Function
 def get_battery():
-    battery = "OK"
+    battery = "95"
     return(battery)
+def get_bat_volt():
+    battery = "5"
+    return(battery)
+
+# Define Daylight Status Function
+def get_daylight():
+    return(str(True))
 
 # Define Tri-State Status Function
 def tristatus(trough):
@@ -129,7 +136,8 @@ def index():
     # Validate Service State
     # Define Template Dictionary
     tags = {
-        'temp':get_temp(),'light':get_light(),'bat':get_battery(),
+        'temp':get_temp(),'light':get_light(), 'daylight':get_daylight(),
+        'batlevel':get_battery(),'batvolt':get_bat_volt(),
         'pole1a': tristatus(1), 'nam1a':animal1a,
         'pole1b': tristatus(2), 'nam1b':animal1b,
         'pole2a': tristatus(3), 'nam2a':animal2a,
@@ -153,20 +161,20 @@ def index():
 def setpage():
     # Define Template Dictionary
     tags = {
-        'p1acheck':p1aserv, '1apower':power1a, 'animal1a':animal1a,
-        'p1bcheck':p1bserv, '1bpower':power1b, 'animal1b':animal1b,
-        'p2acheck':p2aserv, '2apower':power2a, 'animal2a':animal2a,
-        'p2bcheck':p2bserv, '2bpower':power2b, 'animal2b':animal2b,
-        'p3acheck':p3aserv, '3apower':power3a, 'animal3a':animal3a,
-        'p3bcheck':p3bserv, '3bpower':power3b, 'animal3b':animal3b,
-        'p4acheck':p4aserv, '4apower':power4a, 'animal4a':animal4a,
-        'p4bcheck':p4bserv, '4bpower':power4b, 'animal4b':animal4b,
-        'p5acheck':p5aserv, '5apower':power5a, 'animal5a':animal5a,
-        'p5bcheck':p5bserv, '5bpower':power5b, 'animal5b':animal5b,
-        'p6acheck':p6aserv, '6apower':power6a, 'animal6a':animal6a,
-        'p6bcheck':p6bserv, '6bpower':power6b, 'animal6b':animal6b,
-        'stockcheck':stockserv, 'stockpower':stockpower, 'animalstock':animalstock,
-        'emailadd1':emailadd1, 'emailadd2':emailadd2, 'emailadd3':emailadd3,
+        'p1acheck':p1aserv, '1apower':power1a, 'size1a':size1a, 'animal1a':animal1a,
+        'p1bcheck':p1bserv, '1bpower':power1b, 'size1b':size1b, 'animal1b':animal1b,
+        'p2acheck':p2aserv, '2apower':power2a, 'size2a':size2a, 'animal2a':animal2a,
+        'p2bcheck':p2bserv, '2bpower':power2b, 'size2b':size2b, 'animal2b':animal2b,
+        'p3acheck':p3aserv, '3apower':power3a, 'size3a':size3a, 'animal3a':animal3a,
+        'p3bcheck':p3bserv, '3bpower':power3b, 'size3b':size3b, 'animal3b':animal3b,
+        'p4acheck':p4aserv, '4apower':power4a, 'size4a':size4a, 'animal4a':animal4a,
+        'p4bcheck':p4bserv, '4bpower':power4b, 'size4b':size4b, 'animal4b':animal4b,
+        'p5acheck':p5aserv, '5apower':power5a, 'size5a':size5a, 'animal5a':animal5a,
+        'p5bcheck':p5bserv, '5bpower':power5b, 'size5b':size5b, 'animal5b':animal5b,
+        'p6acheck':p6aserv, '6apower':power6a, 'size6a':size6a, 'animal6a':animal6a,
+        'p6bcheck':p6bserv, '6bpower':power6b, 'size6b':size6b, 'animal6b':animal6b,
+        'stockcheck':stockserv, 'stockpower':stockpower, 'sizestock':sizestock, 'animalstock':animalstock,
+        'emailadd1':emailadd1, 'emailadd2':emailadd2, 'emailadd3':emailadd3
     }
     html = serve_template( tags, settings_page )
     return( html )
@@ -181,6 +189,8 @@ def update_settings():
     global power6b, stockpower, animal1a, animal1b, animal2a
     global animal2b, animal3a, animal3b, animal4a, animal4b
     global animal5a, animal5b, animal6a, animal6b, animalstock
+    global size1a, size1b, size2a, size2b, size3a, size3b, size4a
+    global size4b, size5a, size5b, size6a, size6b, sizestock
     # Mask Method Call Handle
     get = request.query.get
     # Identify In/Out of Service
@@ -211,6 +221,20 @@ def update_settings():
     power6a = get('power6a')
     power6b = get('power6b')
     stockpower = get('stockpolepower')
+    # Identify Trough Size
+    size1a = get('size1a')
+    size1b = get('size1b')
+    size2a = get('size2a')
+    size2b = get('size2b')
+    size3a = get('size3a')
+    size3b = get('size3b')
+    size4a = get('size4a')
+    size4b = get('size4b')
+    size5a = get('size5a')
+    size5b = get('size5b')
+    size6a = get('size6a')
+    size6b = get('size6b')
+    sizestock = get('sizestock')
     # Identify Animal Name
     animal1a = get('animal1a')
     animal1b = get('animal1b')
@@ -226,7 +250,7 @@ def update_settings():
     animal6b = get('animal6b')
     animalstock = get('animalstock')
     # Prepare Settings
-    for section in ["in-service","heaters","names"]:
+    for section in ["in-service","heaters","tanks","names"]:
         for setting, value in parser.items(section):
             exec( 'parser.set("'+str(section)+'","'+
                   str(setting)+'", str('+str(setting)+'))' )
