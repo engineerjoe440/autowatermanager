@@ -53,7 +53,7 @@ if __name__ == '__main__' :
                     'engineerjoe440@gmail.com']
     subject = "Embedded Test Email"
     body = "This is just a test message... Hope it works!"
-    files = "README.md"
+    files = "mailmanager.py"
     # Send Email
     send_email( recipients, subject, body, files )
     print("Success")
