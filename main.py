@@ -18,14 +18,17 @@ import git
 from bottle import route, run, template, static_file, error
 from bottle import request, redirect, Bottle, auth_basic, abort
 import configparser
-try:
-    import pam
-    from barnhardware import BarnHardware
-except:
-    print("WARNING! Seems you're testing on Windows. Some features won't work.")
+from model import unit_model, system_model
+import pam # Authentication Engine
+from barnhardware import BarnHardware
 
 # Instantiate Objects
 Webapp = Bottle()
+hardware = BarnHardware()
+model = system_model(hardware.get_temp())
+
+# Indicate Boot on LCD
+hardware.set_lcd("BOOTING...",hardware.get_temp(fmt="{:.2}'F"))
 
 # Define Working Directory and Static Directory
 base = os.getcwd()
@@ -44,25 +47,30 @@ for section in parser.sections():
 
 # Define Temperature Retrieval Function
 def get_temp():
-    temp = 32
+    temp = round(hadware.get_temp(),2)
     return(str(temp))
 
 # Define Light Status Retrieval Function
 def get_light():
-    light = "ON"
+    r1, r2, r3 = hardware.get_rly()
+    if r3:
+        light = "ON"
+    else:
+        light = "OFF"
     return(light)
 
 # Define Batter Status Retrieval Function
 def get_battery():
-    battery = "95"
+    battery = hardware.get_bat_chg()
     return(battery)
 def get_bat_volt():
-    battery = "5"
+    battery = hardware.get_voltage()
     return(battery)
 
 # Define Daylight Status Function
 def get_daylight():
-    return(str(True))
+    light = hardware.get_photo()
+    return(light)
 
 # Define Tri-State Status Function
 def tristatus(trough):
@@ -257,7 +265,7 @@ def update_settings():
     # Write File
     with open( configfile, 'w' ) as file:
                 parser.write( file )
-    # Identify Manual Control
+    # Re-Instantiate Model with new Parameters
     
     redirect('/settings')
 
@@ -322,4 +330,12 @@ def error500(error):
     return( serve_static("500err.html") )
 
 # Run Main Server
-Webapp.run(host=hostname, port=port)
+try:
+    hardware.set_led(grn=True)
+    Webapp.run(host=hostname, port=port)
+except:
+    # An Internal Error has Occurred and the Server has Died!
+    hardware.set_lcd("SERVER CRASHED!")
+    hardware.set_led(True,True)
+
+# END

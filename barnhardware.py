@@ -112,9 +112,13 @@ class BarnHardware:
         sta = pijuice.status.GetStatus()['data']
         err = not( sta['error'] == 'NO_ERROR' )
         return(err)
-    def get_bag_chg(self):
+    def get_bat_chg(self):
         chg = pijuice.status.GetChargeLevel()['data']
         return(chg) # percent charged
+    def get_pwr_src(self):
+        src = pijuice.status.GetStatus()['data']['powerInput5vIo']
+        active = (src == 'PRESENT')
+        return(active,src)
     def get_voltage(self):
         v = pijuice.status.GetBatteryVoltage()['data']
         return(float(v)*0.001)
@@ -131,9 +135,12 @@ class BarnHardware:
         if isinstance(LED, int): # Condition Input
             LED = {1:'D1', 2:'D2', 3:'D3'}[LED]
         return(pijuice.status.GetLedState(LED)['data'])
-    def get_temp(self,scale='f'):
+    def get_temp(self,scale='f',fmt=None):
         # Mask Temperature Function for Ease
-        return(read_temp(scale=scale))
+        temp = read_temp(scale=scale)
+        if isinstance(fmt,str):
+            temp = fmt.format(temp)
+        return(temp)
     
     # Define Callback Specifiers
     def set_grn_callback(self,func,opt=GPIO.HIGH):
@@ -155,7 +162,7 @@ class BarnHardware:
         GPIO.output(RLY1,rly1)
         GPIO.output(RLY2,rly2)
         GPIO.output(RLY3,rly3)
-    def set_lcd(self,LINE1,LINE2):
+    def set_lcd(self,LINE1='',LINE2=''):
         global lcdmsg1, lcdmsg2
         NL = 16*' ' # 16 Spaces
         L2MX = 8
@@ -191,7 +198,7 @@ if __name__ == '__main__':
             hdw.set_lcd("Outside Temperature:",str(round(read_temp(),2))+"'F")
             g,r = hdw.get_btn()
             hdw.set_led(g,r)
-            print("Light:",hdw.get_photo(),"\tBat:",hdw.get_bag_chg(),"%")
+            print("Light:",hdw.get_photo(),"\tBat:",hdw.get_bat_chg(),"%")
             if ctr == 0:
                 hdw.set_rly(False,False,False)
                 ctr += 1

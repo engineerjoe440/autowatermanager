@@ -206,8 +206,23 @@ class unit_model():
 ###################################################################################
 # Define System Model For All Troughs and Heaters
 class system_model():
-    def __init__(self,ambient,shutoff=shutoff):
-        t0 = ambient
+    def __init__(self,ambient,shutoff=shutoff,t0=None):
+        """
+        system_model
+        
+        Parameters
+        ----------
+        ambient:    float
+                    Ambient Temperature in degrees Fahrenheit
+        shutoff:    float, optional
+                    Thermal Shutoff point, default=35
+        t0:         list of float, optional
+                    Descriptive list containing all initial temperatures
+                    in degrees Fahrenheit, default of None loads ambient
+                    as the initial temp for all entries
+        """
+        if t0==None:
+            t0 = [ambient]*13 # Use Ambient Temperature
         k = k_full
         self.shutoff = shutoff
         self.turn_on = turn_on
@@ -224,25 +239,37 @@ class system_model():
                 exec( "global " + str(setting) )
                 exec( str(setting) + '="' + str(value) + '"' )
         # Instantiate Model for Each Trough
-        self.H1A = unit_model(t0,power1a,size1a,k,self.shutoff,self.turn_on,p1aserv)
-        self.H1B = unit_model(t0,power1b,size1b,k,self.shutoff,self.turn_on,p1bserv)
-        self.H2A = unit_model(t0,power2a,size2a,k,self.shutoff,self.turn_on,p2aserv)
-        self.H2B = unit_model(t0,power2b,size2b,k,self.shutoff,self.turn_on,p2bserv)
-        self.H3A = unit_model(t0,power3a,size3a,k,self.shutoff,self.turn_on,p3aserv)
-        self.H3B = unit_model(t0,power3b,size3b,k,self.shutoff,self.turn_on,p3bserv)
-        self.H4A = unit_model(t0,power4a,size4a,k,self.shutoff,self.turn_on,p4aserv)
-        self.H4B = unit_model(t0,power4b,size4b,k,self.shutoff,self.turn_on,p4bserv)
-        self.H5A = unit_model(t0,power5a,size5a,k,self.shutoff,self.turn_on,p5aserv)
-        self.H5B = unit_model(t0,power5b,size5b,k,self.shutoff,self.turn_on,p5bserv)
-        self.H6A = unit_model(t0,power6a,size6a,k,self.shutoff,self.turn_on,p6aserv)
-        self.H6B = unit_model(t0,power6b,size6b,k,self.shutoff,self.turn_on,p6bserv)
-        self.STOCK = unit_model(t0,stockpower,sizestock,k,self.shutoff,
+        self.H1A = unit_model(t0[0],power1a,size1a,k,self.shutoff,
+                              self.turn_on,p1aserv)
+        self.H1B = unit_model(t0[1],power1b,size1b,k,self.shutoff,
+                              self.turn_on,p1bserv)
+        self.H2A = unit_model(t0[2],power2a,size2a,k,self.shutoff,
+                              self.turn_on,p2aserv)
+        self.H2B = unit_model(t0[3],power2b,size2b,k,self.shutoff,
+                              self.turn_on,p2bserv)
+        self.H3A = unit_model(t0[4],power3a,size3a,k,self.shutoff,
+                              self.turn_on,p3aserv)
+        self.H3B = unit_model(t0[5],power3b,size3b,k,self.shutoff,
+                              self.turn_on,p3bserv)
+        self.H4A = unit_model(t0[6],power4a,size4a,k,self.shutoff,
+                              self.turn_on,p4aserv)
+        self.H4B = unit_model(t0[7],power4b,size4b,k,self.shutoff,
+                              self.turn_on,p4bserv)
+        self.H5A = unit_model(t0[8],power5a,size5a,k,self.shutoff,
+                              self.turn_on,p5aserv)
+        self.H5B = unit_model(t0[9],power5b,size5b,k,self.shutoff,
+                              self.turn_on,p5bserv)
+        self.H6A = unit_model(t0[10],power6a,size6a,k,self.shutoff,
+                              self.turn_on,p6aserv)
+        self.H6B = unit_model(t0[11],power6b,size6b,k,self.shutoff,
+                              self.turn_on,p6bserv)
+        self.STOCK = unit_model(t0[12],stockpower,sizestock,k,self.shutoff,
                                 self.turn_on,stockserv)
-        self.models = [self.H1A,self.H1B,self.H2A,self.H2B,self.H3A,self.H3B,
-                       self.H4A,self.H4B,self.H5A,self.H5B,self.H6A,self.H6B]
+        self.allmodels = [self.H1A,self.H1B,self.H2A,self.H2B,self.H3A,self.H3B,
+                          self.H4A,self.H4B,self.H5A,self.H5B,self.H6A,self.H6B]
         # Remove Out-of-Service Heaters from List
         models = []
-        for model in self.models:
+        for model in self.allmodels:
             if model.get_service():
                 models.append(model)
         self.models = models
@@ -256,9 +283,13 @@ class system_model():
                 base_const = const
                 base_model = model
         # Generate New Look-Up Function Based on Baseline LUT
-        self.base_lut = model.cycle_baseline(mintemp=self.basemintemp,maxtemp=self.basemaxtemp,units=self.num_units)
+        self.base_lut = model.cycle_baseline(mintemp=self.basemintemp,
+                                             maxtemp=self.basemaxtemp,
+                                             units=self.num_units)
     
     def lookup_cycles(self,value):
+        # Value: float; the current temperature
+        # Simple Function to Evaluate How Many Control Cycles Allowable by Temp
         if value > self.basemaxtemp:
             cyc = -3
         elif value < self.basemintemp:
@@ -269,13 +300,22 @@ class system_model():
         return(cyc+3)
     
     def update(self,ambient):
+        """
+        system_model.update
+        
+        Parameters
+        ----------
+        ambient:    float
+                    Ambient air temperature in degrees Fahrenheit
+        """
         if ambient < self.turn_on:
             # Determine Number of Cycles Allowed
             n_cycles = self.lookup_cycles(ambient)
             # Prioritize Troughs According to Current Temperature
             priorities = {}
             for model in self.models:
-                priorities[model.get_temp()] = model # Add Dictionary Item with Temp as Key
+                # Add Dictionary Item with Temp as Key
+                priorities[model.get_temp()] = model
             # Load Prioritized List
             priorities = dict(OrderedDict(sorted(priorities.items())))
             c_temps = list(priorities.keys())
@@ -297,18 +337,53 @@ class system_model():
                 for heater in models:
                     heater.update(ambient,EN=True)
             # Manage Stock Tank
-            self.STOCK.update(ambient,EN=True) # Stock Tank is Unregulated by Dispatch
+            # Stock Tank is Unregulated by Dispatch
+            self.STOCK.update(ambient,EN=True)
         else:
             for heater in self.models:
                 heater.update(ambient,EN=False)
-            self.STOCK.update(ambient,EN=False) # Stock Tank is Unregulated by Dispatch
+            # Stock Tank is Unregulated by Dispatch
+            self.STOCK.update(ambient,EN=False)
+    
+    def set_force(self,poleXXforce,stockpoleforce):
+        """
+        system_model.set_force
+        
+        Parameters
+        ----------
+        poleXXforce:    list of list of str, describes float
+                        List of lists with two elements, poleXXon and
+                        poleXXoff; each element is a string that describes a
+                        floating-point representation of hours.
+        stockpoleforce: list of str, describes float
+                        List of two elements, poleXXon and poleXXoff;
+                        each element is a string that describes a
+                        floating-point representation of hours.
+        """
+        # Iteratively Update Each Model
+        for ind,model in enumerate(self.allmodels):
+            # Extract Force Criteria
+            forceON,forceOFF = poleXXforce[ind]
+            # Test for None State
+            if forceON==None:   forceON  = None
+            if forceOFF==None:  forceOFF = None
+            # Load Force
+            model.force( forceON, forceOFF )
+        # Extract Stock Tank Force Criteria
+        forceON,forceOFF = stockpoleforce
+        # Test for None State
+        if forceON==None:   forceON  = None
+        if forceOFF==None:  forceOFF = None
+        # Set Force for Stock Tank
+        self.STOCK.force( forceON, forceOFF )
     
     def get_state(self):
         # Iteratively Collect Heater States
         states = []
         for model in self.models:
             states.append(model.get_heater_state())
-        states.append(self.STOCK.get_heater_state()) # Stock Tank is Unregulated by Dispatch
+        # Stock Tank is Unregulated by Dispatch
+        states.append(self.STOCK.get_heater_state())
         return(states)
     
     def get_temp(self):
