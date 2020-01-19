@@ -361,6 +361,7 @@ def force_heaters(force,state,heaterind):
     heater_ind = int(heaterind)
     # Do Force with Model
     model.set_force(heater_ind,option,time_set)
+    redirect('/settings')
 
 @Webapp.route('/email_update', method='GET')
 def update_email():
