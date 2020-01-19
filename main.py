@@ -74,45 +74,20 @@ def get_daylight():
 
 # Define Tri-State Status Function
 def tristatus(trough):
-    if trough==1:
-        if p1aserv == "None":
-            return("DISABLED")
-    elif trough==2:
-        if p1bserv == "None":
-            return("DISABLED")
-    elif trough==3:
-        if p2aserv == "None":
-            return("DISABLED")
-    elif trough==4:
-        if p2bserv == "None":
-            return("DISABLED")
-    elif trough==5:
-        if p3aserv == "None":
-            return("DISABLED")
-    elif trough==6:
-        if p3bserv == "None":
-            return("DISABLED")
-    elif trough==7:
-        if p4aserv == "None":
-            return("DISABLED")
-    elif trough==8:
-        if p4bserv == "None":
-            return("DISABLED")
-    elif trough==9:
-        if p5aserv == "None":
-            return("DISABLED")
-    elif trough==10:
-        if p5bserv == "None":
-            return("DISABLED")
-    elif trough==11:
-        if p6aserv == "None":
-            return("DISABLED")
-    elif trough==12:
-        if p6bserv == "None":
-            return("DISABLED")
-    elif trough==13:
-        if stockserv == "None":
-            return("DISABLED")
+    # Define Look-Up Table
+    lut = [
+            p1aserv,p1bserv,p2aserv,p2bserv,p3aserv,p3bserv,p4aserv,
+            p4bserv,p5aserv,p5bserv,p6aserv,p6bserv,stockserv,
+          ]
+    # Test for Disabled (Out of Service)
+    if lut[trough] == 'None':
+        return("DISABLED")
+    # Extract State from Model
+    status = model.get_state()[trough]
+    if status: # Heater is Enabled
+        return("ON")
+    else:
+        return("OFF")
     # Catch All
     return("ERROR")
 
@@ -146,19 +121,19 @@ def index():
     tags = {
         'temp':get_temp(),'light':get_light(), 'daylight':get_daylight(),
         'batlevel':get_battery(),'batvolt':get_bat_volt(),
-        'pole1a': tristatus(1), 'nam1a':animal1a,
-        'pole1b': tristatus(2), 'nam1b':animal1b,
-        'pole2a': tristatus(3), 'nam2a':animal2a,
-        'pole2b': tristatus(4), 'nam2b':animal2b,
-        'pole3a': tristatus(5), 'nam3a':animal3a,
-        'pole3b': tristatus(6), 'nam3b':animal3b,
-        'pole4a': tristatus(7), 'nam4a':animal4a,
-        'pole4b': tristatus(8), 'nam4b':animal4b,
-        'pole5a': tristatus(9), 'nam5a':animal5a,
-        'pole5b': tristatus(10),'nam5b':animal5b,
-        'pole6a': tristatus(11),'nam6a':animal6a,
-        'pole6b': tristatus(12),'nam6b':animal6b,
-        'stockpole':tristatus(13),'namstock':animalstock,
+        'pole1a': tristatus(0), 'nam1a':animal1a,
+        'pole1b': tristatus(1), 'nam1b':animal1b,
+        'pole2a': tristatus(2), 'nam2a':animal2a,
+        'pole2b': tristatus(3), 'nam2b':animal2b,
+        'pole3a': tristatus(4), 'nam3a':animal3a,
+        'pole3b': tristatus(5), 'nam3b':animal3b,
+        'pole4a': tristatus(6), 'nam4a':animal4a,
+        'pole4b': tristatus(7), 'nam4b':animal4b,
+        'pole5a': tristatus(8), 'nam5a':animal5a,
+        'pole5b': tristatus(9),'nam5b':animal5b,
+        'pole6a': tristatus(10),'nam6a':animal6a,
+        'pole6b': tristatus(11),'nam6b':animal6b,
+        'stockpole':tristatus(12),'namstock':animalstock,
     }
     html = serve_template( tags, index_page )
     return( html )

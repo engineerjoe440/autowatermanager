@@ -380,7 +380,7 @@ class system_model():
     def get_state(self):
         # Iteratively Collect Heater States
         states = []
-        for model in self.models:
+        for model in self.allmodels:
             states.append(model.get_heater_state())
         # Stock Tank is Unregulated by Dispatch
         states.append(self.STOCK.get_heater_state())
@@ -389,7 +389,7 @@ class system_model():
     def get_temp(self):
         # Iteratively Collect Water Temperatures
         temps = []
-        for model in self.models:
+        for model in self.allmodels:
             temps.append(model.get_temp())
         temps.append(self.STOCK.get_temp()) # Stock Tank is Unregulated by Dispatch
         return(temps)
