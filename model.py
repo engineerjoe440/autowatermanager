@@ -344,38 +344,25 @@ class system_model():
                 heater.update(ambient,EN=False)
             # Stock Tank is Unregulated by Dispatch
             self.STOCK.update(ambient,EN=False)
+        # Return States of All Heaters
+        return(self.get_state())
     
-    def set_force(self,poleXXforce,stockpoleforce):
+    def set_force(self,heater,state,time_set):
         """
         system_model.set_force
         
         Parameters
         ----------
-        poleXXforce:    list of list of str, describes float
-                        List of lists with two elements, poleXXon and
-                        poleXXoff; each element is a string that describes a
-                        floating-point representation of hours.
-        stockpoleforce: list of str, describes float
-                        List of two elements, poleXXon and poleXXoff;
-                        each element is a string that describes a
-                        floating-point representation of hours.
+        heater:     int
+        state:      bool
+        time_set:   float
         """
-        # Iteratively Update Each Model
-        for ind,model in enumerate(self.allmodels):
-            # Extract Force Criteria
-            forceON,forceOFF = poleXXforce[ind]
-            # Test for None State
-            if forceON==None:   forceON  = None
-            if forceOFF==None:  forceOFF = None
-            # Load Force
-            model.force( forceON, forceOFF )
-        # Extract Stock Tank Force Criteria
-        forceON,forceOFF = stockpoleforce
-        # Test for None State
-        if forceON==None:   forceON  = None
-        if forceOFF==None:  forceOFF = None
-        # Set Force for Stock Tank
-        self.STOCK.force( forceON, forceOFF )
+        # Extract Heater Model from List
+        model = self.allmodels[heater]
+        if state: # Turn On
+            model.force(time_set,None)
+        else:
+            model.force(None,time_set)
     
     def get_state(self):
         # Iteratively Collect Heater States

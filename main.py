@@ -1,12 +1,13 @@
-########################################################################
+####################################################################################
 #  AutoWaterManager Main Operating Web Server
 #  (c) Stanley Solutions
 #  Joe Stanley - engineerjoe440@yahoo.com
-########################################################################
+####################################################################################
 
 # Define Parameters
 hostname = '0.0.0.0'
 port = 80
+lightRelay = 2 # 0-indexed
 
 # Define Static Parameters
 index_page = 'index.tpl'
@@ -15,9 +16,13 @@ settings_page = 'settings.tpl'
 # Import Dependencies
 import os
 import git
+import csv
 from bottle import route, run, template, static_file, error
 from bottle import request, redirect, Bottle, auth_basic, abort
 import configparser
+import outletoperate as outlet
+from threading import Timer
+from datetime import datetime
 from model import unit_model, system_model
 import pam # Authentication Engine
 from barnhardware import BarnHardware
@@ -32,9 +37,11 @@ hardware.set_lcd("BOOTING...",hardware.get_temp(fmt="{:.2}'F"))
 
 # Define Working Directory and Static Directory
 base = os.getcwd()
-staticdir = base+"/static/"
-templtdir = base+"/views/"
-filedir   = base+"/files/"
+staticdir  = base+"/static/"
+templtdir  = base+"/views/"
+filedir    = base+"/files/"
+logfile    = staticdir+"historiclog.csv"
+logfileold = staticdir+"historiclog_old.csv"
 
 # Start Configuration Parser Object
 configfile = 'config.ini'
@@ -45,6 +52,95 @@ for section in parser.sections():
     for setting, value in parser.items(section):
         exec( str(setting) + '="' + str(value) + '"' )
 
+# Declare Global Variable to Represent HTTP Communications Status
+http_err = "None"
+http_err_host = ""
+####################################################################################
+
+
+
+####################################################################################
+class RepeatedTimer(object):
+    def __init__(self, interval, function, *args, **kwargs):
+        self._timer     = None
+        self.interval   = interval
+        self.function   = function
+        self.args       = args
+        self.kwargs     = kwargs
+        self.is_running = False
+        self.start()
+
+    def _run(self):
+        self.is_running = False
+        self.start()
+        self.function(*self.args, **self.kwargs)
+
+    def start(self):
+        if not self.is_running:
+            self._timer = Timer(self.interval, self._run)
+            self._timer.start()
+            self.is_running = True
+
+    def stop(self):
+        self._timer.cancel()
+        self.is_running = False
+    
+    def restart(self):
+        self.stop()
+        self.start()
+
+# Define Model Update Function
+def modelUpdate():
+    global model, http_err
+    # Collect Previous State
+    prvStatus = model.get_state()
+    # Update Model
+    status = model.update(hardware.get_temp())
+    http_err = "None"
+    http_err_host = ""
+    # Send Message to Smart Plugs
+    for ind,state in enumerate(status):
+        if state != prvStatus[ind]:
+            # Send Message to Smart Plug
+            rsp = outlet.tasmota_set(ind,state)
+            http_err = http_err or (not rsp)
+            if not rsp:
+                http_err_host += '-'+outlet.host_lut[ind] # Append Host IP
+    # Collect Date Time
+    dt_str = datetime.now().strftime("%d/%m/%YT%H:%M:%S")
+    # Generate Full CSV List for new Row
+    csv_list = [dt_str]
+    csv_list.extend(status)
+    csv_list.extend([model.get_consumption(),http_err,http_err_host])
+    with open(logfile, 'a+') as file:
+        # Generate Reader/Writer Objects
+        file_reader = csv.reader(file, delimiter=',')
+        file_writer = csv.writer(file, delimiter=',')
+        # Count Number of Rows in File
+        row_count = sum(1 for row in file_reader)
+        # Perform Special Operations for First/Last Row
+        rename = False
+        if row_count < 1:
+            file_writer.writerow(["DateTime","Pole1A","Pole1B","Pole2A",
+                                  "Pole2B","Pole3A","Pole3B","Pole4A",
+                                  "Pole4B","Pole5A","Pole5B","Pole6A",
+                                  "Pole6B","PowerConsumption(kW-min)",
+                                  "HTTP-ERR","HOST-IP"])
+        elif row_count == 43200:
+            rename = True
+        file_writer.writerow(csv_list)
+    if rename:
+        # Rename File, so New File Can Be Generated
+        try:
+            os.rename(logfile, logfileold)
+        except WindowsError:
+            os.remove(logfileold)
+            os.rename(logfile, logfileold)
+####################################################################################
+
+
+
+####################################################################################
 # Define Temperature Retrieval Function
 def get_temp():
     temp = round(hadware.get_temp(),2)
@@ -52,8 +148,8 @@ def get_temp():
 
 # Define Light Status Retrieval Function
 def get_light():
-    r1, r2, r3 = hardware.get_rly()
-    if r3:
+    rStatus = hardware.get_rly()
+    if rStatus[lightRelay]:
         light = "ON"
     else:
         light = "OFF"
@@ -71,6 +167,11 @@ def get_bat_volt():
 def get_daylight():
     light = hardware.get_photo()
     return(light)
+
+# Define Active Power Source Comprehension Function
+def get_pwr_src():
+    active,src = hardware.get_pwr_src()
+    return(src)
 
 # Define Tri-State Status Function
 def tristatus(trough):
@@ -90,7 +191,11 @@ def tristatus(trough):
         return("OFF")
     # Catch All
     return("ERROR")
+####################################################################################
 
+
+
+####################################################################################
 # Define and route Static Files (Images):
 @Webapp.route('/static/<page>/<filename>')
 @Webapp.route('/static/<filename>')
@@ -121,6 +226,7 @@ def index():
     tags = {
         'temp':get_temp(),'light':get_light(), 'daylight':get_daylight(),
         'batlevel':get_battery(),'batvolt':get_bat_volt(),
+        'hosterrors':http_err,'activesrc':get_pwr_src(),
         'pole1a': tristatus(0), 'nam1a':animal1a,
         'pole1b': tristatus(1), 'nam1b':animal1b,
         'pole2a': tristatus(2), 'nam2a':animal2a,
@@ -173,7 +279,7 @@ def update_settings():
     global animal2b, animal3a, animal3b, animal4a, animal4b
     global animal5a, animal5b, animal6a, animal6b, animalstock
     global size1a, size1b, size2a, size2b, size3a, size3b, size4a
-    global size4b, size5a, size5b, size6a, size6b, sizestock
+    global size4b, size5a, size5b, size6a, size6b, sizestock, model
     # Mask Method Call Handle
     get = request.query.get
     # Identify In/Out of Service
@@ -240,9 +346,21 @@ def update_settings():
     # Write File
     with open( configfile, 'w' ) as file:
                 parser.write( file )
+    # Capture Current Temperatures for Update
+    curTemperature = model.get_temp()
     # Re-Instantiate Model with new Parameters
-    
+    model = system_model(hardware.get_temp(),t0=curTemperature)
+    # Restart Model Timer
+    modelTimer.restart()
     redirect('/settings')
+
+@Webapp.route('/force_heater/<force>/<state>/<heaterind>', method='GET')
+def force_heaters(force,state,heaterind):
+    time_set = float(force)
+    option = ["ON":True,"OFF":False][state]
+    heater_ind = int(heaterind)
+    # Do Force with Model
+    model.set_force(heater_ind,option,time_set)
 
 @Webapp.route('/email_update', method='GET')
 def update_email():
@@ -264,6 +382,8 @@ def update_email():
 @Webapp.route('/set_light', method='get')
 def control_barn_light():
     # Toggle the Barn Light
+    rStatus = hardware.get_rly()[lightRelay]
+    hardware.set_rly(lightRelay,(not rStatus))
     redirect('/')
 
 # Define Authenticator Function Using PAM
@@ -292,8 +412,11 @@ def upgrade_code():
 def upgrade_server():
     # Passed Credentials, Perform Upgrade
     upgrade_code()
-    
+####################################################################################
 
+
+
+####################################################################################
 @Webapp.error(404)
 def error404(error):
     return( serve_static("404err.html") )
@@ -303,14 +426,23 @@ def error403(error):
 @Webapp.error(500)
 def error500(error):
     return( serve_static("500err.html") )
+####################################################################################
 
+
+
+####################################################################################
 # Run Main Server
 try:
-    hardware.set_led(grn=True)
+    hardware.set_led(grn=True) # Set Green LED to Indicate Active Status
+    # Start Model Timer to Manage Updates, Load Temperature Each Time
+    modelTimer = RepeatedTimer(60, modelUpdate)
     Webapp.run(host=hostname, port=port)
 except:
     # An Internal Error has Occurred and the Server has Died!
     hardware.set_lcd("SERVER CRASHED!")
     hardware.set_led(True,True)
-
+finally:
+    # Regardless of Error or Quit, Stop Timer for Model Operation
+    modelTimer.stop()
+####################################################################################
 # END

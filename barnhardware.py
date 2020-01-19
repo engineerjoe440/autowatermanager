@@ -157,11 +157,11 @@ class BarnHardware:
         if isinstance(LED, int): # Condition Input
             LED = {1:'D1', 2:'D2', 3:'D3'}[LED]
         pijuice.status.SetLedState(LED, [r,g,b])
-    def set_rly(self,rly1,rly2,rly3):
+    def set_rly(self,rly,status):
+        # Define LUT
+        rly = [RLY1,RLY2,RLY3][rly]
         # Set Relays
-        GPIO.output(RLY1,rly1)
-        GPIO.output(RLY2,rly2)
-        GPIO.output(RLY3,rly3)
+        GPIO.output(rly,status)
     def set_lcd(self,LINE1='',LINE2=''):
         global lcdmsg1, lcdmsg2
         NL = 16*' ' # 16 Spaces
@@ -200,16 +200,18 @@ if __name__ == '__main__':
             hdw.set_led(g,r)
             print("Light:",hdw.get_photo(),"\tBat:",hdw.get_bat_chg(),"%")
             if ctr == 0:
-                hdw.set_rly(False,False,False)
+                hdw.set_rly(0,False)
+                hdw.set_rly(1,False)
+                hdw.set_rly(2,False)
                 ctr += 1
             elif ctr == 1:
-                hdw.set_rly(True,False,False)
+                hdw.set_rly(0,True)
                 ctr += 1
             elif ctr == 2:
-                hdw.set_rly(False,True,False)
+                hdw.set_rly(1,True)
                 ctr += 1
             elif ctr == 3:
-                hdw.set_rly(False,False,True)
+                hdw.set_rly(2,True)
                 ctr += 1
             else:
                 ctr = 0
