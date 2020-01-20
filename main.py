@@ -357,7 +357,7 @@ def update_settings():
 @Webapp.route('/force_heater/<force>/<state>/<heaterind>', method='GET')
 def force_heaters(force,state,heaterind):
     time_set = float(force)
-    option = ["ON":True,"OFF":False][state]
+    option = {"ON":True,"OFF":False}[state]
     heater_ind = int(heaterind)
     # Do Force with Model
     model.set_force(heater_ind,option,time_set)
