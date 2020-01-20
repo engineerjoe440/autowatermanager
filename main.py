@@ -136,7 +136,7 @@ def modelUpdate():
         try:
             with open(logfile, 'r') as file:
                 # Count Number of Rows in File
-                row_count = sum(1 for row in file_reader)
+                row_count = sum(1 for row in file)
                 hardware.set_lcd(str(row_count)+"-rows","")
                 time.sleep(3)
                 # Check for Over-Full File
