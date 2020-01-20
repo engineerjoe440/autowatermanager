@@ -107,7 +107,7 @@ def modelUpdate():
         status = model.get_state()
         hardware.set_lcd(str(len(status))+str(len(prvStatus)),"")
         hardware.set_rly(0,True)
-        time.sleep(8)
+        time.sleep(5)
         http_err = "None"
         http_err_host = ""
         # Send Message to Smart Plugs
@@ -115,11 +115,9 @@ def modelUpdate():
             # Extract from Tuple
             cur,prv = states
             hardware.set_lcd("inside"+str(ind),"")
-            time.sleep(3)
+            time.sleep(1)
             if cur != prv:
                 # Attempt Control
-                hardware.set_lcd("insideinside","")
-                time.sleep(3)
                 try:
                     # Send Message to Smart Plug
                     rsp = outlet.tasmota_set(ind,cur)
@@ -129,6 +127,8 @@ def modelUpdate():
                 if not rsp:
                     http_err_host += '-'+outlet.host_lut[ind] # Append Host IP
         # Collect Date Time
+        hardware.set_lcd("backout","")
+        time.sleep(3)
         dt_str = datetime.now().strftime("%d/%m/%YT%H:%M:%S")
         # Generate Full CSV List for new Row
         csv_list = [dt_str, hardware.get_temp()]
