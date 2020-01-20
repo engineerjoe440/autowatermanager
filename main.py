@@ -98,7 +98,7 @@ def modelUpdate():
     try:
         global model, http_err
         # Update LCD with Time and Temperature
-        hardware.set_lcd(datetime.now().strftime("%d/%m/%YT%H:%M"),
+        hardware.set_lcd(datetime.now().strftime("%d/%m/%Y-%H:%M"),
                          hardware.get_temp(fmt="{:.2f}'F"))
         # Collect Previous State
         prvStatus = model.get_state()
@@ -120,6 +120,7 @@ def modelUpdate():
         csv_list = [dt_str, hardware.get_temp()]
         csv_list.extend(status)
         csv_list.extend([model.get_consumption(),http_err,http_err_host])
+        hardware.set_lcd("here","")
         # Count Rows in File
         try:
             with open(logfile, 'r') as file:
@@ -138,7 +139,7 @@ def modelUpdate():
         except FileNotFoundError:
             row_count = 0
         # Write to File as Necessary
-        with open(logfile, 'a+') as file:
+        with open(logfile, 'a') as file:
             # Generate Reader/Writer Objects
             file_writer = csv.writer(file, delimiter=',')
             # Perform Special Operations for First/Last Row
