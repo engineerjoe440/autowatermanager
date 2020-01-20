@@ -250,7 +250,7 @@ def index():
     # Define Template Dictionary
     tags = {
         'temp':get_temp(),'light':get_light(), 'daylight':get_daylight(),
-        'batlevel':get_battery(),'batvolt':round(get_bat_volt(),2)
+        'batlevel':get_battery(),'batvolt':round(get_bat_volt(),2),
         'hosterrors':http_err,'activesrc':get_pwr_src(),
         'pole1a': tristatus(0), 'nam1a':animal1a,
         'pole1b': tristatus(1), 'nam1b':animal1b,
