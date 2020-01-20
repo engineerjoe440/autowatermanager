@@ -147,17 +147,20 @@ def modelUpdate():
 
 ####################################################################################
 # Define OS-Interfaced Thread Class
-class OsThreadedCommand():
-    def __init__(self,message,dly=5):
+class OsCommand():
+    def __init__(self,message,threaded=True,dly=5):
         self.command = message.split()
         self.dly_time = dly
-        t = Thread(target=self.run)
-        t.start()
+        if threaded:
+            t = Thread(target=self.run)
+            t.start()
+            return
     
     def run(self):
         time.sleep(self.dly_time)
         proc = Popen(self.command, stdin=PIPE, stderr=PIPE, universal_newlines=True)
         response = proc.communicate()[1]
+        return(response)
 ####################################################################################
 
 
@@ -420,6 +423,24 @@ def confirm_user(user, password):
             return(True)
     except:
         abort(code=403)
+# Define Delete Log Files Page
+@Webapp.route('/deletelogs')
+@Webapp.route('/deletelog')
+@Webapp.route('/delete')
+@auth_basic(confirm_user)
+def delete_log_files():
+    # Attempt Deleting Files that May (or may not) be Present
+    # Logfile
+    try:
+        os.remove(logfile)
+    except:
+        pass
+    # Previous Period Log File
+    try:
+        os.remove(logfileold)
+    except:
+        pass
+    redirect('/') # Return to Index
 # Define Refresh Code Functional Operation
 @Webapp.route('/gitpull')
 @Webapp.route('/git')
@@ -429,15 +450,21 @@ def upgrade_code(servicerestart=True):
     repo = git.Git()
     status = repo.pull()
     if servicerestart:
-        OsThreadedCommand('sudo service AutoWaterWeb restart')
+        OsCommand('sudo service AutoWaterWeb restart')
         return(status)
 # Define Upgrade Routing and Functional Operation for Upgrade
 @Webapp.route('/upgrade')
 @Webapp.route('/update')
 @auth_basic(confirm_user)
 def upgrade_server():
-    # Passed Credentials, Perform Upgrade
+    # Passed Credentials, Perform Upgrade to Codebase
     upgrade_code(servicerestart=False)
+    # Perform System Update and Upgrade, One-Shot
+    cmd = OsCommand('sudo apt-get update && sudo apt-get upgrade -y',True,0)
+    response = cmd.run()
+    # Reboot System
+    OsCommand('sudo reboot')
+    return(response)
 ####################################################################################
 
 
