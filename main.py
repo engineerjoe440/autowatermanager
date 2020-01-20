@@ -97,6 +97,9 @@ def modelUpdate():
     # Use Try/Except to Catch Any Errors in Thread
     try:
         global model, http_err
+        # Update LCD with Time and Temperature
+        hardware.set_lcd(datetime.now().strftime("%d/%m/%YT%H:%M"),
+                         hardware.get_temp(fmt="{:.2f}'F"))
         # Collect Previous State
         prvStatus = model.get_state()
         # Update Model
@@ -150,6 +153,7 @@ def modelUpdate():
     except Exception as e:
         hardware.set_led(red=True)
         hardware.set_lcd("ERROR:Model","")
+        print(e)
         with open(errlog, 'a') as file:
             file.write(e)
 ####################################################################################
