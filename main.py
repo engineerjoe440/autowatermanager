@@ -111,7 +111,7 @@ def modelUpdate():
         http_err_host = ""
         # Send Message to Smart Plugs
         for ind,state in enumerate(status):
-            hardware.set_lcd("inside","")
+            hardware.set_lcd("inside"+str(ind),"")
             time.sleep(3)
             if state != prvStatus[ind]:
                 # Attempt Control

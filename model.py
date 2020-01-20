@@ -344,8 +344,6 @@ class system_model():
                 heater.update(ambient,EN=False)
             # Stock Tank is Unregulated by Dispatch
             self.STOCK.update(ambient,EN=False)
-        # Return States of All Heaters
-        return(self.get_state())
     
     def set_force(self,heater,state,time_set):
         """
