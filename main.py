@@ -105,7 +105,7 @@ def modelUpdate():
         # Update Model
         model.update(hardware.get_temp())
         status = model.get_state()
-        hardware.set_lcd(str(len(status)),"")
+        hardware.set_lcd(str(len(status))+str(len(prvStatus)),"")
         hardware.set_rly(0,True)
         time.sleep(8)
         http_err = "None"
@@ -163,12 +163,9 @@ def modelUpdate():
                                       "Pole6A","Pole6B","PowerConsumption(kW-min)",
                                       "HTTP-ERR","HOST-IP"])
             file_writer.writerow(csv_list)
-    except Exception as e:
+    except:
         hardware.set_led(red=True)
-        hardware.set_lcd("ERROR:Model","")
-        print(e)
-        with open(errlog, 'a') as file:
-            file.write(e)
+        hardware.set_lcd("ERROR:Model"+e,"")
 ####################################################################################
 
 
