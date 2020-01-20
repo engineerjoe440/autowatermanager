@@ -65,9 +65,33 @@ http_err_host = ""
 ####################################################################################
 # Define Push-Button Call-Back Functions
 def grn_callback(channel):
+    # Count the Length of Time that the Button is Being Pressed
+    t_cnt = 0
+    while hardware.get_btn()[0]:
+        t_cnt += 0.1        # Increment Counter
+        time.sleep(0.1)     # Sleep
+        # Test for Reboot Criteria
+        if all(hardware.get_btn()):
+            # Reboot System
+            OsCommand('sudo reboot')
+            hardware.set_lcd("Rebooting...")
     hardware.set_rly(0,not hardware.get_rly()[0])
 
 def red_callback(channel):
+    # Count the Length of Time that the Button is Being Pressed
+    t_cnt = 0
+    while hardware.get_btn()[1]:
+        t_cnt += 0.1        # Increment Counter
+        time.sleep(0.1)     # Sleep
+        # Test for Reboot Criteria
+        if all(hardware.get_btn()):
+            # Reboot System
+            OsCommand('sudo reboot')
+            hardware.set_lcd("Rebooting...")
+    if t_cnt > 10:
+        # Shut Down System
+        OsCommand('sudo shutdown')
+        hardware.set_lcd("Shutting-Down...")
     hardware.set_rly(1,not hardware.get_rly()[1])
 
 # Assocaite Push-Button Call-Back Functions with Hardware Callback
