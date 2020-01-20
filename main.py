@@ -132,13 +132,13 @@ def modelUpdate():
         csv_list = [dt_str, hardware.get_temp()]
         csv_list.extend(status)
         csv_list.extend([model.get_consumption(),http_err,http_err_host])
-        hardware.set_lcd("newlist","")
-        time.sleep(3)
         # Count Rows in File
         try:
             with open(logfile, 'r') as file:
                 # Count Number of Rows in File
                 row_count = sum(1 for row in file_reader)
+                hardware.set_lcd(str(row_count)"-rows","")
+                time.sleep(3)
                 # Check for Over-Full File
                 if row_count == 43200:
                     # Rename File, so New File Can Be Generated
