@@ -103,16 +103,19 @@ def modelUpdate():
         # Collect Previous State
         prvStatus = model.get_state()
         # Update Model
-        status = model.update(hardware.get_temp())
+        model.update(hardware.get_temp())
+        status = model.get_state()
         hardware.set_lcd("here","")
         time.sleep(3)
         http_err = "None"
         http_err_host = ""
         # Send Message to Smart Plugs
         for ind,state in enumerate(status):
+            hardware.set_lcd("inside","")
+            time.sleep(3)
             if state != prvStatus[ind]:
                 # Attempt Control
-                hardware.set_lcd("inside","")
+                hardware.set_lcd("insideinside","")
                 time.sleep(3)
                 try:
                     # Send Message to Smart Plug
