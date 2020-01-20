@@ -143,9 +143,9 @@ class BarnHardware:
         return(temp)
     
     # Define Callback Specifiers
-    def set_grn_callback(self,func,opt=GPIO.HIGH):
+    def set_grn_callback(self,func,opt=GPIO.RISING):
         GPIO.add_event_detect(gBTN,opt,callback=func)
-    def set_red_callback(self,func,opt=GPIO.HIGH):
+    def set_red_callback(self,func,opt=GPIO.RISING):
         GPIO.add_event_detect(rBTN,opt,callback=func)
     
     # Define Set Functions for LED's and LCD
