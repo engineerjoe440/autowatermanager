@@ -35,7 +35,7 @@ hardware = BarnHardware()
 model = system_model(hardware.get_temp())
 
 # Indicate Boot on LCD
-hardware.set_lcd("BOOTING...",hardware.get_temp(fmt="{:.2}'F"))
+hardware.set_lcd("BOOTING...",hardware.get_temp(fmt="{:.2f}'F"))
 
 # Define Working Directory and Static Directory
 base = os.getcwd()
@@ -93,57 +93,61 @@ class RepeatedTimer(object):
 
 # Define Model Update Function
 def modelUpdate():
-    global model, http_err
-    # Collect Previous State
-    prvStatus = model.get_state()
-    # Update Model
-    status = model.update(hardware.get_temp())
-    http_err = "None"
-    http_err_host = ""
-    # Send Message to Smart Plugs
-    for ind,state in enumerate(status):
-        if state != prvStatus[ind]:
-            # Send Message to Smart Plug
-            rsp = outlet.tasmota_set(ind,state)
-            http_err = http_err or (not rsp)
-            if not rsp:
-                http_err_host += '-'+outlet.host_lut[ind] # Append Host IP
-    # Collect Date Time
-    dt_str = datetime.now().strftime("%d/%m/%YT%H:%M:%S")
-    # Generate Full CSV List for new Row
-    csv_list = [dt_str, hardware.get_temp()]
-    csv_list.extend(status)
-    csv_list.extend([model.get_consumption(),http_err,http_err_host])
-    # Count Rows in File
+    # Use Try/Except to Catch Any Errors in Thread
     try:
-        with open(logfile, 'r') as file:
-            # Count Number of Rows in File
-            row_count = sum(1 for row in file_reader)
-            # Check for Over-Full File
-            if row_count == 43200:
-                # Rename File, so New File Can Be Generated
-                try:
-                    os.rename(logfile, logfileold)
-                except WindowsError:
-                    os.remove(logfileold)
-                    os.rename(logfile, logfileold)
-                # Reset Row Count
-                row_count = 0
-    except FileNotFoundError:
-        row_count = 0
-    # Write to File as Necessary
-    with open(logfile, 'a+') as file:
-        # Generate Reader/Writer Objects
-        file_writer = csv.writer(file, delimiter=',')
-        # Perform Special Operations for First/Last Row
-        rename = False
-        if row_count < 1:
-            file_writer.writerow(["DateTime","Temperature","Pole1A","Pole1B",
-                                  "Pole2A","Pole2B","Pole3A","Pole3B",
-                                  "Pole4A","Pole4B","Pole5A","Pole5B",
-                                  "Pole6A","Pole6B","PowerConsumption(kW-min)",
-                                  "HTTP-ERR","HOST-IP"])
-        file_writer.writerow(csv_list)
+        global model, http_err
+        # Collect Previous State
+        prvStatus = model.get_state()
+        # Update Model
+        status = model.update(hardware.get_temp())
+        http_err = "None"
+        http_err_host = ""
+        # Send Message to Smart Plugs
+        for ind,state in enumerate(status):
+            if state != prvStatus[ind]:
+                # Send Message to Smart Plug
+                rsp = outlet.tasmota_set(ind,state)
+                http_err = http_err or (not rsp)
+                if not rsp:
+                    http_err_host += '-'+outlet.host_lut[ind] # Append Host IP
+        # Collect Date Time
+        dt_str = datetime.now().strftime("%d/%m/%YT%H:%M:%S")
+        # Generate Full CSV List for new Row
+        csv_list = [dt_str, hardware.get_temp()]
+        csv_list.extend(status)
+        csv_list.extend([model.get_consumption(),http_err,http_err_host])
+        # Count Rows in File
+        try:
+            with open(logfile, 'r') as file:
+                # Count Number of Rows in File
+                row_count = sum(1 for row in file_reader)
+                # Check for Over-Full File
+                if row_count == 43200:
+                    # Rename File, so New File Can Be Generated
+                    try:
+                        os.rename(logfile, logfileold)
+                    except WindowsError:
+                        os.remove(logfileold)
+                        os.rename(logfile, logfileold)
+                    # Reset Row Count
+                    row_count = 0
+        except FileNotFoundError:
+            row_count = 0
+        # Write to File as Necessary
+        with open(logfile, 'a+') as file:
+            # Generate Reader/Writer Objects
+            file_writer = csv.writer(file, delimiter=',')
+            # Perform Special Operations for First/Last Row
+            rename = False
+            if row_count < 1:
+                file_writer.writerow(["DateTime","Temperature","Pole1A","Pole1B",
+                                      "Pole2A","Pole2B","Pole3A","Pole3B",
+                                      "Pole4A","Pole4B","Pole5A","Pole5B",
+                                      "Pole6A","Pole6B","PowerConsumption(kW-min)",
+                                      "HTTP-ERR","HOST-IP"])
+            file_writer.writerow(csv_list)
+    except:
+        hardware.set_led(red=True)
 ####################################################################################
 
 
@@ -490,6 +494,7 @@ def error500(error):
 # Run Main Server
 try:
     hardware.set_led(grn=True) # Set Green LED to Indicate Active Status
+    hardware.set_lcd("System OK",hardware.get_temp(fmt="{:.2f}'F")) # Update LCD
     # Start Model Timer to Manage Updates, Load Temperature Each Time
     modelTimer = RepeatedTimer(60, modelUpdate)
     Webapp.run(host=hostname, port=port)
