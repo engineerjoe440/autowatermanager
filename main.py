@@ -104,6 +104,8 @@ def modelUpdate():
         prvStatus = model.get_state()
         # Update Model
         status = model.update(hardware.get_temp())
+        hardware.set_lcd("here","")
+        time.sleep(3)
         http_err = "None"
         http_err_host = ""
         # Send Message to Smart Plugs
@@ -120,7 +122,6 @@ def modelUpdate():
         csv_list = [dt_str, hardware.get_temp()]
         csv_list.extend(status)
         csv_list.extend([model.get_consumption(),http_err,http_err_host])
-        hardware.set_lcd("here","")
         # Count Rows in File
         try:
             with open(logfile, 'r') as file:
