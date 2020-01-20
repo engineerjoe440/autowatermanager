@@ -44,6 +44,7 @@ templtdir  = base+"/views/"
 filedir    = base+"/files/"
 logfile    = staticdir+"historiclog.csv"
 logfileold = staticdir+"historiclog_old.csv"
+errlog     = staticdir+"errorlog.txt"
 
 # Start Configuration Parser Object
 configfile = 'config.ini'
@@ -146,8 +147,11 @@ def modelUpdate():
                                       "Pole6A","Pole6B","PowerConsumption(kW-min)",
                                       "HTTP-ERR","HOST-IP"])
             file_writer.writerow(csv_list)
-    except:
+    except Exception as e:
         hardware.set_led(red=True)
+        hardware.set_lcd("ERROR:Model","")
+        with open(errlog, 'a') as file:
+            file.write(e)
 ####################################################################################
 
 
@@ -494,7 +498,7 @@ def error500(error):
 # Run Main Server
 try:
     hardware.set_led(grn=True) # Set Green LED to Indicate Active Status
-    hardware.set_lcd("System OK",hardware.get_temp(fmt="{:.2f}'F")) # Update LCD
+    hardware.set_lcd("System-OK",hardware.get_temp(fmt="{:.2f}'F")) # Update LCD
     # Start Model Timer to Manage Updates, Load Temperature Each Time
     modelTimer = RepeatedTimer(60, modelUpdate)
     Webapp.run(host=hostname, port=port)
