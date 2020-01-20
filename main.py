@@ -15,13 +15,15 @@ settings_page = 'settings.tpl'
 
 # Import Dependencies
 import os
+import time
 import git
 import csv
 from bottle import route, run, template, static_file, error
 from bottle import request, redirect, Bottle, auth_basic, abort
 import configparser
 import outletoperate as outlet
-from threading import Timer
+from subprocess import Popen, PIPE
+from threading import Timer, Thread
 from datetime import datetime
 from model import unit_model, system_model
 import pam # Authentication Engine
@@ -109,33 +111,53 @@ def modelUpdate():
     # Collect Date Time
     dt_str = datetime.now().strftime("%d/%m/%YT%H:%M:%S")
     # Generate Full CSV List for new Row
-    csv_list = [dt_str]
+    csv_list = [dt_str, hardware.get_temp()]
     csv_list.extend(status)
     csv_list.extend([model.get_consumption(),http_err,http_err_host])
-    with open(logfile, 'a+') as file:
-        # Generate Reader/Writer Objects
-        file_reader = csv.reader(file, delimiter=',')
-        file_writer = csv.writer(file, delimiter=',')
+    # Count Rows in File
+    with open(logfile, 'r') as file:
         # Count Number of Rows in File
         row_count = sum(1 for row in file_reader)
+        # Check for Over-Full File
+        if row_count == 43200:
+            # Rename File, so New File Can Be Generated
+            try:
+                os.rename(logfile, logfileold)
+            except WindowsError:
+                os.remove(logfileold)
+                os.rename(logfile, logfileold)
+            # Reset Row Count
+            row_count = 0
+    # Write to File as Necessary
+    with open(logfile, 'a+') as file:
+        # Generate Reader/Writer Objects
+        file_writer = csv.writer(file, delimiter=',')
         # Perform Special Operations for First/Last Row
         rename = False
         if row_count < 1:
-            file_writer.writerow(["DateTime","Pole1A","Pole1B","Pole2A",
-                                  "Pole2B","Pole3A","Pole3B","Pole4A",
-                                  "Pole4B","Pole5A","Pole5B","Pole6A",
-                                  "Pole6B","PowerConsumption(kW-min)",
+            file_writer.writerow(["DateTime","Temperature","Pole1A","Pole1B",
+                                  "Pole2A","Pole2B","Pole3A","Pole3B",
+                                  "Pole4A","Pole4B","Pole5A","Pole5B",
+                                  "Pole6A","Pole6B","PowerConsumption(kW-min)",
                                   "HTTP-ERR","HOST-IP"])
-        elif row_count == 43200:
-            rename = True
         file_writer.writerow(csv_list)
-    if rename:
-        # Rename File, so New File Can Be Generated
-        try:
-            os.rename(logfile, logfileold)
-        except WindowsError:
-            os.remove(logfileold)
-            os.rename(logfile, logfileold)
+####################################################################################
+
+
+
+####################################################################################
+# Define OS-Interfaced Thread Class
+class OsThreadedCommand():
+    def __init__(self,message,dly=5):
+        self.command = message.split()
+        self.dly_time = dly
+        t = Thread(target=self.run)
+        t.start()
+    
+    def run(self):
+        time.sleep(self.dly_time)
+        proc = Popen(self.command, stdin=PIPE, stderr=PIPE, universal_newlines=True)
+        response = proc.communicate()[1]
 ####################################################################################
 
 
@@ -225,7 +247,7 @@ def index():
     # Define Template Dictionary
     tags = {
         'temp':get_temp(),'light':get_light(), 'daylight':get_daylight(),
-        'batlevel':get_battery(),'batvolt':get_bat_volt(),
+        'batlevel':get_battery(),'batvolt':round(get_bat_volt(),2)
         'hosterrors':http_err,'activesrc':get_pwr_src(),
         'pole1a': tristatus(0), 'nam1a':animal1a,
         'pole1b': tristatus(1), 'nam1b':animal1b,
@@ -402,18 +424,20 @@ def confirm_user(user, password):
 @Webapp.route('/gitpull')
 @Webapp.route('/git')
 @auth_basic(confirm_user)
-def upgrade_code():
+def upgrade_code(servicerestart=True):
     # Passed Credentials, Perform Update
     repo = git.Git()
     status = repo.pull()
-    return(status)
+    if servicerestart:
+        OsThreadedCommand('sudo service AutoWaterWeb restart')
+        return(status)
 # Define Upgrade Routing and Functional Operation for Upgrade
 @Webapp.route('/upgrade')
 @Webapp.route('/update')
 @auth_basic(confirm_user)
 def upgrade_server():
     # Passed Credentials, Perform Upgrade
-    upgrade_code()
+    upgrade_code(servicerestart=False)
 ####################################################################################
 
 
