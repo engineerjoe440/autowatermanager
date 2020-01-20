@@ -68,8 +68,8 @@ def grn_callback(channel):
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
     while hardware.get_btn()[0]:
-        t_cnt += 0.1        # Increment Counter
-        time.sleep(0.1)     # Sleep
+        t_cnt += 0.01       # Increment Counter
+        time.sleep(0.01)    # Sleep
         # Test for Reboot Criteria
         if all(hardware.get_btn()):
             # Reboot System
@@ -81,8 +81,8 @@ def red_callback(channel):
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
     while hardware.get_btn()[1]:
-        t_cnt += 0.1        # Increment Counter
-        time.sleep(0.1)     # Sleep
+        t_cnt += 0.01       # Increment Counter
+        time.sleep(0.01)    # Sleep
         # Test for Reboot Criteria
         if all(hardware.get_btn()):
             # Reboot System
