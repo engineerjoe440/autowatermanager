@@ -112,6 +112,8 @@ def modelUpdate():
         for ind,state in enumerate(status):
             if state != prvStatus[ind]:
                 # Attempt Control
+                hardware.set_lcd("inside","")
+                time.sleep(3)
                 try:
                     # Send Message to Smart Plug
                     rsp = outlet.tasmota_set(ind,state)
