@@ -104,7 +104,7 @@ def modelUpdate():
         prvStatus = model.get_state()
         # Update Model
         status = model.update(hardware.get_temp())
-        hardware.set_lcd("here","")
+        hardware.set_lcd(str(status[0]),"")
         time.sleep(3)
         http_err = "None"
         http_err_host = ""
