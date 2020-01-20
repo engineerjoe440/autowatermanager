@@ -96,7 +96,7 @@ class RepeatedTimer(object):
 def modelUpdate():
     # Use Try/Except to Catch Any Errors in Thread
     try:
-        global model, http_err
+        global model, http_err, http_err_host
         # Update LCD with Time and Temperature
         hardware.set_lcd(datetime.now().strftime("%d/%m/%Y-%H:%M"),
                          hardware.get_temp(fmt="{:.2f}'F"))
@@ -111,8 +111,12 @@ def modelUpdate():
         # Send Message to Smart Plugs
         for ind,state in enumerate(status):
             if state != prvStatus[ind]:
-                # Send Message to Smart Plug
-                rsp = outlet.tasmota_set(ind,state)
+                # Attempt Control
+                try:
+                    # Send Message to Smart Plug
+                    rsp = outlet.tasmota_set(ind,state)
+                except:
+                    rsp = False
                 http_err = http_err or (not rsp)
                 if not rsp:
                     http_err_host += '-'+outlet.host_lut[ind] # Append Host IP
@@ -145,8 +149,7 @@ def modelUpdate():
         with open(logfile, 'a') as file:
             # Generate Reader/Writer Objects
             file_writer = csv.writer(file, delimiter=',')
-            # Perform Special Operations for First/Last Row
-            rename = False
+            # Perform Special Operations for First Row
             if row_count < 1:
                 file_writer.writerow(["DateTime","Temperature","Pole1A","Pole1B",
                                       "Pole2A","Pole2B","Pole3A","Pole3B",
