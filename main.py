@@ -63,6 +63,17 @@ http_err_host = ""
 
 
 ####################################################################################
+# Define Push-Button Call-Back Functions
+def grn_callback():
+    hardware.set_rly(0,not hardware.get_rly()[0])
+
+def red_callback():
+    hardware.set_rly(1,not hardware.get_rly()[1])
+####################################################################################
+
+
+
+####################################################################################
 class RepeatedTimer(object):
     def __init__(self, interval, function, *args, **kwargs):
         self._timer     = None
