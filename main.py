@@ -115,19 +115,22 @@ def modelUpdate():
     csv_list.extend(status)
     csv_list.extend([model.get_consumption(),http_err,http_err_host])
     # Count Rows in File
-    with open(logfile, 'r') as file:
-        # Count Number of Rows in File
-        row_count = sum(1 for row in file_reader)
-        # Check for Over-Full File
-        if row_count == 43200:
-            # Rename File, so New File Can Be Generated
-            try:
-                os.rename(logfile, logfileold)
-            except WindowsError:
-                os.remove(logfileold)
-                os.rename(logfile, logfileold)
-            # Reset Row Count
-            row_count = 0
+    try:
+        with open(logfile, 'r') as file:
+            # Count Number of Rows in File
+            row_count = sum(1 for row in file_reader)
+            # Check for Over-Full File
+            if row_count == 43200:
+                # Rename File, so New File Can Be Generated
+                try:
+                    os.rename(logfile, logfileold)
+                except WindowsError:
+                    os.remove(logfileold)
+                    os.rename(logfile, logfileold)
+                # Reset Row Count
+                row_count = 0
+    except FileNotFoundError:
+        row_count = 0
     # Write to File as Necessary
     with open(logfile, 'a+') as file:
         # Generate Reader/Writer Objects
