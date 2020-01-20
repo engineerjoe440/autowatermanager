@@ -400,6 +400,7 @@ def confirm_user(user, password):
         abort(code=403)
 # Define Refresh Code Functional Operation
 @Webapp.route('/gitpull')
+@Webapp.route('/git')
 @auth_basic(confirm_user)
 def upgrade_code():
     # Passed Credentials, Perform Update
