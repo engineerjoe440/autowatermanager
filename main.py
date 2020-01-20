@@ -69,6 +69,10 @@ def grn_callback():
 
 def red_callback():
     hardware.set_rly(1,not hardware.get_rly()[1])
+
+# Assocaite Push-Button Call-Back Functions with Hardware Callback
+hardware.set_grn_callback(grn_callback)
+hardware.set_red_callback(red_callback)
 ####################################################################################
 
 
