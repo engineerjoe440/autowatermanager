@@ -104,7 +104,7 @@ def modelUpdate():
         prvStatus = model.get_state()
         # Update Model
         status = model.update(hardware.get_temp())
-        hardware.set_lcd(str(status[0]),"")
+        hardware.set_lcd("here","")
         time.sleep(3)
         http_err = "None"
         http_err_host = ""
@@ -139,6 +139,8 @@ def modelUpdate():
                     row_count = 0
         except FileNotFoundError:
             row_count = 0
+        hardware.set_lcd("there","")
+        time.sleep(3)
         # Write to File as Necessary
         with open(logfile, 'a') as file:
             # Generate Reader/Writer Objects
