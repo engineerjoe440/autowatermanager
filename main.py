@@ -105,8 +105,9 @@ def modelUpdate():
         # Update Model
         model.update(hardware.get_temp())
         status = model.get_state()
-        hardware.set_lcd("here","")
-        time.sleep(3)
+        hardware.set_lcd(str(len(status)),"")
+        hardware.set_rly(0,True)
+        time.sleep(8)
         http_err = "None"
         http_err_host = ""
         # Send Message to Smart Plugs
