@@ -143,7 +143,7 @@ def modelUpdate():
 ####################################################################################
 # Define Temperature Retrieval Function
 def get_temp():
-    temp = round(hadware.get_temp(),2)
+    temp = round(hardware.get_temp(),2)
     return(str(temp))
 
 # Define Light Status Retrieval Function
