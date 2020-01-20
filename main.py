@@ -111,16 +111,18 @@ def modelUpdate():
         http_err = "None"
         http_err_host = ""
         # Send Message to Smart Plugs
-        for ind,state in enumerate(status):
+        for ind,states in enumerate(zip(status,prvStatus)):
+            # Extract from Tuple
+            cur,prv = states
             hardware.set_lcd("inside"+str(ind),"")
             time.sleep(3)
-            if state != prvStatus[ind]:
+            if cur != prv:
                 # Attempt Control
                 hardware.set_lcd("insideinside","")
                 time.sleep(3)
                 try:
                     # Send Message to Smart Plug
-                    rsp = outlet.tasmota_set(ind,state)
+                    rsp = outlet.tasmota_set(ind,cur)
                 except:
                     rsp = False
                 http_err = http_err or (not rsp)
