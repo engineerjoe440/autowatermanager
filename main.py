@@ -105,9 +105,6 @@ def modelUpdate():
         # Update Model
         model.update(hardware.get_temp())
         status = model.get_state()
-        hardware.set_lcd(str(len(status))+str(len(prvStatus)),"")
-        hardware.set_rly(0,True)
-        time.sleep(5)
         http_err = "None"
         http_err_host = ""
         # Send Message to Smart Plugs
@@ -125,8 +122,6 @@ def modelUpdate():
                 if not rsp:
                     http_err_host += '-'+outlet.host_lut[ind] # Append Host IP
         # Collect Date Time
-        hardware.set_lcd("backout","")
-        time.sleep(3)
         dt_str = datetime.now().strftime("%d/%m/%YT%H:%M:%S")
         # Generate Full CSV List for new Row
         csv_list = [dt_str, hardware.get_temp()]
@@ -137,8 +132,6 @@ def modelUpdate():
             with open(logfile, 'r') as file:
                 # Count Number of Rows in File
                 row_count = sum(1 for row in file)
-                hardware.set_lcd(str(row_count)+"-rows","")
-                time.sleep(3)
                 # Check for Over-Full File
                 if row_count == 43200:
                     # Rename File, so New File Can Be Generated
@@ -151,8 +144,6 @@ def modelUpdate():
                     row_count = 0
         except FileNotFoundError:
             row_count = 0
-        hardware.set_lcd("there","")
-        time.sleep(3)
         # Write to File as Necessary
         with open(logfile, 'a') as file:
             # Generate Reader/Writer Objects
@@ -167,7 +158,7 @@ def modelUpdate():
             file_writer.writerow(csv_list)
     except:
         hardware.set_led(red=True)
-        hardware.set_lcd("ERROR:Model"+e,"")
+        hardware.set_lcd("ERROR:Model","")
 ####################################################################################
 
 
