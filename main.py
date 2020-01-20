@@ -64,10 +64,10 @@ http_err_host = ""
 
 ####################################################################################
 # Define Push-Button Call-Back Functions
-def grn_callback():
+def grn_callback(channel):
     hardware.set_rly(0,not hardware.get_rly()[0])
 
-def red_callback():
+def red_callback(channel):
     hardware.set_rly(1,not hardware.get_rly()[1])
 
 # Assocaite Push-Button Call-Back Functions with Hardware Callback
