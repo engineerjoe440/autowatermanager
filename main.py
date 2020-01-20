@@ -114,8 +114,6 @@ def modelUpdate():
         for ind,states in enumerate(zip(status,prvStatus)):
             # Extract from Tuple
             cur,prv = states
-            hardware.set_lcd("inside"+str(ind),"")
-            time.sleep(1)
             if cur != prv:
                 # Attempt Control
                 try:
@@ -134,6 +132,8 @@ def modelUpdate():
         csv_list = [dt_str, hardware.get_temp()]
         csv_list.extend(status)
         csv_list.extend([model.get_consumption(),http_err,http_err_host])
+        hardware.set_lcd("newlist","")
+        time.sleep(3)
         # Count Rows in File
         try:
             with open(logfile, 'r') as file:
