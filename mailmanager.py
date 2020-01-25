@@ -21,6 +21,8 @@ def send_email(recipient_list, subject, body, files=None):
     # Set Up MIME with Header Fields
     message = MIMEMultipart()
     message['From'] = address
+    # Clean Up Recipient List and Prepare for Email Sender
+    recipient_list = [i for i in recipient_list if i]
     recipients = COMMASPACE.join( recipient_list )
     message['To'] = recipients
     message['Date'] = formatdate(localtime=True)

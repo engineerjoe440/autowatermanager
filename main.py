@@ -28,6 +28,7 @@ from datetime import datetime
 from model import unit_model, system_model
 import pam # Authentication Engine
 from barnhardware import BarnHardware
+from mailmanager import send_email
 
 # Instantiate Objects
 Webapp = Bottle()
@@ -35,13 +36,15 @@ hardware = BarnHardware()
 model = system_model(hardware.get_temp())
 
 # Indicate Boot on LCD
-hardware.set_lcd("BOOTING...",hardware.get_temp(fmt="{:.2f}'F"))
+hardware.set_lcd("Auto-Water-Manager","BOOT...")
 
 # Define Working Directory and Static Directory
 base = os.getcwd()
 staticdir  = base+"/static/"
 templtdir  = base+"/views/"
 filedir    = base+"/files/"
+
+# Define Log Files and Error Log File
 logfile    = staticdir+"historiclog.csv"
 logfileold = staticdir+"historiclog_old.csv"
 errlog     = staticdir+"errorlog.txt"
@@ -64,41 +67,53 @@ http_err_host = ""
 
 ####################################################################################
 # Define Push-Button Call-Back Functions
+step = 0.01
 def grn_callback(channel):
+    global model
     # Perform Immediate Action
     hardware.set_rly(0,not hardware.get_rly()[0])
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
     while hardware.get_btn()[0]:
-        t_cnt += 0.01       # Increment Counter
-        time.sleep(0.01)    # Sleep
+        t_cnt += step       # Increment Counter
+        time.sleep(step)    # Sleep
         # Test for Reboot Criteria
-        if all(hardware.get_btn()):
+        if all(hardware.get_btn()) and t_cnt>1:
             # Reboot System
             OsCommand('sudo reboot')
+            hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
+        else:
+            # Start Control Model Updates
+            model = system_model(hardware.get_temp()) # Re-Activate Model
+            modelTimer.start()
+            hardware.set_led(grn=True,red=False)
 
 def red_callback(channel):
+    global model
     # Perform Immediate Action
     hardware.set_rly(1,not hardware.get_rly()[1])
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
     while hardware.get_btn()[1]:
-        t_cnt += 0.01       # Increment Counter
-        time.sleep(0.01)    # Sleep
+        t_cnt += step       # Increment Counter
+        time.sleep(step)    # Sleep
         # Test for Reboot Criteria
-        if all(hardware.get_btn()):
+        if all(hardware.get_btn()) and t_cnt>1:
             # Reboot System
             OsCommand('sudo reboot')
+            hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
-        if t_cnt > 10:
+        elif t_cnt > 10:
             # Shut Down System
             OsCommand('sudo shutdown')
+            hardware.set_led(grn=False,red=True)
             hardware.set_lcd("Shutting-Down...")
-
-# Assocaite Push-Button Call-Back Functions with Hardware Callback
-hardware.set_grn_callback(grn_callback)
-hardware.set_red_callback(red_callback)
+        else:
+            # Stop Control Model Updates
+            model = None # Deactivate the Model
+            modelTimer.stop()
+            hardware.set_led(grn=False,red=True)
 ####################################################################################
 
 
@@ -176,11 +191,10 @@ def modelUpdate():
                 # Check for Over-Full File
                 if row_count == 43200:
                     # Rename File, so New File Can Be Generated
-                    try:
-                        os.rename(logfile, logfileold)
-                    except WindowsError:
-                        os.remove(logfileold)
-                        os.rename(logfile, logfileold)
+                    os.rename(logfile, logfileold)
+                    # If Log Messages are Enabled, Send Email Messages
+                    if enlogmsg:
+                        send_email()
                     # Reset Row Count
                     row_count = 0
         except FileNotFoundError:
@@ -200,6 +214,9 @@ def modelUpdate():
     except:
         hardware.set_led(red=True)
         hardware.set_lcd("ERROR:Model","")
+        # If Error Messages Are Enabled, Send Email Message
+        if enerrmsg:
+            send_email()
 ####################################################################################
 
 
@@ -264,8 +281,8 @@ def tristatus(trough):
             p1aserv,p1bserv,p2aserv,p2bserv,p3aserv,p3bserv,p4aserv,
             p4bserv,p5aserv,p5bserv,p6aserv,p6bserv,stockserv,
           ]
-    # Test for Disabled (Out of Service)
-    if lut[trough] == 'None':
+    # Test for Disabled (Out of Service), or Model is Deactivated
+    if lut[trough] == 'None' or model==None:
         return("DISABLED")
     # Extract State from Model
     status = model.get_state()[trough]
@@ -549,6 +566,10 @@ try:
     hardware.set_lcd("System-OK",hardware.get_temp(fmt="{:.2f}'F")) # Update LCD
     # Start Model Timer to Manage Updates, Load Temperature Each Time
     modelTimer = RepeatedTimer(60, modelUpdate)
+    # Assocaite Push-Button Call-Back Functions with Hardware Callback
+    hardware.set_grn_callback(grn_callback)
+    hardware.set_red_callback(red_callback)
+    # Start Web-App
     Webapp.run(host=hostname, port=port)
 except:
     # An Internal Error has Occurred and the Server has Died!
