@@ -322,12 +322,20 @@ def serve_template( label, layer0, layer1=None, layer2=None):
 @Webapp.route('/index/')
 @Webapp.route('/index.html')
 def index():
-    # Validate Service State
+    # Identify Presence of "Old" Log File
+    if os.path.isfile( logfileold ):
+        oldlog = """<a href="/static/historiclog_old.csv" download="log_old.csv">
+                              <p><img src="/static/log.png" alt="Download" width="50"></p>
+                              <p>Log File</p>
+                            </a>"""
+    else:
+        oldlog = ""
     # Define Template Dictionary
     tags = {
         'temp':get_temp(),'light':get_light(), 'daylight':get_daylight(),
         'batlevel':get_battery(),'batvolt':round(get_bat_volt(),2),
         'hosterrors':http_err,'activesrc':get_pwr_src(),
+        'modelSta':(model==None),'oldlog':oldlog,
         'pole1a': tristatus(0), 'nam1a':animal1a,
         'pole1b': tristatus(1), 'nam1b':animal1b,
         'pole2a': tristatus(2), 'nam2a':animal2a,
@@ -451,6 +459,8 @@ def update_settings():
     curTemperature = model.get_temp()
     # Re-Instantiate Model with new Parameters
     model = system_model(hardware.get_temp(),t0=curTemperature)
+    # Update Front LED's As Necessary
+    hardware.set_led(grn=True,red=False)
     # Restart Model Timer
     modelTimer.restart()
     redirect('/settings')

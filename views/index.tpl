@@ -93,11 +93,11 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
 							
                             <table style="width:100%">
                                 <tr>
-                                    <th colspan="2">Current Outside Air Temperature: &nbsp &nbsp {{PAGE['temp']}}&#176F</th>
+                                    <th>Ambient Air Temperature: &nbsp &nbsp {{PAGE['temp']}}&#176F <br> Daylight: &nbsp {{PAGE['daylight']}} </th>
                                     <th> &nbsp </th>
                                     <th style="text-align:left;">Battery Level: &nbsp {{PAGE['batlevel']}} % <br> Battery Voltage: {{PAGE['batvolt']}} VDC</th>
                                     <th> &nbsp </th>
-                                    <th> Daylight: &nbsp {{PAGE['daylight']}} </th>
+                                    <th>Power Input OK: &nbsp &nbsp {{PAGE['activesrc']}} <br> Control Errors: &nbsp &nbsp {{PAGE['hosterrors']}}</th>
                                 </tr>
                                 <tr>
                                     <th colspan="6"> &nbsp &nbsp &nbsp </th>
@@ -136,7 +136,9 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                             <p><input type="submit" value="Barn Light"> &nbsp &nbsp ({{PAGE['light']}})</p>
                                         </form>
                                     </th>
-                                    <th colspan="4"> &nbsp </th>
+                                    <th> &nbsp </th>
+                                    <img src="/static/{{PAGE['modelSta']}}.png" alt="Front Panel"><br/>Front Panel Indicator<br>(Model Status)</td>
+                                    <th> &nbsp </th>
                                     <td><img src="/static/{{PAGE['stockpole']}}.png" alt="Stall Status"><br/>Stock Pole - {{PAGE['stockpole']}} - {{PAGE['namstock']}}</td>
                                 </tr>
                             </table>
@@ -147,6 +149,10 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                               <p><img src="/static/log.png" alt="Download" width="50"></p>
                               <p>Log File</p>
                             </a>
+                            
+                            &nbsp; &nbsp; &nbsp;
+                            
+                            {{PAGE['oldlog']}}
                             
 						</div>
 					</div>
