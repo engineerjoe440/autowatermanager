@@ -176,7 +176,7 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole1aon" value="Turn On"></td>
+                                    <td><input type="submit" name="pole1aon" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','','ON/0');"/></td>
                                     <td><input type="submit" name="pole1aoff" value="Turn Off"></td>
                                     <td><input type="text" maxlength="4" name="power1a" value="{{PAGE['1apower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size1a" value="{{PAGE['size1a']}}" size="4">&nbsp Gallons</td>
@@ -369,7 +369,7 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                             <form action="/email_update" method="get">
                             <table style="width:100%">
                                 <tr>
-                                    <th>Email Address 1: &nbsp <input type="text" name="emailadd1" size="75" value="{{PAGE['emailadd1']}}"></th>
+                                    <th>Email Address 1: &nbsp <input type="text" name="emailadd1" size="65" value="{{PAGE['emailadd1']}}"></th>
                                     <th align="right">Error Messages &nbsp;
                                         <label class="switch">
                                           <input type="checkbox" name="enerrmsg" value="checked"  {{PAGE['enerrmsg']}}>
@@ -378,7 +378,7 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                     </th>
                                 </tr>
                                 <tr>
-                                    <th>Email Address 2: &nbsp <input type="text" name="emailadd2" size="75" value="{{PAGE['emailadd2']}}"></th>
+                                    <th>Email Address 2: &nbsp <input type="text" name="emailadd2" size="65" value="{{PAGE['emailadd2']}}"></th>
                                     <th align="right">New Log Messages &nbsp;
                                         <label class="switch">
                                           <input type="checkbox" name="enlogmsg" value="checked"  {{PAGE['enlogmsg']}}>
@@ -387,7 +387,7 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                     </th>
                                 </tr>
                                 <tr>
-                                    <th>Email Address 3: &nbsp <input type="text" name="emailadd3" size="75" value="{{PAGE['emailadd3']}}"></th>
+                                    <th>Email Address 3: &nbsp <input type="text" name="emailadd3" size="65" value="{{PAGE['emailadd3']}}"></th>
                                     <th align="right">Settings Change Messages &nbsp;
                                         <label class="switch">
                                           <input type="checkbox" name="ensetmsg" value="checked"  {{PAGE['ensetmsg']}}>

@@ -37,7 +37,7 @@ function input_to_redirect(prompt_string, default_string='',
     var userinput = prompt(prompt_string, default_string);
     if (userinput != null){
         // Capture Domain if Needed
-        if (url == null){
+        if (domain == null){
             var arr = window.location.href.split("/");
             domain = arr[0] + "//" + arr[2];
         }

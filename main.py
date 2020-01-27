@@ -214,8 +214,8 @@ def modelUpdate():
                 file_writer.writerow(["DateTime","Temperature","Pole1A","Pole1B",
                                       "Pole2A","Pole2B","Pole3A","Pole3B",
                                       "Pole4A","Pole4B","Pole5A","Pole5B",
-                                      "Pole6A","Pole6B","PowerConsumption(kW-min)",
-                                      "HTTP-ERR","HOST-IP"])
+                                      "Pole6A","Pole6B","Stock Pole",
+                                      "PowerConsumption(kW-min)","HTTP-ERR","HOST-IP"])
             file_writer.writerow(csv_list)
     except:
         hardware.set_led(red=True)
@@ -522,11 +522,21 @@ def update_settings():
 
 @Webapp.route('/force_heater/<force>/<state>/<heaterind>', method='GET')
 def force_heaters(force,state,heaterind):
-    time_set = float(force)
+    time_set = float(force)*60
     option = {"ON":True,"OFF":False}[state]
     heater_ind = int(heaterind)
+    return("Force",force,"State",state,"Index",heaterind)
     # Do Force with Model
-    model.set_force(heater_ind,option,time_set)
+    try:
+        model.set_force(heater_ind,option,time_set)
+    except:
+        # If Error Messages Are Enabled, Send Email Message
+        if enerrmsg:
+            errcont = emailtemplate(error_notice,
+                                    bodycontext={'notice':
+                                    "\nHeater force attempted on disabled system.\n"+
+                                    "Please re-enable system before forcing heaters."})
+            send_email([emailadd1,emailadd2,emailadd3],errcont)
     redirect('/settings')
 
 @Webapp.route('/email_update', method='GET')
