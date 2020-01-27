@@ -92,7 +92,7 @@ def grn_callback(channel):
             model = system_model(hardware.get_temp()) # Re-Activate Model
             modelTimer.start()
             hardware.set_lcd("System-Enabled")
-            CallThread(hardware.set_lcd,5,"System-OK",hardware.get_temp(fmt="{:.2f}'F"))
+            CallThread(hardware.set_lcd,3,"System-OK",hardware.get_temp(fmt="{:.2f}'F"))
             hardware.set_led(grn=True,red=False)
 
 def red_callback(channel):
@@ -533,8 +533,6 @@ def force_heaters(force,state,heaterind):
 def update_email():
     # Define all Global Variables
     global emailadd1, emailadd2, emailadd3
-    # Define LUT
-    en_lut = {'checked':True,'None':False}
     # Update Variables
     emailadd1 = request.query.get('emailadd1')
     emailadd2 = request.query.get('emailadd2')
