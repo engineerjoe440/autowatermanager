@@ -134,9 +134,9 @@ class BarnHardware:
         return(float(i))
     def get_bat_led(self,LED=None):
         if LED==None:
-            return(pijuice.status.GetLedState('D1'),
-                   pijuice.status.GetLedState('D2'),
-                   pijuice.status.GetLedState('D3'))
+            return(pijuice.status.GetLedState('D1')['data'],
+                   pijuice.status.GetLedState('D2')['data'],
+                   pijuice.status.GetLedState('D3')['data'])
         if isinstance(LED, int): # Condition Input
             LED = {1:'D1', 2:'D2', 3:'D3'}[LED]
         return(pijuice.status.GetLedState(LED)['data'])

@@ -87,13 +87,12 @@ def grn_callback(channel):
             OsCommand('sudo reboot')
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
-        else:
-            # Start Control Model Updates
-            model = system_model(hardware.get_temp()) # Re-Activate Model
-            modelTimer.start()
-            hardware.set_lcd("System-Enabled")
-            CallThread(hardware.set_lcd,3,"System-OK",hardware.get_temp(fmt="{:.2f}'F"))
-            hardware.set_led(grn=True,red=False)
+    # Start Control Model Updates
+    model = system_model(hardware.get_temp()) # Re-Activate Model
+    modelTimer.start()
+    hardware.set_lcd("System-Enabled")
+    CallThread(hardware.set_lcd,3,"System-OK",hardware.get_temp(fmt="{:.2f}'F"))
+    hardware.set_led(grn=True,red=False)
 
 def red_callback(channel):
     global model
@@ -113,12 +112,11 @@ def red_callback(channel):
             OsCommand('sudo shutdown')
             hardware.set_led(grn=False,red=True)
             hardware.set_lcd("Shutting-Down...")
-        else:
-            # Stop Control Model Updates
-            model = None # Deactivate the Model
-            modelTimer.stop()
-            hardware.set_lcd("System-Disabled")
-            hardware.set_led(grn=False,red=True)
+    # Stop Control Model Updates
+    model = None # Deactivate the Model
+    modelTimer.stop()
+    hardware.set_lcd("System-Disabled")
+    hardware.set_led(grn=False,red=True)
 ####################################################################################
 
 
