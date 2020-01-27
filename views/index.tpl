@@ -27,25 +27,21 @@
 	</div>
 </div>
 <ul class="menu-mobile-animated hidden">
-	<li class="imMnMnFirst imPage" data-link-paths="/index.html,/">
+	<li class="imMnMnFirst imPage" data-link-paths="index,/">
 <div class="label-wrapper">
 <div class="label-inner-wrapper">
 		<a class="label" href="index.html">
 Overview		</a>
 </div>
 </div>
-	</li><li class="imMnMnLast imPage" data-link-paths="/settings.html">
+	</li><li class="imMnMnLast imPage" data-link-paths="settings">
 <div class="label-wrapper">
 <div class="label-inner-wrapper">
 		<a class="label" href="settings.html">
 Settings		</a>
 </div>
 </div>
-	</li></ul></div><script type="text/javascript">
-x5engine.boot.push(function(){x5engine.initMenu('imHeader_imMenuObject_01',1000)});
-$(function () {$('#imHeader_imMenuObject_01 ul li').each(function () {    var $this = $(this), timeout = 0, subtimeout = 0, width = 'none', height = 'none';        var submenu = $this.children('ul').add($this.find('.multiple-column > ul'));    $this.on('mouseenter', function () {        if($(this).parents('#imHeader_imMenuObject_01-menu-opened').length > 0) return;         clearTimeout(timeout);        clearTimeout(subtimeout);        $this.children('.multiple-column').show(0);        submenu.stop(false, false);        if (width == 'none') {             width = submenu.width();        }        if (height == 'none') {            height = submenu.height();            submenu.css({ overflow : 'hidden', height: 0});        }        setTimeout(function () {         submenu.css({ overflow : 'hidden'}).fadeIn(1).animate({ height: height }, 300, null, function() {$(this).css('overflow', 'visible'); });        }, 250);    }).on('mouseleave', function () {        if($(this).parents('#imHeader_imMenuObject_01-menu-opened').length > 0) return;         timeout = setTimeout(function () {         submenu.stop(false, false);            submenu.css('overflow', 'hidden').animate({ height: 0 }, 300, null, function() {$(this).fadeOut(0); });            subtimeout = setTimeout(function () { $this.children('.multiple-column').hide(0); }, 300);        }, 250);    });});});
-
-</script>
+	</li></ul></div>
 </div></div></div></div>
 					</div>
 					<div id="imStickyBarContainer">
@@ -57,25 +53,21 @@ $(function () {$('#imHeader_imMenuObject_01 ul li').each(function () {    var $t
 	</div>
 </div>
 <ul class="menu-mobile-animated hidden">
-	<li class="imMnMnFirst imPage" data-link-paths="/index.html,/">
+	<li class="imMnMnFirst imPage" data-link-paths="index,/">
 <div class="label-wrapper">
 <div class="label-inner-wrapper">
 		<a class="label" href="index.html">
 Overview		</a>
 </div>
 </div>
-	</li><li class="imMnMnLast imPage" data-link-paths="/settings.html">
+	</li><li class="imMnMnLast imPage" data-link-paths="settings">
 <div class="label-wrapper">
 <div class="label-inner-wrapper">
 		<a class="label" href="settings.html">
 Settings		</a>
 </div>
 </div>
-	</li></ul></div><script type="text/javascript">
-x5engine.boot.push(function(){x5engine.initMenu('imStickyBar_imMenuObject_03',1000)});
-$(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var $this = $(this), timeout = 0, subtimeout = 0, width = 'none', height = 'none';        var submenu = $this.children('ul').add($this.find('.multiple-column > ul'));    $this.on('mouseenter', function () {        if($(this).parents('#imStickyBar_imMenuObject_03-menu-opened').length > 0) return;         clearTimeout(timeout);        clearTimeout(subtimeout);        $this.children('.multiple-column').show(0);        submenu.stop(false, false);        if (width == 'none') {             width = submenu.width();        }        if (height == 'none') {            height = submenu.height();            submenu.css({ overflow : 'hidden', height: 0});        }        setTimeout(function () {         submenu.css({ overflow : 'hidden'}).fadeIn(1).animate({ height: height }, 300, null, function() {$(this).css('overflow', 'visible'); });        }, 250);    }).on('mouseleave', function () {        if($(this).parents('#imStickyBar_imMenuObject_03-menu-opened').length > 0) return;         timeout = setTimeout(function () {         submenu.stop(false, false);            submenu.css('overflow', 'hidden').animate({ height: 0 }, 300, null, function() {$(this).fadeOut(0); });            subtimeout = setTimeout(function () { $this.children('.multiple-column').hide(0); }, 300);        }, 250);    });});});
-
-</script>
+	</li></ul></div>
 </div></div></div></div>
 						</div>
 					</div>
