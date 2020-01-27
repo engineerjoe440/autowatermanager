@@ -76,8 +76,6 @@ http_err_host = ""
 step = 0.01
 def grn_callback(channel):
     global model
-    # Perform Immediate Action
-    hardware.set_rly(0,not hardware.get_rly()[0])
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
     while hardware.get_btn()[0]:
@@ -99,8 +97,6 @@ def grn_callback(channel):
 
 def red_callback(channel):
     global model
-    # Perform Immediate Action
-    hardware.set_rly(1,not hardware.get_rly()[1])
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
     while hardware.get_btn()[1]:
@@ -363,12 +359,11 @@ def index():
     else:
         oldlog = ""
     # Define Template Dictionary
-    print(model)
     tags = {
         'temp':get_temp(),'light':get_light(), 'daylight':get_daylight(),
         'batlevel':get_battery(),'batvolt':round(get_bat_volt(),2),
         'hosterrors':http_err,'activesrc':get_pwr_src(),
-        'modelSta':(model==None),'oldlog':oldlog,
+        'modelSta':str(hardware.get_led()[0]),'oldlog':oldlog,
         'pole1a': tristatus(0), 'nam1a':animal1a,
         'pole1b': tristatus(1), 'nam1b':animal1b,
         'pole2a': tristatus(2), 'nam2a':animal2a,

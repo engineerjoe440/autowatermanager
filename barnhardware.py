@@ -102,6 +102,7 @@ class BarnHardware:
     def get_led(self):
         L1 = GPIO.input(gLED) == GPIO.HIGH
         L2 = GPIO.input(rLED) == GPIO.HIGH
+        return(L1,L2)
     def get_rly(self):
         r1 = GPIO.input(RLY1) == GPIO.HIGH
         r2 = GPIO.input(RLY2) == GPIO.HIGH

@@ -137,8 +137,7 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                         </form>
                                     </th>
                                     <th> &nbsp </th>
-                                    <th style="text-align:center"><img src="/static/{{PAGE['modelSta']}}.png" alt="Front Panel"><br/>Front Panel Indicator<br/>(Model Status)</th>
-                                    <th> &nbsp </th>
+                                    <th colspan="2" style="text-align:center"><img src="/static/{{PAGE['modelSta']}}.png" alt="Front Panel"><br/>Front Panel Indicator<br/>(Temperature Model Status)</th>
                                     <th> &nbsp </th>
                                     <td><img src="/static/{{PAGE['stockpole']}}.png" alt="Stall Status"><br/>Stock Pole - {{PAGE['stockpole']}} - {{PAGE['namstock']}}</td>
                                 </tr>
