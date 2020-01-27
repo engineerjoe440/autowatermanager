@@ -253,12 +253,11 @@ class CallThread():
         self.func = function
         self.args = args
         self.dly  = dly
-        self.run()
+        Thread(target=self.run).start()
     
     def run(self):
         time.sleep(self.dly)
-        t = Thread(target=self.func,args=self.args)
-        t.start()
+        self.func(*self.args)
 ####################################################################################
 
 
