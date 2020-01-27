@@ -370,18 +370,36 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                             <table style="width:100%">
                                 <tr>
                                     <th>Email Address 1: &nbsp <input type="text" name="emailadd1" size="95" value="{{PAGE['emailadd1']}}"></th>
+                                    <td>
+                                        <label class="switch">
+                                          <input type="checkbox" name="enerrmsg" value="checked"  {{PAGE['enerrmsg']}}>
+                                          <span class="slider round"></span>
+                                        </label>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>Email Address 2: &nbsp <input type="text" name="emailadd2" size="95" value="{{PAGE['emailadd2']}}"></th>
+                                    <td>
+                                        <label class="switch">
+                                          <input type="checkbox" name="enlogmsg" value="checked"  {{PAGE['enlogmsg']}}>
+                                          <span class="slider round"></span>
+                                        </label>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>Email Address 3: &nbsp <input type="text" name="emailadd3" size="95" value="{{PAGE['emailadd3']}}"></th>
+                                    <td>
+                                        <label class="switch">
+                                          <input type="checkbox" name="ensetmsg" value="checked"  {{PAGE['ensetmsg']}}>
+                                          <span class="slider round"></span>
+                                        </label>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th> &nbsp &nbsp &nbsp </th>
                                 </tr>
                                 <tr>
-                                    <th align="left"> <input type="submit" value="Update Email Addresses"> </th>
+                                    <th align="left"> <input type="submit" value="Update Email Settings"> </th>
                                 </tr>
                             </table>
                             </form>

@@ -228,7 +228,7 @@ def modelUpdate():
         if enerrmsg:
             errcont = emailtemplate(error_notice,
                                     bodycontext={'notice':
-                                                 "Exception in Temperature Model Update."})
+                                    "Exception in Temperature Model Update."})
             send_email([emailadd1,emailadd2,emailadd3],errcont)
 ####################################################################################
 
@@ -317,6 +317,12 @@ def tristatus(trough):
     else:
         return("OFF")
     # Catch All
+    # If Error Messages Are Enabled, Send Email Message
+    if enerrmsg:
+        errcont = emailtemplate(error_notice,
+                                bodycontext={'notice':
+                                             "Exception in Web Response Update."})
+        CallThread(send_email,0,[emailadd1,emailadd2,emailadd3],errcont)
     return("ERROR")
 ####################################################################################
 
@@ -647,6 +653,12 @@ except:
     # An Internal Error has Occurred and the Server has Died!
     hardware.set_lcd("SERVER CRASHED!")
     hardware.set_led(True,True)
+    # If Error Messages Are Enabled, Send Email Message
+    if enerrmsg:
+        errcont = emailtemplate(error_notice,
+                                bodycontext={'notice':
+                                "Web Server Crashed! Manual Restart Required"})
+        send_email([emailadd1,emailadd2,emailadd3],errcont)
 finally:
     # Regardless of Error or Quit, Stop Timer for Model Operation
     modelTimer.stop()
