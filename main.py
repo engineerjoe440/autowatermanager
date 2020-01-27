@@ -87,6 +87,14 @@ def grn_callback(channel):
             OsCommand('sudo reboot')
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
+            modelTimer.stop()
+            return
+        elif t_cnt > 10:
+            # Reboot System
+            OsCommand('sudo reboot')
+            hardware.set_led(grn=True,red=True)
+            hardware.set_lcd("Rebooting...")
+            modelTimer.stop()
             return
     # Start Control Model Updates
     model = system_model(hardware.get_temp()) # Re-Activate Model
@@ -108,12 +116,14 @@ def red_callback(channel):
             OsCommand('sudo reboot')
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
+            modelTimer.stop()
             return
         elif t_cnt > 10:
             # Shut Down System
             OsCommand('sudo shutdown')
             hardware.set_led(grn=False,red=True)
             hardware.set_lcd("Shutting-Down...")
+            modelTimer.stop()
             return
     # Stop Control Model Updates
     model = None # Deactivate the Model
