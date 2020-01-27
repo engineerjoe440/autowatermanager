@@ -95,7 +95,7 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                 <tr>
                                     <th colspan="2">Ambient Air Temperature: &nbsp &nbsp {{PAGE['temp']}}&#176F <br> Daylight: &nbsp {{PAGE['daylight']}} </th>
                                     <th> &nbsp </th>
-                                    <th style="text-align:left;">Battery Level: &nbsp {{PAGE['batlevel']}} % <br> Battery Voltage: {{PAGE['batvolt']}} VDC</th>
+                                    <th style="text-align:left;">Battery: &nbsp {{PAGE['batlevel']}} % <br>Voltage: {{PAGE['batvolt']}} VDC</th>
                                     <th> &nbsp </th>
                                     <th>Power Input OK: &nbsp &nbsp {{PAGE['activesrc']}} <br> Control Errors: &nbsp &nbsp {{PAGE['hosterrors']}}</th>
                                 </tr>
@@ -137,7 +137,8 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                         </form>
                                     </th>
                                     <th> &nbsp </th>
-                                    <td><img src="/static/{{PAGE['modelSta']}}.png" alt="Front Panel"><br/>Front Panel Indicator<br/>(Model Status)</td>
+                                    <th style="text-align:center"><img src="/static/{{PAGE['modelSta']}}.png" alt="Front Panel"><br/>Front Panel Indicator<br/>(Model Status)</th>
+                                    <th> &nbsp </th>
                                     <th> &nbsp </th>
                                     <td><img src="/static/{{PAGE['stockpole']}}.png" alt="Stall Status"><br/>Stock Pole - {{PAGE['stockpole']}} - {{PAGE['namstock']}}</td>
                                 </tr>
