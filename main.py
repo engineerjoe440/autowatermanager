@@ -214,7 +214,7 @@ def modelUpdate():
                 file_writer.writerow(["DateTime","Temperature","Pole1A","Pole1B",
                                       "Pole2A","Pole2B","Pole3A","Pole3B",
                                       "Pole4A","Pole4B","Pole5A","Pole5B",
-                                      "Pole6A","Pole6B","Stock Pole",
+                                      "Pole6A","Pole6B","StockPole",
                                       "PowerConsumption(kW-min)","HTTP-ERR","HOST-IP"])
             file_writer.writerow(csv_list)
     except:
@@ -358,7 +358,7 @@ def api_status(item=None):
                }
     else:
         try:
-            exec("return({'"+item+"':"+item+"'})")
+            exec("return({'"+item+"':"+item+"})")
         except:
             return({item:"Invalid Request"})
 
