@@ -554,9 +554,9 @@ def update_email():
     parser.set('email','emailadd1', emailadd1)
     parser.set('email','emailadd2', emailadd2)
     parser.set('email','emailadd3', emailadd3)
-    parser.set('email','enlogmsg',  enlogmsg)
-    parser.set('email','enerrmsg',  enerrmsg)
-    parser.set('email','ensetmsg',  ensetmsg)
+    parser.set('email','enlogmsg', str(enlogmsg))
+    parser.set('email','enerrmsg', str(enerrmsg))
+    parser.set('email','ensetmsg', str(ensetmsg))
     # Write File
     with open( configfile, 'w' ) as file:
                 parser.write( file )
