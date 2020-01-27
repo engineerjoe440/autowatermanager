@@ -359,7 +359,7 @@ def api_status(item=None):
             'temp':get_temp(),'light':get_light(), 'daylight':get_daylight(),
             'batlevel':get_battery(),'batvolt':round(get_bat_volt(),2),
             'hosterrors':http_err,'activesrc':get_pwr_src(),
-            'modelSta':str(hardware.get_led()[0]),'oldlog':oldlog,
+            'modelSta':str(hardware.get_led()[0]),
             'pole1a': tristatus(0), 'nam1a':animal1a,
             'pole1b': tristatus(1), 'nam1b':animal1b,
             'pole2a': tristatus(2), 'nam2a':animal2a,
