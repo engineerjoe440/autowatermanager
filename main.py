@@ -324,7 +324,7 @@ def tristatus(trough):
 
 
 ####################################################################################
-# Define and route Static Files (Images):
+# Define and route Static Files (Images)
 @Webapp.route('/static/<page>/<filename>')
 @Webapp.route('/static/<filename>')
 def serve_static(filename,page=None):
@@ -332,6 +332,11 @@ def serve_static(filename,page=None):
         return(static_file(filename, root=staticdir))
     else:
         return(static_file(page, root=staticdir))
+
+# Define and route File Server
+@Webapp.route('/files/<filename>')
+def serve_files(filename):
+    return(static_file(filename, root=filedir))
 
 # Define Template-in-Template Function
 def serve_template( label, layer0, layer1=None, layer2=None):
@@ -343,6 +348,19 @@ def serve_template( label, layer0, layer1=None, layer2=None):
     else:
         body = ''
     return( template(layer0, BODY = body, PAGE = label) )
+
+# Define API Data Retrieval
+@Webapp.route('/api/status/<item>')
+@Webapp.route('/api/status')
+def api_status(item=None):
+    if item==None:
+        tags = {
+               }
+    else:
+        try:
+            exec("return({'"+item+"':"+item+"'})")
+        except:
+            return({item:"Invalid Request"})
 
 @Webapp.route('/')
 @Webapp.route('/index')
@@ -529,6 +547,7 @@ def force_heaters(force,state,heaterind):
     # Do Force with Model
     try:
         model.set_force(heater_ind,option,time_set)
+        modelUpdate() # Update Model (will inherently cause some minor inaccuracy)
     except:
         # If Error Messages Are Enabled, Send Email Message
         if enerrmsg:

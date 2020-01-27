@@ -349,7 +349,7 @@ Settings		</a>
                                     <th colspan="5"> &nbsp &nbsp &nbsp </th>
                                 </tr>
                                 <tr>
-                                    <th colspan="5"> <input type="submit" value="Submit"> </th>
+                                    <th colspan="5"> <input type="submit" value="Update General Settings"> </th>
                                 </tr>
                             </table>
                             </form>
