@@ -176,8 +176,8 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole1aon" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','','ON/0');"/></td>
-                                    <td><input type="submit" name="pole1aoff" value="Turn Off"></td>
+                                    <td><input type="button" name="pole1aon" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','','ON/0');"/></td>
+                                    <td><input type="button" name="pole1aoff" value="Turn Off"></td>
                                     <td><input type="text" maxlength="4" name="power1a" value="{{PAGE['1apower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size1a" value="{{PAGE['size1a']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal1a" value="{{PAGE['animal1a']}}"></td>
