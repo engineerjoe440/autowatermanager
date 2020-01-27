@@ -356,12 +356,13 @@ def api_status(item=None):
     if item==None:
         tags = {
                }
+        return(tags)
     else:
-        try:
-            exec("resp = {'"+item+"':"+item+"}")
-            return(resp)
-        except:
-            return({item:"Invalid Request"})
+        #try:
+        exec("tags = {'"+item+"':"+item+"}")
+        return(tags)
+        #except:
+        #    return({item:"Invalid Request"})
 
 @Webapp.route('/')
 @Webapp.route('/index')
