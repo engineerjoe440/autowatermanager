@@ -89,7 +89,7 @@ def emailtemplate(path,subjectcontext=None,bodycontext=None,htmlcontext=None):
     # Clean Text Strings
     subj = subj.replace('\n','')
     body = body.replace('\n','').replace(';;','\n')
-    html = html.replace(';;','\n')
+    html = html.replace(';;','<br>\n')
     # Perform Formatting Operations
     if isinstance(subjectcontext,dict):
         for key,val in subjectcontext.items():

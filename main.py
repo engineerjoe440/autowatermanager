@@ -418,7 +418,8 @@ def update_settings():
     global size1a, size1b, size2a, size2b, size3a, size3b, size4a
     global size4b, size5a, size5b, size6a, size6b, sizestock, model
     # Mask Method Call Handle
-    get = request.query.get
+    def get(q):
+        return(str(request.query.get(q)))
     # Identify In/Out of Service
     p1aserv = get('pole1aservice')
     p1bserv = get('pole1bservice')
