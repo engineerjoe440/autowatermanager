@@ -89,6 +89,7 @@ def emailtemplate(path,subjectcontext=None,bodycontext=None,htmlcontext=None):
     # Clean Text Strings
     subj = subj.replace('\n','')
     body = body.replace('\n','').replace(';;','\n')
+    html = html.replace(';;','\n')
     # Perform Formatting Operations
     if isinstance(subjectcontext,dict):
         for key,val in subjectcontext.items():
@@ -99,7 +100,6 @@ def emailtemplate(path,subjectcontext=None,bodycontext=None,htmlcontext=None):
     if isinstance(htmlcontext,dict):
         for key,val in htmlcontext.items():
             html = html.replace('{{'+str(key)+'}}', str(val))
-    print(body,html)
     return({'subject':subj,'body':body,'html':html})
 
 # Define Builtin Test Aparatus
