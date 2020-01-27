@@ -674,8 +674,9 @@ try:
     Webapp.run(host=hostname, port=port)
 except:
     # An Internal Error has Occurred and the Server has Died!
-    hardware.set_lcd("SERVER CRASHED!")
+    hardware.set_lcd("SERVER-CRASHED!")
     hardware.set_led(True,True)
+    modelTimer.stop()
     # If Error Messages Are Enabled, Send Email Message
     if enerrmsg:
         errcont = emailtemplate(error_notice,

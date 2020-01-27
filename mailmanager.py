@@ -23,7 +23,11 @@ def send_email(recipient_list, content, files=None):
     body    = content['body']
     html    = content['html']
     # Set Up MIME with Header Fields
-    message = MIMEMultipart("alternative", None, [MIMEText(body), MIMEText(html,'html')])
+    if html != '':
+        message = MIMEMultipart("alternative", None, 
+                                [MIMEText(body), MIMEText(html,'html')])
+    else:
+        message = MIMEText(body)
     message['From'] = address
     # Clean Up Recipient List and Prepare for Email Sender
     recipient_list = [i for i in recipient_list if i]
