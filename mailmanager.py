@@ -92,13 +92,13 @@ def emailtemplate(path,subjectcontext=None,bodycontext=None,htmlcontext=None):
     # Perform Formatting Operations
     if isinstance(subjectcontext,dict):
         for key,val in subjectcontext.items():
-            subj = subj.replace('{{'+str(key)+'}}', val)
+            subj = subj.replace('{{'+str(key)+'}}', str(val))
     if isinstance(bodycontext,dict):
         for key,val in bodycontext.items():
-            body = body.replace('{{'+str(key)+'}}', val)
+            body = body.replace('{{'+str(key)+'}}', str(val))
     if isinstance(htmlcontext,dict):
         for key,val in htmlcontext.items():
-            html = html.replace('{{'+str(key)+'}}', val)
+            html = html.replace('{{'+str(key)+'}}', str(val))
     print(body,html)
     return({'subject':subj,'body':body,'html':html})
 
