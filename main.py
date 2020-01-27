@@ -353,14 +353,15 @@ def serve_template( label, layer0, layer1=None, layer2=None):
 @Webapp.route('/api/status/<item>')
 @Webapp.route('/api/status')
 def api_status(item=None):
+    global api_tags
     if item==None:
-        tags = {
-               }
-        return(tags)
+        api_tags = {
+                   }
+        return(api_tags)
     else:
         #try:
-        exec("tags = {'"+item+"':"+item+"}")
-        return(tags)
+        exec("api_tags = {'"+item+"':"+item+"}")
+        return(api_tags)
         #except:
         #    return({item:"Invalid Request"})
 
