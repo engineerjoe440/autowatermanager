@@ -542,6 +542,7 @@ def force_heaters(force,state,heaterind):
 def update_email():
     # Define all Global Variables
     global emailadd1, emailadd2, emailadd3
+    global enlogmsg, enerrmsg, ensetmsg
     # Update Variables
     emailadd1 = request.query.get('emailadd1')
     emailadd2 = request.query.get('emailadd2')
