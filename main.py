@@ -363,6 +363,7 @@ def index():
     else:
         oldlog = ""
     # Define Template Dictionary
+    print(model)
     tags = {
         'temp':get_temp(),'light':get_light(), 'daylight':get_daylight(),
         'batlevel':get_battery(),'batvolt':round(get_bat_volt(),2),
