@@ -546,9 +546,9 @@ def update_email():
     emailadd1 = request.query.get('emailadd1')
     emailadd2 = request.query.get('emailadd2')
     emailadd3 = request.query.get('emailadd3')
-    enlogmsg = en_lut[request.query.get('enlogmsg')]
-    enerrmsg = en_lut[request.query.get('enerrmsg')]
-    ensetmsg = en_lut[request.query.get('ensetmsg')]
+    enlogmsg = request.query.get('enlogmsg')
+    enerrmsg = request.query.get('enerrmsg')
+    ensetmsg = request.query.get('ensetmsg')
     # Save Settings
     parser.set('email','emailadd1', emailadd1)
     parser.set('email','emailadd2', emailadd2)
