@@ -359,11 +359,11 @@ def api_status(item=None):
                    }
         return(api_tags)
     else:
-        #try:
-        exec("api_tags = {'"+item+"':"+item+"}")
-        return(api_tags)
-        #except:
-        #    return({item:"Invalid Request"})
+        try:
+            exec("global api_tags; api_tags = {'"+item+"':"+str(item)+"}")
+            return(api_tags)
+        except:
+            return({item:"Invalid Request"})
 
 @Webapp.route('/')
 @Webapp.route('/index')
