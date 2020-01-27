@@ -93,7 +93,7 @@ $(function () {$('#imStickyBar_imMenuObject_03 ul li').each(function () {    var
 							
                             <table style="width:100%">
                                 <tr>
-                                    <th>Ambient Air Temperature: &nbsp &nbsp {{PAGE['temp']}}&#176F <br> Daylight: &nbsp {{PAGE['daylight']}} </th>
+                                    <th colspan="2">Ambient Air Temperature: &nbsp &nbsp {{PAGE['temp']}}&#176F <br> Daylight: &nbsp {{PAGE['daylight']}} </th>
                                     <th> &nbsp </th>
                                     <th style="text-align:left;">Battery Level: &nbsp {{PAGE['batlevel']}} % <br> Battery Voltage: {{PAGE['batvolt']}} VDC</th>
                                     <th> &nbsp </th>
