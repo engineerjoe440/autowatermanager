@@ -1,0 +1,33 @@
+Settings Change Announcement from Auto-Water-Manager
+
+Settings for the Auto-Water-Manager have been changed to some degree.
+The settings have been stored as follows:
+;;
+;;
+<html>
+<table>
+<thead>
+<tr><th>Heater in Service  </th><th>Heater Power (watts)  </th><th>Trough Volume (gallons)  </th><th>Animal Name    </th></tr>
+</thead>
+<tbody>
+<tr><td>{{p1acheck}}       </td><td>{{1apower}}           </td><td>{{size1a}}               </td><td>{{animal1a}}   </td></tr>
+<tr><td>{{p1bcheck}}       </td><td>{{1bpower}}           </td><td>{{size1b}}               </td><td>{{animal1b}}   </td></tr>
+<tr><td>{{p2acheck}}       </td><td>{{2apower}}           </td><td>{{size2a}}               </td><td>{{animal2a}}   </td></tr>
+<tr><td>{{p2bcheck}}       </td><td>{{2bpower}}           </td><td>{{size2b}}               </td><td>{{animal2b}}   </td></tr>
+<tr><td>{{p3acheck}}       </td><td>{{3apower}}           </td><td>{{size3a}}               </td><td>{{animal3a}}   </td></tr>
+<tr><td>{{p3bcheck}}       </td><td>{{3bpower}}           </td><td>{{size3b}}               </td><td>{{animal3b}}   </td></tr>
+<tr><td>{{p4acheck}}       </td><td>{{4apower}}           </td><td>{{size4a}}               </td><td>{{animal4a}}   </td></tr>
+<tr><td>{{p4bcheck}}       </td><td>{{4bpower}}           </td><td>{{size4b}}               </td><td>{{animal4b}}   </td></tr>
+<tr><td>{{p5acheck}}       </td><td>{{5apower}}           </td><td>{{size5a}}               </td><td>{{animal5a}}   </td></tr>
+<tr><td>{{p5bcheck}}       </td><td>{{5bpower}}           </td><td>{{size5b}}               </td><td>{{animal5b}}   </td></tr>
+<tr><td>{{p6acheck}}       </td><td>{{6apower}}           </td><td>{{size6a}}               </td><td>{{animal6a}}   </td></tr>
+<tr><td>{{p6bcheck}}       </td><td>{{6bpower}}           </td><td>{{size6b}}               </td><td>{{animal6b}}   </td></tr>
+<tr><td>{{stockcheck}}     </td><td>{{stockpower}}        </td><td>{{sizestock}}            </td><td>{{animalstock}}</td></tr>
+</tbody>
+</table>
+<br>
+<br>
+<p><b>Email Address 1:</b>&nbsp;{{emailadd1}}</p>
+<p><b>Email Address 2:</b>&nbsp;{{emailadd2}}</p>
+<p><b>Email Address 3:</b>&nbsp;{{emailadd3}}</p>
+</html>

@@ -28,7 +28,7 @@ from datetime import datetime
 from model import unit_model, system_model
 import pam # Authentication Engine
 from barnhardware import BarnHardware
-from mailmanager import send_email
+from mailmanager import send_email, emailtemplate
 
 # Instantiate Objects
 Webapp = Bottle()
@@ -43,11 +43,17 @@ base = os.getcwd()
 staticdir  = base+"/static/"
 templtdir  = base+"/views/"
 filedir    = base+"/files/"
+emaildir   = base+"/email/"
 
 # Define Log Files and Error Log File
-logfile    = staticdir+"historiclog.csv"
-logfileold = staticdir+"historiclog_old.csv"
-errlog     = staticdir+"errorlog.txt"
+logfile    = filedir+"historiclog.csv"
+logfileold = filedir+"historiclog_old.csv"
+errlog     = filedir+"errorlog.txt"
+
+# Define Email Template Files
+new_log_notice  = emaildir+"newreport.emlx"
+error_notice    = emaildir+"errnotice.emlx"
+settings_notice = emaildir+"setnotice.emlx"
 
 # Start Configuration Parser Object
 configfile = 'config.ini'
@@ -87,6 +93,8 @@ def grn_callback(channel):
             # Start Control Model Updates
             model = system_model(hardware.get_temp()) # Re-Activate Model
             modelTimer.start()
+            hardware.set_lcd("System-Enabled")
+            CallThread(hardware.set_lcd,5,"System-OK",hardware.get_temp(fmt="{:.2f}'F"))
             hardware.set_led(grn=True,red=False)
 
 def red_callback(channel):
@@ -113,6 +121,7 @@ def red_callback(channel):
             # Stop Control Model Updates
             model = None # Deactivate the Model
             modelTimer.stop()
+            hardware.set_lcd("System-Disabled")
             hardware.set_led(grn=False,red=True)
 ####################################################################################
 
@@ -194,7 +203,8 @@ def modelUpdate():
                     os.rename(logfile, logfileold)
                     # If Log Messages are Enabled, Send Email Messages
                     if enlogmsg:
-                        send_email()
+                        content = emailtemplate(new_log_notice)
+                        send_email([emailadd1,emailadd2,emailadd3],content,logfileold)
                     # Reset Row Count
                     row_count = 0
         except FileNotFoundError:
@@ -216,7 +226,10 @@ def modelUpdate():
         hardware.set_lcd("ERROR:Model","")
         # If Error Messages Are Enabled, Send Email Message
         if enerrmsg:
-            send_email()
+            errcont = emailtemplate(error_notice,
+                                    bodycontext={'notice':
+                                                 "Exception in Temperature Model Update."})
+            send_email([emailadd1,emailadd2,emailadd3],errcont)
 ####################################################################################
 
 
@@ -237,6 +250,19 @@ class OsCommand():
         proc = Popen(self.command, stdin=PIPE, stderr=PIPE, universal_newlines=True)
         response = proc.communicate()[1]
         return(response)
+
+# Define Threaded Operation Class to Handle Independent Function Calls
+class CallThread():
+    def __init__(self,function,dly=0,*args):
+        self.func = function
+        self.args = args
+        self.dly  = dly
+        self.run()
+    
+    def run(self):
+        time.sleep(self.dly)
+        t = Thread(target=self.function,args=self.args)
+        t.start()
 ####################################################################################
 
 
@@ -372,7 +398,8 @@ def setpage():
         'p6acheck':p6aserv, '6apower':power6a, 'size6a':size6a, 'animal6a':animal6a,
         'p6bcheck':p6bserv, '6bpower':power6b, 'size6b':size6b, 'animal6b':animal6b,
         'stockcheck':stockserv, 'stockpower':stockpower, 'sizestock':sizestock, 'animalstock':animalstock,
-        'emailadd1':emailadd1, 'emailadd2':emailadd2, 'emailadd3':emailadd3
+        'emailadd1':emailadd1, 'emailadd2':emailadd2, 'emailadd3':emailadd3,
+        'enlogmsg':enlogmsg, 'enerrmsg':enerrmsg, 'ensetmsg':ensetmsg,
     }
     html = serve_template( tags, settings_page )
     return( html )
@@ -455,6 +482,33 @@ def update_settings():
     # Write File
     with open( configfile, 'w' ) as file:
                 parser.write( file )
+    if ensetmsg:
+        # Configure List of Tags for Email Update
+        tags = {
+            'p1acheck':p1aserv, '1apower':power1a, 'size1a':size1a, 'animal1a':animal1a,
+            'p1bcheck':p1bserv, '1bpower':power1b, 'size1b':size1b, 'animal1b':animal1b,
+            'p2acheck':p2aserv, '2apower':power2a, 'size2a':size2a, 'animal2a':animal2a,
+            'p2bcheck':p2bserv, '2bpower':power2b, 'size2b':size2b, 'animal2b':animal2b,
+            'p3acheck':p3aserv, '3apower':power3a, 'size3a':size3a, 'animal3a':animal3a,
+            'p3bcheck':p3bserv, '3bpower':power3b, 'size3b':size3b, 'animal3b':animal3b,
+            'p4acheck':p4aserv, '4apower':power4a, 'size4a':size4a, 'animal4a':animal4a,
+            'p4bcheck':p4bserv, '4bpower':power4b, 'size4b':size4b, 'animal4b':animal4b,
+            'p5acheck':p5aserv, '5apower':power5a, 'size5a':size5a, 'animal5a':animal5a,
+            'p5bcheck':p5bserv, '5bpower':power5b, 'size5b':size5b, 'animal5b':animal5b,
+            'p6acheck':p6aserv, '6apower':power6a, 'size6a':size6a, 'animal6a':animal6a,
+            'p6bcheck':p6bserv, '6bpower':power6b, 'size6b':size6b, 'animal6b':animal6b,
+            'stockcheck':stockserv, 'stockpower':stockpower, 'sizestock':sizestock, 'animalstock':animalstock,
+            'emailadd1':emailadd1, 'emailadd2':emailadd2, 'emailadd3':emailadd3,
+        }
+        for key,value in tags.items():
+            if value=='checked':
+                tags[key] = 'True'
+            elif value=='None':
+                tags[key] = 'False'
+        # Build Settings Notice
+        emlx = emailtemplate(settings_notice,htmlcontext=tags)
+        # Send Email
+        CallThread(send_email,0,[emailadd1,emailadd2,emailadd3],emlx)
     # Capture Current Temperatures for Update
     curTemperature = model.get_temp()
     # Re-Instantiate Model with new Parameters
@@ -478,14 +532,22 @@ def force_heaters(force,state,heaterind):
 def update_email():
     # Define all Global Variables
     global emailadd1, emailadd2, emailadd3
+    # Define LUT
+    en_lut = {'checked':True,'None':False}
     # Update Variables
     emailadd1 = request.query.get('emailadd1')
     emailadd2 = request.query.get('emailadd2')
     emailadd3 = request.query.get('emailadd3')
+    enlogmsg = en_lut[request.query.get('enlogmsg')]
+    enerrmsg = en_lut[request.query.get('enerrmsg')]
+    ensetmsg = en_lut[request.query.get('ensetmsg')]
     # Save Settings
     parser.set('email','emailadd1', emailadd1)
     parser.set('email','emailadd2', emailadd2)
     parser.set('email','emailadd3', emailadd3)
+    parser.set('email','enlogmsg',  enlogmsg)
+    parser.set('email','enerrmsg',  enerrmsg)
+    parser.set('email','ensetmsg',  ensetmsg)
     # Write File
     with open( configfile, 'w' ) as file:
                 parser.write( file )
