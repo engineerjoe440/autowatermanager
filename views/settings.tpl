@@ -168,8 +168,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="button" name="pole1aon" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/0');"/></td>
-                                    <td><input type="button" name="pole1aoff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/0');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/0');"/></td>
                                     <td><input type="text" maxlength="4" name="power1a" value="{{PAGE['1apower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size1a" value="{{PAGE['size1a']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal1a" value="{{PAGE['animal1a']}}"></td>
@@ -182,8 +182,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole1bon" value="Turn On"></td>
-                                    <td><input type="submit" name="pole1boff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/1');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/1');"/></td>
                                     <td><input type="text" maxlength="4" name="power1b" value="{{PAGE['1bpower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size1b" value="{{PAGE['size1b']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal1b" value="{{PAGE['animal1b']}}"></td>
@@ -196,8 +196,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole2aon" value="Turn On"></td>
-                                    <td><input type="submit" name="pole2aoff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/2');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/2');"/></td>
                                     <td><input type="text" maxlength="4" name="power2a" value="{{PAGE['2apower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size2a" value="{{PAGE['size2a']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal2a" value="{{PAGE['animal2a']}}"></td>
@@ -210,8 +210,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole2bon" value="Turn On"></td>
-                                    <td><input type="submit" name="pole2boff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/3');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/3');"/></td>
                                     <td><input type="text" maxlength="4" name="power2b" value="{{PAGE['2bpower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size2b" value="{{PAGE['size2b']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal2b" value="{{PAGE['animal2b']}}"></td>
@@ -224,8 +224,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole3aon" value="Turn On"></td>
-                                    <td><input type="submit" name="pole3aoff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/4');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/4');"/></td>
                                     <td><input type="text" maxlength="4" name="power3a" value="{{PAGE['3apower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size3a" value="{{PAGE['size3a']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal3a" value="{{PAGE['animal3a']}}"></td>
@@ -238,8 +238,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole3bon" value="Turn On"></td>
-                                    <td><input type="submit" name="pole3boff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/5');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/5');"/></td>
                                     <td><input type="text" maxlength="4" name="power3b" value="{{PAGE['3bpower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size3b" value="{{PAGE['size3b']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal3b" value="{{PAGE['animal3b']}}"></td>
@@ -252,8 +252,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole4aon" value="Turn On"></td>
-                                    <td><input type="submit" name="pole4aoff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/6');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/6');"/></td>
                                     <td><input type="text" maxlength="4" name="power4a" value="{{PAGE['4apower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size4a" value="{{PAGE['size4a']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal4a" value="{{PAGE['animal4a']}}"></td>
@@ -266,8 +266,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole4bon" value="Turn On"></td>
-                                    <td><input type="submit" name="pole4boff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/7');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/7');"/></td>
                                     <td><input type="text" maxlength="4" name="power4b" value="{{PAGE['4bpower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size4b" value="{{PAGE['size4b']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal4b" value="{{PAGE['animal4b']}}"></td>
@@ -280,8 +280,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole5aon" value="Turn On"></td>
-                                    <td><input type="submit" name="pole5aoff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/8');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/8');"/></td>
                                     <td><input type="text" maxlength="4" name="power5a" value="{{PAGE['5apower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size5a" value="{{PAGE['size5a']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal5a" value="{{PAGE['animal5a']}}"></td>
@@ -294,8 +294,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole5bon" value="Turn On"></td>
-                                    <td><input type="submit" name="pole5boff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/9');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/9');"/></td>
                                     <td><input type="text" maxlength="4" name="power5b" value="{{PAGE['5bpower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size5b" value="{{PAGE['size5b']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal5b" value="{{PAGE['animal5b']}}"></td>
@@ -308,8 +308,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole6aon" value="Turn On"></td>
-                                    <td><input type="submit" name="pole6aoff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/10');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/10');"/></td>
                                     <td><input type="text" maxlength="4" name="power6a" value="{{PAGE['6apower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size6a" value="{{PAGE['size6a']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal6a" value="{{PAGE['animal6a']}}"></td>
@@ -322,8 +322,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="pole6bon" value="Turn On"></td>
-                                    <td><input type="submit" name="pole6boff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/11');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/11');"/></td>
                                     <td><input type="text" maxlength="4" name="power6b" value="{{PAGE['6bpower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="size6b" value="{{PAGE['size6b']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animal6b" value="{{PAGE['animal6b']}}"></td>
@@ -339,8 +339,8 @@ Settings		</a>
                                           <span class="slider round"></span>
                                         </label>
                                     </td>
-                                    <td><input type="submit" name="stockpoleon" value="Turn On"></td>
-                                    <td><input type="submit" name="stockpoleoff" value="Turn Off"></td>
+                                    <td><input type="button" value="Turn On" onclick="input_to_redirect('Number of Hours','0.5','force_heater','ON/12');"/></td>
+                                    <td><input type="button" value="Turn Off" onclick="input_to_redirect('Number of Hours','0.5','force_heater','OFF/12');"/></td>
                                     <td><input type="text" maxlength="4" name="stockpolepower" value="{{PAGE['stockpower']}}" size="4">&nbsp Watts</td>
                                     <td><input type="text" maxlength="4" name="sizestock" value="{{PAGE['sizestock']}}" size="4">&nbsp Gallons</td>
                                     <td><input type="text" name="animalstock" value="{{PAGE['animalstock']}}"></td>

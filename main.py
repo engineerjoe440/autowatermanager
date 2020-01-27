@@ -525,7 +525,6 @@ def force_heaters(force,state,heaterind):
     time_set = float(force)*60
     option = {"ON":True,"OFF":False}[state]
     heater_ind = int(heaterind)
-    return("Force",force,"State",state,"Index",heaterind)
     # Do Force with Model
     try:
         model.set_force(heater_ind,option,time_set)
