@@ -116,7 +116,7 @@ class BarnHardware:
         chg = pijuice.status.GetChargeLevel()['data']
         return(chg) # percent charged
     def get_pwr_src(self):
-        src = pijuice.status.GetStatus()['data']['powerInput5vIo']
+        src = pijuice.status.GetStatus()['data']['powerInput']
         active = (src == 'PRESENT')
         return(active,src)
     def get_voltage(self):

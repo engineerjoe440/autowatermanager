@@ -298,7 +298,7 @@ def get_daylight():
 # Define Active Power Source Comprehension Function
 def get_pwr_src():
     active,src = hardware.get_pwr_src()
-    return(src)
+    return(active)
 
 # Define Tri-State Status Function
 def tristatus(trough):
