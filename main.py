@@ -147,6 +147,7 @@ def modelUpdate():
         # Set Force Off When Power Source Absent
         if not hardware.get_pwr_src()[0]:
             model.set_force("all",False,5)
+        print("Pass!")
         # Update Model
         model.update(hardware.get_temp())
         status = model.get_state()
