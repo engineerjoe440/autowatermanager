@@ -353,8 +353,9 @@ class system_model():
         ----------
         heater:     int
         state:      bool
-        time_set:   float
+        time_set:   int
         """
+        time_set = int(time_set)
         # Force ALL if heater is 'all'
         if heater=='all':
             modelset = self.allmodels.copy()
