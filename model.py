@@ -357,9 +357,9 @@ class system_model():
         """
         # Force ALL if heater is 'all'
         if heater=='all':
-            allmodels = self.allmodels.copy()
-            allmodels.append(self.STOCK)
-            for model in allmodels:
+            modelset = self.allmodels.copy()
+            modelset.append(self.STOCK)
+            for model in modelset:
                 if state: # Turn On
                     model.force(time_set,None)
                 else:     # Turn Off
