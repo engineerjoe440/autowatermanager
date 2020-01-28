@@ -147,7 +147,6 @@ def modelUpdate():
         # Set Force Off When Power Source Absent
         if not hardware.get_pwr_src()[0]:
             model.set_force("all",False,5)
-        print("Pass!")
         # Update Model
         model.update(hardware.get_temp())
         status = model.get_state()
@@ -185,15 +184,15 @@ def modelUpdate():
                     row_count += 1
                     # Skip the header, then sum the power and temp
                     if row_count > 1:
-                        power += float(row[15])
-                        temp += float(row[1])
+                        t_power += float(row[15])
+                        t_temp += float(row[1])
                 # Check for Over-Full File
                 if row_count == 43200:
                     # Rename File, so New File Can Be Generated
                     os.rename(logfile, logfileold)
                     # Evaluate Average Temperature and Total Power
-                    tot_power = power/60
-                    avg_temp = temp/(row_count-1)
+                    tot_power = t_power/60
+                    avg_temp = t_temp/(row_count-1)
                     # If Log Messages are Enabled, Send Email Messages
                     if enlogmsg:
                         c_dict = {'power_kw':tot_power, 'avg_temp':avg_temp}
