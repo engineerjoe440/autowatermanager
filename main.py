@@ -138,12 +138,15 @@ def red_callback(channel):
 def modelUpdate():
     # Use Try/Except to Catch Any Errors in Thread
     try:
-        global model, http_err, http_err_host
+        global http_err, http_err_host
         # Update LCD with Time and Temperature
         hardware.set_lcd(datetime.now().strftime("%d/%m/%Y-%H:%M"),
                          hardware.get_temp(fmt="{:.2f}'F"))
         # Collect Previous State
         prvStatus = model.get_state()
+        # Set Force Off When Power Source Absent
+        if not hardware.get_pwr_src()[0]:
+            model.set_force("all",False,5)
         # Update Model
         model.update(hardware.get_temp())
         status = model.get_state()
@@ -172,15 +175,29 @@ def modelUpdate():
         # Count Rows in File
         try:
             with open(logfile, 'r') as file:
-                # Count Number of Rows in File
-                row_count = sum(1 for row in file)
+                # Count Number of Rows in File, Calculate Power and Avg Temp
+                row_count = 0
+                t_power = 0
+                t_temp = 0
+                # Iterate over each row
+                for row in csv.reader(file, delimiter=','):
+                    row_count += 1
+                    # Skip the header, then sum the power and temp
+                    if row_count > 1:
+                        power += float(row[15])
+                        temp += float(row[1])
                 # Check for Over-Full File
                 if row_count == 43200:
                     # Rename File, so New File Can Be Generated
                     os.rename(logfile, logfileold)
+                    # Evaluate Average Temperature and Total Power
+                    tot_power = power/60
+                    avg_temp = temp/(row_count-1)
                     # If Log Messages are Enabled, Send Email Messages
                     if enlogmsg:
-                        content = emailtemplate(new_log_notice)
+                        c_dict = {'power_kw':tot_power, 'avg_temp':avg_temp}
+                        content = emailtemplate(new_log_notice,
+                                                bodycontext=c_dict)
                         send_email([emailadd1,emailadd2,emailadd3],content,logfileold)
                     # Reset Row Count
                     row_count = 0
@@ -225,11 +242,6 @@ def get_light():
     else:
         light = "OFF"
     return(light)
-
-# Define Active Power Source Comprehension Function
-def get_pwr_src():
-    active,src = hardware.get_pwr_src()
-    return(active)
 
 # Define Tri-State Status Function
 def tristatus(trough):
@@ -294,7 +306,7 @@ def api_status(item=None):
         api_tags = {
             'temp':get_temp(),'light':get_light(), 'daylight':hardware.get_photo(),
             'batlevel':hardware.get_bat_chg(),'batvolt':round(hardware.get_voltage(),2),
-            'hosterrors':http_err,'activesrc':get_pwr_src(),
+            'hosterrors':http_err,'activesrc':hardware.get_pwr_src()[0],
             'modelSta':str(hardware.get_led()[0]),
             'pole1a': tristatus(0), 'nam1a':animal1a,
             'pole1b': tristatus(1), 'nam1b':animal1b,
@@ -353,7 +365,7 @@ def index():
     tags = {
         'temp':get_temp(),'light':get_light(), 'daylight':hardware.get_photo(),
         'batlevel':hardware.get_bat_chg(),'batvolt':round(hardware.get_voltage(),2),
-        'hosterrors':http_err,'activesrc':get_pwr_src(),
+        'hosterrors':http_err,'activesrc':hardware.get_pwr_src()[0],
         'modelSta':str(hardware.get_led()[0]),'oldlog':oldlog,
         'pole1a': tristatus(0), 'nam1a':animal1a,
         'pole1b': tristatus(1), 'nam1b':animal1b,

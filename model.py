@@ -355,12 +355,28 @@ class system_model():
         state:      bool
         time_set:   float
         """
-        # Extract Heater Model from List
-        model = self.allmodels[heater]
-        if state: # Turn On
-            model.force(time_set,None)
+        # Force ALL if heater is 'all'
+        if heater=='all':
+            allmodels = self.allmodels.copy()
+            allmodels.append(self.STOCK)
+            for model in allmodels:
+                if state: # Turn On
+                    model.force(time_set,None)
+                else:     # Turn Off
+                    model.force(None,time_set)
+        elif str(heater)=='12':
+            model = self.STOCK
+            if state: # Turn On
+                model.force(time_set,None)
+            else:     # Turn Off
+                model.force(None,time_set)
         else:
-            model.force(None,time_set)
+            # Extract Heater Model from List
+            model = self.allmodels[heater]
+            if state: # Turn On
+                model.force(time_set,None)
+            else:     # Turn Off
+                model.force(None,time_set)
     
     def get_state(self):
         # Iteratively Collect Heater States

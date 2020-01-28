@@ -6,4 +6,7 @@ Should you have any questions about the report, or operation of the
 Auto-Water-Manager, contact Joe Stanley of StanleySolutions.
 In addition to the copy attached to this email, a copy of this report is
 also available for download directly from the Auto-Water-Manager Web Interface.
-
+;;
+;;
+In the past 30 days, the Auto-Water-Manager estimates a total of {{power_kw}}kWh
+were used, and the daily average temperature was {{avg_temp}}°F.
