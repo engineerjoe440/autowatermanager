@@ -22,13 +22,12 @@ from bottle import route, run, template, static_file, error
 from bottle import request, redirect, Bottle, auth_basic, abort
 import configparser
 import outletoperate as outlet
-from subprocess import Popen, PIPE
-from threading import Timer, Thread
 from datetime import datetime
 from model import unit_model, system_model
 import pam # Authentication Engine
 from barnhardware import BarnHardware
 from mailmanager import send_email, emailtemplate
+from threader import RepeatedThread, OsCommand, CallThread
 
 # Instantiate Objects
 Webapp = Bottle()
@@ -135,35 +134,6 @@ def red_callback(channel):
 
 
 ####################################################################################
-class RepeatedTimer(object):
-    def __init__(self, interval, function, *args, **kwargs):
-        self._timer     = None
-        self.interval   = interval
-        self.function   = function
-        self.args       = args
-        self.kwargs     = kwargs
-        self.is_running = False
-        self.start()
-
-    def _run(self):
-        self.is_running = False
-        self.start()
-        self.function(*self.args, **self.kwargs)
-
-    def start(self):
-        if not self.is_running:
-            self._timer = Timer(self.interval, self._run)
-            self._timer.start()
-            self.is_running = True
-
-    def stop(self):
-        self._timer.cancel()
-        self.is_running = False
-    
-    def restart(self):
-        self.stop()
-        self.start()
-
 # Define Model Update Function
 def modelUpdate():
     # Use Try/Except to Catch Any Errors in Thread
@@ -242,38 +212,6 @@ def modelUpdate():
 
 
 ####################################################################################
-# Define OS-Interfaced Thread Class
-class OsCommand():
-    def __init__(self,message,threaded=True,dly=5):
-        self.command = message.split()
-        self.dly_time = dly
-        if threaded:
-            t = Thread(target=self.run)
-            t.start()
-            return
-    
-    def run(self):
-        time.sleep(self.dly_time)
-        proc = Popen(self.command, stdin=PIPE, stderr=PIPE, universal_newlines=True)
-        response = proc.communicate()[1]
-        return(response)
-
-# Define Threaded Operation Class to Handle Independent Function Calls
-class CallThread():
-    def __init__(self,function,dly=0,*args):
-        self.func = function
-        self.args = args
-        self.dly  = dly
-        Thread(target=self.run).start()
-    
-    def run(self):
-        time.sleep(self.dly)
-        self.func(*self.args)
-####################################################################################
-
-
-
-####################################################################################
 # Define Temperature Retrieval Function
 def get_temp():
     temp = round(hardware.get_temp(),2)
@@ -286,19 +224,6 @@ def get_light():
         light = "ON"
     else:
         light = "OFF"
-    return(light)
-
-# Define Batter Status Retrieval Function
-def get_battery():
-    battery = hardware.get_bat_chg()
-    return(battery)
-def get_bat_volt():
-    battery = hardware.get_voltage()
-    return(battery)
-
-# Define Daylight Status Function
-def get_daylight():
-    light = hardware.get_photo()
     return(light)
 
 # Define Active Power Source Comprehension Function
@@ -367,8 +292,8 @@ def api_status(item=None):
     global api_tags
     if item==None:
         api_tags = {
-            'temp':get_temp(),'light':get_light(), 'daylight':get_daylight(),
-            'batlevel':get_battery(),'batvolt':round(get_bat_volt(),2),
+            'temp':get_temp(),'light':get_light(), 'daylight':hardware.get_photo(),
+            'batlevel':hardware.get_bat_chg(),'batvolt':round(hardware.get_voltage(),2),
             'hosterrors':http_err,'activesrc':get_pwr_src(),
             'modelSta':str(hardware.get_led()[0]),
             'pole1a': tristatus(0), 'nam1a':animal1a,
@@ -426,8 +351,8 @@ def index():
         oldlog = ""
     # Define Template Dictionary
     tags = {
-        'temp':get_temp(),'light':get_light(), 'daylight':get_daylight(),
-        'batlevel':get_battery(),'batvolt':round(get_bat_volt(),2),
+        'temp':get_temp(),'light':get_light(), 'daylight':hardware.get_photo(),
+        'batlevel':hardware.get_bat_chg(),'batvolt':round(hardware.get_voltage(),2),
         'hosterrors':http_err,'activesrc':get_pwr_src(),
         'modelSta':str(hardware.get_led()[0]),'oldlog':oldlog,
         'pole1a': tristatus(0), 'nam1a':animal1a,
@@ -715,7 +640,7 @@ try:
     hardware.set_led(grn=True) # Set Green LED to Indicate Active Status
     hardware.set_lcd("System-OK",hardware.get_temp(fmt="{:.2f}'F")) # Update LCD
     # Start Model Timer to Manage Updates, Load Temperature Each Time
-    modelTimer = RepeatedTimer(60, modelUpdate)
+    modelTimer = RepeatedThread(60, modelUpdate)
     # Assocaite Push-Button Call-Back Functions with Hardware Callback
     hardware.set_grn_callback(grn_callback)
     hardware.set_red_callback(red_callback)
