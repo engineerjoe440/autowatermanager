@@ -154,7 +154,7 @@ def modelUpdate():
         # Update Model
         model.update(hardware.get_temp())
         status = model.get_state()
-        http_err = "None"
+        http_err = False
         http_err_host = ""
         # Send Message to Smart Plugs
         for ind,states in enumerate(zip(status,prvStatus)):
