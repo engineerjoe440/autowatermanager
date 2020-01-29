@@ -88,6 +88,10 @@ def grn_callback(channel):
             hardware.set_lcd("Rebooting...")
             modelTimer.stop()
             return
+        elif t_cnt > 3:
+            # Display Device IP Address
+            hardware.set_lcd(hardware.get_ip_adr())
+            return
         elif t_cnt > 10:
             # Reboot System
             OsCommand('sudo reboot')
