@@ -1,8 +1,8 @@
 # Barn Automation Hardware Interface
-import threading
 import time
 import sys
 import glob
+import socket
 
 try:
     from pijuice import PiJuice # Import pijuice module
@@ -146,6 +146,13 @@ class BarnHardware:
         if isinstance(fmt,str):
             temp = fmt.format(temp)
         return(temp)
+    def get_ip_adr(self):
+        ip_address = ''
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8",80))
+        ip_address = s.getsockname()[0]
+        s.close()
+        return(ip_address)
     
     # Define Callback Specifiers
     def set_grn_callback(self,func,opt=GPIO.RISING):
