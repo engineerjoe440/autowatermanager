@@ -90,7 +90,7 @@ def grn_callback(channel):
             return
         elif t_cnt > 3:
             # Display Device IP Address
-            hardware.set_lcd(hardware.get_ip_adr())
+            hardware.set_lcd("IP: "+hardware.get_ip_adr())
             return
         elif t_cnt > 10:
             # Reboot System
