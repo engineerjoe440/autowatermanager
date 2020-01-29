@@ -136,10 +136,11 @@ class unit_model():
         else:
             self._heater_en = False # Don't Heat
         # Decrement Force States if Any are Present
-        if self._force_on:
-            self._force_on -= 1
-        if self._force_on:
-            self._force_off -= 1
+        if self._force_on > 0:      self._force_on -= 1
+        if self._force_off > 0:     self._force_off -= 1
+        # Catch Error Cases
+        if self._force_on < 0:      self._force_on = 0
+        if self._force_off < 0:     self._force_off = 0
         # Store Temperature, Return Heater Status
         self._temp = newTemp
         return(self._heater_en)
