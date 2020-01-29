@@ -70,6 +70,7 @@ class unit_model():
         self._tactv = turn_on # Frezing, Activate Point
         # This Freezing (Activate Point) Specifys the Water Temperature
         # at which the model evaluates a required turn-on.
+        self._dt_heat = 0
     
     def get_service(self):
         # Return Internal Service State
@@ -128,13 +129,16 @@ class unit_model():
         # (Temperature is Above Upper Limit and not Forced On) or Forced Off
         if ((temp >= self._threshold) and (self._force_on == 0)) or self._force_off:
             self._heater_en = False # Don't Heat
+            self._dt_heat = 0
         # If System In Service and (Temp Below Threshold or Heater Already On) or Forced On
         elif (self._in_service and EN and ((temp <= self._tactv) or self._heater_en)) or self._force_on:
             self._heater_en = True # Apply Heater
             newTemp += dt_heat
+            self._dt_heat = dt_heat
         # Don't Heat By Default
         else:
             self._heater_en = False # Don't Heat
+            self._dt_heat = 0
         # Decrement Force States if Any are Present
         if self._force_on > 0:      self._force_on -= 1
         if self._force_off > 0:     self._force_off -= 1
@@ -201,6 +205,13 @@ class unit_model():
         for key,value in baseline.items():
             if value == 1:
                 return(key)
+    
+    def control_fail_reset(self):
+        # Change Heater State
+        self._heater_en = not self._heater_en
+        if self._dt_heat > 0:
+            # Remove Heating Addition
+            self._temp -= self._dt_heat
 ###################################################################################
 
 
@@ -379,6 +390,13 @@ class system_model():
                 model.force(time_set,None)
             else:     # Turn Off
                 model.force(None,time_set)
+    
+    def set_fail(self,heater):
+        if str(heater)=='12':
+            self.STOCK.control_fail_reset()
+        else:
+            model = self.allmodels[heater]
+            model.control_fail_reset()
     
     def get_state(self):
         # Iteratively Collect Heater States
