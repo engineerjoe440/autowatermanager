@@ -64,7 +64,7 @@ for section in parser.sections():
         exec( str(setting) + '="' + str(value) + '"' )
 
 # Declare Global Variable to Represent HTTP Communications Status
-http_err = "None"
+http_err = False
 http_err_host = ""
 ####################################################################################
 
