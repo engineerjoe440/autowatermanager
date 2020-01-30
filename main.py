@@ -528,6 +528,8 @@ def update_settings():
     hardware.set_led(grn=True,red=False)
     # Restart Model Timer
     modelTimer.restart()
+    # Display Settings Update Notice
+    hardware.set_lcd("Settings-Updated")
     redirect('/settings')
 
 @Webapp.route('/force_heater/<force>/<state>/<heaterind>', method='GET')
