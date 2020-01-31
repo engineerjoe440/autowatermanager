@@ -135,10 +135,9 @@ class BarnHardware:
     def get_bat_led(self,LED=None):
         if LED==None:
             return(pijuice.status.GetLedState('D1')['data'],
-                   pijuice.status.GetLedState('D2')['data'],
-                   pijuice.status.GetLedState('D3')['data'])
+                   pijuice.status.GetLedState('D2')['data'])
         if isinstance(LED, int): # Condition Input
-            LED = {1:'D1', 2:'D2', 3:'D3'}[LED]
+            LED = {1:'D1', 2:'D2'}[LED]
         return(pijuice.status.GetLedState(LED)['data'])
     def get_temp(self,scale='f',fmt=None):
         # Mask Temperature Function for Ease
