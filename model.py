@@ -121,8 +121,7 @@ class unit_model():
         temp = self._temp
         # Determine Temperature Change from Both Heating and Cooling
         newTemp = ambient + (temp-ambient)*m.exp(-self._k)
-        heatC = (temp-32)*5/9 + (60*self._Pkw)/(4.2*liters(self._volume))
-        heat = (heatC*9/5) + 32
+        heat = temp + (60*9*self._Pkw)/(79.49361*self._volume)
         # Convert Heating Effect back to Fahrenheit
         dt_heat = heat-temp
         # Determine whether Heater should be Applied
