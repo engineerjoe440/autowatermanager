@@ -154,8 +154,6 @@ def modelUpdate():
         # Update LCD with Time and Temperature
         hardware.set_lcd(datetime.now().strftime("%d/%m/%Y-%H:%M"),
                          hardware.get_temp(fmt="{:.2f}'F"))
-        # Collect Previous State
-        prvStatus = model.get_state()
         # Set Force Off When Power Source Absent
         if not hardware.get_pwr_src()[0]:
             model.set_force("all",False,5)
@@ -165,9 +163,9 @@ def modelUpdate():
         http_err = False
         http_err_host = ""
         # Send Message to Smart Plugs
-        for ind,states in enumerate(zip(status,prvStatus)):
-            # Extract from Tuple
-            cur,prv = states
+        for ind,cur in enumerate(status):
+            # Identify Current Heater State
+            prv = outlet.tasmota_status(ind)
             if cur != prv:
                 # Attempt Control
                 try:
