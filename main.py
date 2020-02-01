@@ -658,8 +658,6 @@ def error500(error):
 ####################################################################################
 # Run Main Server
 try:
-    # Start Model Timer to Manage Updates, Load Temperature Each Time
-    modelTimer = RepeatedThread(60, modelUpdate)
     # Assocaite Push-Button Call-Back Functions with Hardware Callback
     hardware.set_grn_callback(grn_callback)
     hardware.set_red_callback(red_callback)
@@ -675,6 +673,8 @@ try:
             print("ERROR:",deviceId,'Is Not Responsive.')
             hardware.set_lcd(deviceId+"NoResponse")
             time.sleep(2)
+    # Start Model Timer to Manage Updates, Load Temperature Each Time
+    modelTimer = RepeatedThread(60, modelUpdate)
     # Update LCD with System OK Notice
     hardware.set_led(grn=True) # Set Green LED to Indicate Active Status
     hardware.set_lcd("System-OK",hardware.get_temp(fmt="{:.2f}'F")) # Update LCD
