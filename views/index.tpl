@@ -146,6 +146,13 @@ Settings		</a>
                             
                             {{PAGE['oldlog']}}
                             
+                            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                            
+                            <a href="/files/20200130_AutoWaterManager_IM.pdf" download="AutoWaterManager_InstructionManual.pdf">
+                              <p><img src="/static/pdf.png" alt="Download" width="50"></p>
+                              <p>Log File</p>
+                            </a>
+                            
 						</div>
 					</div>
 				

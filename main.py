@@ -63,9 +63,10 @@ for section in parser.sections():
     for setting, value in parser.items(section):
         exec( str(setting) + '="' + str(value) + '"' )
 
-# Declare Global Variable to Represent HTTP Communications Status
+# Declare Global Variable to Represent HTTP Communications Status and Heater States
 http_err = False
 http_err_host = ""
+cur_heater_states = [False]*13
 ####################################################################################
 
 
@@ -150,7 +151,7 @@ def red_callback(channel):
 def modelUpdate():
     # Use Try/Except to Catch Any Errors in Thread
     try:
-        global http_err, http_err_host
+        global http_err, http_err_host, cur_heater_states
         # Update LCD with Time and Temperature
         hardware.set_lcd(datetime.now().strftime("%d/%m/%Y-%H:%M"),
                          hardware.get_temp(fmt="{:.2f}'F"))
@@ -166,6 +167,7 @@ def modelUpdate():
         for ind,cur in enumerate(status):
             # Identify Current Heater State
             prv = outlet.tasmota_status(ind)
+            cur_heater_states[ind] = prv # Update Global State Monitor
             # Status Change and Not Invalid Heater Control Object
             if (cur != prv) and (prv != None):
                 # Attempt Control
@@ -276,7 +278,7 @@ def tristatus(trough):
     if lut[trough] == 'None' or model==None:
         return("DISABLED")
     # Extract State from Model
-    status = outlet.tasmota_status(trough)
+    status = cur_heater_states[trough]
     if status == None: # Heater is in Error
         return("ERROR")
     elif status: # Heater is Enabled
