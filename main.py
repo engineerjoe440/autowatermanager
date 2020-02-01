@@ -574,13 +574,15 @@ def update_email():
     with open( configfile, 'w' ) as file:
                 parser.write( file )
     redirect('/settings')
+    return
 
 @Webapp.route('/set_light', method='get')
 def control_barn_light():
     # Toggle the Barn Light
     rStatus = hardware.get_rly()[lightRelay]
     hardware.set_rly(lightRelay,(not rStatus))
-    redirect('/')
+    redirect('/index')
+    return
 
 # Define Authenticator Function Using PAM
 def confirm_user(user, password):
