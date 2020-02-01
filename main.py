@@ -169,7 +169,7 @@ def modelUpdate():
                     rsp = False
                 http_err = http_err or (not rsp)
                 if not rsp:
-                    http_err_host += '-'+outlet.host_lut[ind] # Append Host IP
+                    http_err_host += '-'+outlet.heater_lut[ind] # Append Heater ID
                     model.set_fail(ind) # Reset Model to Account for Failure
         # Collect Date Time
         dt_str = datetime.now().strftime("%d/%m/%YT%H:%M:%S")

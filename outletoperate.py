@@ -3,6 +3,7 @@
 # Import Required Libraries
 import requests
 import json
+from pyping import ping
 
 # Define Network Parameters
 domain = "192.168.220."
@@ -25,16 +26,39 @@ hstock = '3419'
 
 # Define Look-Up-Tables
 state_lut = {False:'OFF', True:'ON'}
-host_lut  = [host_prefix+h1A,host_prefix+h1B,host_prefix+h2A,host_prefix+h2B,
-             host_prefix+h3A,host_prefix+h3B,host_prefix+h4A,host_prefix+h4B,
-             host_prefix+h5A,host_prefix+h5B,host_prefix+h6A,host_prefix+h6B,
-             host_prefix+hstock]
+hostname_lut  = [host_prefix+h1A,host_prefix+h1B,host_prefix+h2A,host_prefix+h2B,
+                 host_prefix+h3A,host_prefix+h3B,host_prefix+h4A,host_prefix+h4B,
+                 host_prefix+h5A,host_prefix+h5B,host_prefix+h6A,host_prefix+h6B,
+                 host_prefix+hstock]
+heater_lut = ['Heater1A','Heater1B','Heater2A','Heater2B','Heater3A','Heater3B',
+              'Heater4A','Heater4B','Heater5A','Heater5B','Heater6A','Heater6B',
+              'HeaterStock']
+host_lut = {}
+
+# Define "DNS Resolution" Function (Ping Resolver)
+def resolve(host):
+    # Ping the Host and Evaluate the IP
+    try:
+        ip = ping(host).destination_ip
+    except:
+        ip = None
+    return(ip)
+
+# For Every Valid Hostname, Determine the IP
+for hostname in hostname_lut:
+    if len(hostname) > 8:
+        host_lut[hostname] = resolve(hostname)
+    else:
+        host_lut[hostname] = None
 
 # Define Set function
 def tasmota_set(host, state):
     # Interpret Host if Provided as Integer
     if isinstance(host,int):
-        host = host_lut[host]
+        hostname = hostname_lut[host]
+        host = host_lut[hostname]
+        if host == None:
+            return(False)
     # Interpret State
     state = state_lut[bool(state)]
     # Generate Simple Control String for HTTP and Send
