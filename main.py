@@ -656,13 +656,24 @@ def error500(error):
 ####################################################################################
 # Run Main Server
 try:
-    hardware.set_led(grn=True) # Set Green LED to Indicate Active Status
-    hardware.set_lcd("System-OK",hardware.get_temp(fmt="{:.2f}'F")) # Update LCD
     # Start Model Timer to Manage Updates, Load Temperature Each Time
     modelTimer = RepeatedThread(60, modelUpdate)
     # Assocaite Push-Button Call-Back Functions with Hardware Callback
     hardware.set_grn_callback(grn_callback)
     hardware.set_red_callback(red_callback)
+    # Attempt to Resolve IP Addresses
+    for deviceId,sta in outlet.resolve_all():
+        if sta == None:
+            # Heater Control Not Defined
+            hardware.set_lcd(deviceId+"NotAvail")
+            time.sleep(2)
+        if sta == False:
+            # Heater Not Responding
+            hardware.set_lcd(deviceId+"NoResponse")
+            time.sleep(2)
+    # Update LCD with System OK Notice
+    hardware.set_led(grn=True) # Set Green LED to Indicate Active Status
+    hardware.set_lcd("System-OK",hardware.get_temp(fmt="{:.2f}'F")) # Update LCD
     # Start Web-App
     Webapp.run(host=hostname, port=port)
 except:

@@ -40,16 +40,26 @@ def resolve(host):
     # Ping the Host and Evaluate the IP
     try:
         ip = ping(host).destination_ip
+        host_lut[host] = ip
+        return(True)
+    # Ping Attempt Failed... Record Failure
     except:
-        ip = None
-    return(ip)
+        host_lut[host] = None
+        return(False)
 
-# For Every Valid Hostname, Determine the IP
-for hostname in hostname_lut:
-    if len(hostname) > 8:
-        host_lut[hostname] = resolve(hostname)
-    else:
-        host_lut[hostname] = None
+# Define System-Wide Resolution Function (Used at Startup)
+def resolve_all():
+    # For Every Valid Hostname, Determine the IP
+    for ind,hostname in enumerate(hostname_lut):
+        # Identify a Friendly-Name for the Heater Control
+        heater_id = heater_lut[ind]
+        # If Valid Domain Name, Attempt Resolution
+        if len(hostname) > 8:
+            yield(heater_id,resolve(hostname))
+        # Else Record Invalid "Object"
+        else:
+            host_lut[hostname] = None
+            yield(heater_id,None)
 
 # Define Set function
 def tasmota_set(host, state):
