@@ -672,7 +672,7 @@ try:
             time.sleep(2)
         if sta == False:
             # Heater Not Responding
-            print("WARNING:",deviceId,'Is Not Responsive.')
+            print("ERROR:",deviceId,'Is Not Responsive.')
             hardware.set_lcd(deviceId+"NoResponse")
             time.sleep(2)
     # Update LCD with System OK Notice
