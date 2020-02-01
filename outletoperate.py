@@ -8,26 +8,27 @@ import json
 domain = "192.168.220."
 
 # Define Hosts
-heater1a = str(int("1A",16))
-heater1b = str(int("1B",16))
-heater2a = str(int("2A",16))
-heater2b = str(int("2B",16))
-heater3a = str(int("3A",16))
-heater3b = str(int("3B",16))
-heater4a = str(int("4A",16))
-heater4b = str(int("4B",16))
-heater5a = str(int("5A",16))
-heater5b = str(int("5B",16))
-heater6a = str(int("6A",16))
-heater6b = str(int("6B",16))
-heater_stock = str(120)
+host_prefix = 'tasmota-'
+h1A = '6602'
+h1B = '7236'
+h2A = '3964'
+h2B = '3199'
+h3A = '6259'
+h3B = ''
+h4A = '2905'
+h4B = '4426'
+h5A = '2343'
+h5B = ''
+h6A = ''
+h6B = '7377'
+hstock = '3419'
 
 # Define Look-Up-Tables
 state_lut = {False:'OFF', True:'ON'}
-host_lut  = [domain+heater1a,domain+heater1b,domain+heater2a,domain+heater2b,
-             domain+heater3a,domain+heater3b,domain+heater4a,domain+heater4b,
-             domain+heater5a,domain+heater5b,domain+heater6a,domain+heater6b,
-             domain+heater_stock]
+host_lut  = [host_prefix+h1A,host_prefix+h1B,host_prefix+h2A,host_prefix+h2B,
+             host_prefix+h3A,host_prefix+h3B,host_prefix+h4A,host_prefix+h4B,
+             host_prefix+h5A,host_prefix+h5B,host_prefix+h6A,host_prefix+h6B,
+             host_prefix+hstock]
 
 # Define Set function
 def tasmota_set(host, state):
@@ -81,7 +82,9 @@ def tasmota_status(host, fullresponse=False):
 
 # Define Builtin Testing System
 if __name__ == '__main__':
+    print(host_lut)
     import time
+    time.sleep(60)
     host = input("Please Specify a Test Host IP Address:  ")
     print("Current Status:",state_lut[tasmota_status(host)])
     time.sleep(2)
