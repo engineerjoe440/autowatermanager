@@ -166,7 +166,8 @@ def modelUpdate():
         for ind,cur in enumerate(status):
             # Identify Current Heater State
             prv = outlet.tasmota_status(ind)
-            if cur != prv:
+            # Status Change and Not Invalid Heater Control Object
+            if (cur != prv) and (prv != None):
                 # Attempt Control
                 try:
                     # Send Message to Smart Plug
@@ -175,10 +176,20 @@ def modelUpdate():
                     rsp = False
                 http_err = http_err or (not rsp)
                 if not rsp:
-                    http_err_host += '-'+outlet.heater_lut[ind] # Append Heater ID
+                    # Control Error has Occurred
+                    hid = outlet.heater_lut[ind]
+                    http_err_host += '-'+hid # Append Heater ID
                     model.set_fail(ind) # Reset Model to Account for Failure
+                    if enerrmsg:
+                        errcont = emailtemplate(error_notice,
+                                                bodycontext={'notice':
+                                                "Control Failure for Heater ["+hid+"]."})
+                        send_email([emailadd1,emailadd2,emailadd3],errcont)
+            # Invalid Heater Control Object
+            elif prv == None:
+                http_err_host += '-'+outlet.heater_lut[ind] # Append Heater ID
         # Collect Date Time
-        dt_str = datetime.now().strftime("%d/%m/%YT%H:%M:%S")
+        dt_str = datetime.now().strftime("%d/%m/%Y-%H:%M:%S")
         # Generate Full CSV List for new Row
         csv_list = [dt_str, hardware.get_temp()]
         csv_list.extend(status)
