@@ -665,10 +665,12 @@ try:
     for deviceId,sta in outlet.resolve_all():
         if sta == None:
             # Heater Control Not Defined
+            print("WARNING:",deviceId,'Is Not Available.')
             hardware.set_lcd(deviceId+"NotAvail")
             time.sleep(2)
         if sta == False:
             # Heater Not Responding
+            print("WARNING:",deviceId,'Is Not Responsive.')
             hardware.set_lcd(deviceId+"NoResponse")
             time.sleep(2)
     # Update LCD with System OK Notice
