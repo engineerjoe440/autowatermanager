@@ -267,7 +267,7 @@ def tristatus(trough):
     if lut[trough] == 'None' or model==None:
         return("DISABLED")
     # Extract State from Model
-    status = tasmota_status(trough)
+    status = outlet.tasmota_status(trough)
     if status == None: # Heater is in Error
         return("ERROR")
     elif status: # Heater is Enabled
