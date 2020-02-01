@@ -601,8 +601,10 @@ def update_email():
 def control_barn_light():
     # Toggle the Barn Light
     rStatus = hardware.get_rly()[lightRelay]
+    if rStatus:
+        CallThread(grn_callback,1,None)
     hardware.set_rly(lightRelay,(not rStatus))
-    redirect('/index')
+    redirect('/index.html')
     return
 
 # Define Authenticator Function Using PAM
