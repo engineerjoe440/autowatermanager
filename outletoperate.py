@@ -40,8 +40,12 @@ def resolve(host):
     # Ping the Host and Evaluate the IP
     try:
         ip = ping(host).destination_ip
-        host_lut[host] = ip
-        return(True)
+        if ip.startswith('192.168.220.'):
+            host_lut[host] = ip
+            return(True)
+        else:
+            host_lut[host] = None
+            return(False)
     # Ping Attempt Failed... Record Failure
     except:
         host_lut[host] = None
