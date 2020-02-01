@@ -561,7 +561,7 @@ def force_heaters(force,state,heaterind):
     # Do Force with Model
     try:
         model.set_force(heater_ind,option,time_set)
-        modelUpdate() # Update Model (will inherently cause some minor inaccuracy)
+        CallThread(modelUpdate,0) # Update Model (will inherently cause some minor inaccuracy)
     except:
         # If Error Messages Are Enabled, Send Email Message
         if enerrmsg:
