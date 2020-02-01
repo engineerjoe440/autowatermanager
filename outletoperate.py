@@ -109,6 +109,12 @@ def tasmota_toggle(host):
 
 # Define Status Retrieval Function
 def tasmota_status(host, fullresponse=False):
+    # Interpret Host if Provided as Integer
+    if isinstance(host,int):
+        hostname = hostname_lut[host]
+        host = host_lut[hostname]
+        if host == None:
+            return(None)
     # Generate Simple URI to Request Status
     uri = "http://{}/cm?cmnd=status".format(str(host))
     # Request Status
