@@ -73,8 +73,10 @@ http_err_host = ""
 ####################################################################################
 # Define Push-Button Call-Back Functions
 step = 0.01
+rebt = False
+shdn = False
 def grn_callback(channel):
-    global model
+    global model, rebt, shdn
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
     while hardware.get_btn()[0]:
@@ -87,27 +89,30 @@ def grn_callback(channel):
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
             modelTimer.stop()
+            rebt = True
             return
-        elif t_cnt > 3:
+        elif (t_cnt > 3) and not (rebt or shdn):
             # Display Device IP Address
             hardware.set_lcd("IP: "+hardware.get_ip_adr())
             return
-        elif t_cnt > 10:
+        elif (t_cnt > 10) and not (rebt or shdn):
             # Reboot System
             OsCommand('sudo reboot')
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
             modelTimer.stop()
+            rebt = True
             return
     # Start Control Model Updates
-    model = system_model(hardware.get_temp()) # Re-Activate Model
-    modelTimer.start()
-    hardware.set_lcd("System-Enabled")
-    CallThread(hardware.set_lcd,3,"System-OK",hardware.get_temp(fmt="{:.2f}'F"))
-    hardware.set_led(grn=True,red=False)
+    if not (rebt or shdn):
+        model = system_model(hardware.get_temp()) # Re-Activate Model
+        modelTimer.start()
+        hardware.set_lcd("System-Enabled")
+        CallThread(hardware.set_lcd,3,"System-OK",hardware.get_temp(fmt="{:.2f}'F"))
+        hardware.set_led(grn=True,red=False)
 
 def red_callback(channel):
-    global model
+    global model, rebt, shdn
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
     while hardware.get_btn()[1]:
@@ -120,19 +125,22 @@ def red_callback(channel):
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
             modelTimer.stop()
+            rebt = True
             return
-        elif t_cnt > 10:
+        elif (t_cnt > 10) and not (rebt or shdn):
             # Shut Down System
             OsCommand('sudo shutdown')
             hardware.set_led(grn=False,red=True)
             hardware.set_lcd("Shutting-Down...")
             modelTimer.stop()
+            shdn = True
             return
     # Stop Control Model Updates
-    model = None # Deactivate the Model
-    modelTimer.stop()
-    hardware.set_lcd("System-Disabled")
-    hardware.set_led(grn=False,red=True)
+    if not (rebt or shdn):
+        model = None # Deactivate the Model
+        modelTimer.stop()
+        hardware.set_lcd("System-Disabled")
+        hardware.set_led(grn=False,red=True)
 ####################################################################################
 
 
