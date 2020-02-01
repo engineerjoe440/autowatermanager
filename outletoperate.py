@@ -44,6 +44,8 @@ def resolve(host):
             if ip.startswith('192.168.220.'):
                 host_lut[host] = ip
                 return(True)
+            else:
+                print("Bad IP:",ip)
         host_lut[host] = None
         return(False)
     # Ping Attempt Failed... Record Failure
