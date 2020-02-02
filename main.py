@@ -721,5 +721,7 @@ except:
 finally:
     # Regardless of Error or Quit, Stop Timer for Model Operation
     modelTimer.stop()
+    # Display Failure
+    hardware.set_lcd("AutoWaterWeb-Service","DOWN")
 ####################################################################################
 # END
