@@ -655,19 +655,6 @@ def upgrade_code(servicerestart=True):
     if servicerestart:
         OsCommand('sudo service AutoWaterWeb restart')
         return(status)
-# Define Upgrade Routing and Functional Operation for Upgrade
-@Webapp.route('/upgrade')
-@Webapp.route('/update')
-@auth_basic(confirm_user)
-def upgrade_server():
-    # Passed Credentials, Perform Upgrade to Codebase
-    upgrade_code(servicerestart=False)
-    # Perform System Update and Upgrade, One-Shot
-    cmd = OsCommand('sudo apt-get update && sudo apt-get upgrade -y',False,0,True)
-    response = cmd.run()
-    # Reboot System
-    OsCommand('sudo reboot',shell=True)
-    return(response)
 ####################################################################################
 
 
