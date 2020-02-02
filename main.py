@@ -166,7 +166,10 @@ def modelUpdate():
         # Send Message to Smart Plugs
         for ind,cur in enumerate(status):
             # Identify Current Heater State
-            prv = outlet.tasmota_status(ind)
+            try:
+                prv = outlet.tasmota_status(ind)
+            except:
+                prv = None
             cur_heater_states[ind] = prv # Update Global State Monitor
             # Status Change and Not Invalid Heater Control Object
             if (cur != prv) and (prv != None):
