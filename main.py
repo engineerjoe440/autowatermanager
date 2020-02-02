@@ -69,6 +69,8 @@ for section in parser.sections():
 http_err = False
 http_err_host = ""
 cur_heater_states = [False]*13
+sys_err_cnt = 0
+sys_ok_cnt = 0
 ####################################################################################
 
 
@@ -162,7 +164,7 @@ def red_callback(channel):
 def modelUpdate():
     # Use Try/Except to Catch Any Errors in Thread
     try:
-        global http_err, http_err_host, cur_heater_states
+        global http_err, http_err_host, cur_heater_states, sys_err_cnt, sys_ok_cnt
         # Update LCD with Time and Temperature
         hardware.set_lcd(datetime.now().strftime("%d/%m/%Y-%H:%M"),
                          hardware.get_temp(fmt="{:.2f}'F"))
@@ -253,18 +255,37 @@ def modelUpdate():
                                       "Pole6A","Pole6B","StockPole",
                                       "PowerConsumption(kW-min)","HTTP-ERR","HOST-IP"])
             file_writer.writerow(csv_list)
+        if sys_ok_cnt > 5:
+            sys_err_cnt -= 1
+            sys_ok_cnt = 0
+        else:
+            sys_ok_cnt +=1
     except Exception as e:
-        hardware.set_led(red=True)
-        hardware.set_lcd("ERROR:Model","")
-        print("Unhandled Error in Update.")
-        print(e)
-        logging.error(traceback.format_exc())
-        # If Error Messages Are Enabled, Send Email Message
-        if enerrmsg:
-            errcont = emailtemplate(error_notice,
-                                    bodycontext={'notice':
-                                    "Exception in Temperature Model Update."})
-            send_email([emailadd1,emailadd2,emailadd3],errcont)
+        sys_err_cnt += 1
+        if sys_err_cnt > 5:
+            sys_err_cnt = 0
+            red_callback()
+            print("Unhandled Error in Update. Disabling System")
+            print(e)
+            logging.error(traceback.format_exc())
+            # If Error Messages Are Enabled, Send Email Message
+            if enerrmsg:
+                errcont = emailtemplate(error_notice,
+                                        bodycontext={'notice':
+                "More than 5 errors have occurred, the system is disabling itself."})
+                send_email([emailadd1,emailadd2,emailadd3],errcont)
+        else:
+            hardware.set_led(red=True)
+            hardware.set_lcd("ERROR:Model","")
+            print("Unhandled Error in Update.")
+            print(e)
+            logging.error(traceback.format_exc())
+            # If Error Messages Are Enabled, Send Email Message
+            if enerrmsg:
+                errcont = emailtemplate(error_notice,
+                                        bodycontext={'notice':
+                                        "Exception in Temperature Model Update."})
+                send_email([emailadd1,emailadd2,emailadd3],errcont)
 ####################################################################################
 
 
