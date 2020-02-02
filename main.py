@@ -172,7 +172,7 @@ def modelUpdate():
     # Use Try/Except to Catch Any Errors in Thread
     try:
         global http_err, http_err_host, cur_heater_states, sys_err_cnt, sys_ok_cnt
-        if model != None
+        if model != None:
             # Update LCD with Time and Temperature
             hardware.set_lcd(datetime.now().strftime("%d/%m/%Y-%H:%M"),
                              hardware.get_temp(fmt="{:.2f}'F"))
