@@ -622,6 +622,7 @@ def force_heaters(force,state,heaterind):
     heater_ind = int(heaterind)
     # Do Force with Model
     try:
+        outlet.tasmota_set(heater_ind,option):
         model.set_force(heater_ind,option,time_set)
         CallThread(modelUpdate,0) # Update Model (will inherently cause some minor inaccuracy)
     except:

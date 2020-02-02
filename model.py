@@ -121,7 +121,7 @@ class unit_model():
         temp = self._temp
         # Determine Temperature Change from Both Heating and Cooling
         newTemp = ambient + (temp-ambient)*m.exp(-self._k)
-        heat = temp + (60*9*self._Pkw)/(79.49361*self._volume)
+        heat = temp + (60*9*self._Pkw)/(79.49361*self._volume+1E-12)
         # Convert Heating Effect back to Fahrenheit
         dt_heat = heat-temp
         # Determine whether Heater should be Applied
@@ -185,7 +185,7 @@ class unit_model():
                     if not (temp_rest > temp_restart):
                         state -= 1 # Indicate Completion of Test
             # Times have been Calculated, Store Baseline
-            floor = m.floor(rest/recovery)
+            floor = m.floor(rest/(recovery+1E-12))
             if floor < 0:
                 floor = 0
             elif floor > units:
@@ -470,7 +470,7 @@ def min_maintain(volume,Pwatts,temp_maint=None,k=k_full):
     for ambient in range(-10,32):
         # Determine Temperature Change from Both Heating and Cooling
         dcool = temp - (ambient + (temp-ambient)*m.exp(-k))
-        heatC = (temp-32)*5/9 + (60*Pkw)/(4.2*liters(volume))
+        heatC = (temp-32)*5/9 + (60*Pkw)/(4.2*liters(volume)+1E-12)
         heat = (heatC*9/5) + 32
         dheat = heat-temp
         if dheat >= dcool:
@@ -491,7 +491,7 @@ def time_to_recover(ambient,volume,Pwatts,temp_recovr=None,t0=None,k=k_full):
     # Iteratively Process the Heating/Cooling Performance to Determine
     # the Time Required; Return -1 if more than 24 Hours Required
     while temp < temp_recovr:
-        heatC = (temp-32)*5/9 + (60*Pkw)/(4.2*liters(volume))
+        heatC = (temp-32)*5/9 + (60*Pkw)/(4.2*liters(volume)+1E-12)
         heat = (heatC*9/5) + 32
         dt_heat = heat-temp
         temp = ambient + (temp-ambient)*m.exp(-k) + dt_heat
