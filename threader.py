@@ -37,11 +37,8 @@ class RepeatedThread():
 
 # Define OS-Interfaced Thread Class
 class OsCommand():
-    def __init__(self,message,threaded=True,delay=5,shell=False):
-        if shell:
-            self.command = message
-        else:
-            self.command = message.split()
+    def __init__(self,message,threaded=True,delay=5):
+        self.command = message.split()
         self.dly_time = delay
         self.shell = shell
         if threaded:
@@ -51,8 +48,7 @@ class OsCommand():
     
     def run(self):
         time.sleep(self.dly_time)
-        proc = Popen(self.command, stdin=PIPE, stderr=PIPE,
-                     universal_newlines=True, shell=True)
+        proc = Popen(self.command, stdin=PIPE, stderr=PIPE,universal_newlines=True)
         response = proc.communicate()[1]
         return(response)
 

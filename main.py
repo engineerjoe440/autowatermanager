@@ -88,7 +88,7 @@ def grn_callback(channel):
         # Test for Reboot Criteria
         if all(hardware.get_btn()) and t_cnt>1:
             # Reboot System
-            OsCommand('sudo reboot')
+            OsCommand('sudo reboot now')
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
             modelTimer.stop()
@@ -100,7 +100,7 @@ def grn_callback(channel):
             return
         elif (t_cnt > 10) and not (rebt or shdn):
             # Reboot System
-            OsCommand('sudo reboot')
+            OsCommand('sudo reboot now')
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
             modelTimer.stop()
