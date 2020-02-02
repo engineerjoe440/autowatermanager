@@ -655,7 +655,7 @@ def upgrade_server():
     # Passed Credentials, Perform Upgrade to Codebase
     upgrade_code(servicerestart=False)
     # Perform System Update and Upgrade, One-Shot
-    cmd = OsCommand('sudo apt-get update && sudo apt-get upgrade -y',True,0)
+    cmd = OsCommand('sudo apt-get update && sudo apt-get upgrade -y',True,0,True)
     response = cmd.run()
     # Reboot System
     OsCommand('sudo reboot')
