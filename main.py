@@ -131,8 +131,9 @@ def red_callback(channel):
             rebt = True
             return
         elif (t_cnt > 3) and not (rebt or shdn):
-            # Display Device IP Address
+            # Use GIT to Pull Updated Source Code
             hardware.set_lcd("Source-Code-Update...")
+            modelTimer.stop()
             repo = git.Git()
             status = repo.pull()
             # Restart Service
