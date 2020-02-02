@@ -130,6 +130,14 @@ def red_callback(channel):
             modelTimer.stop()
             rebt = True
             return
+        elif (t_cnt > 3) and not (rebt or shdn):
+            # Display Device IP Address
+            hardware.set_lcd("Source-Code-Update...")
+            repo = git.Git()
+            status = repo.pull()
+            # Restart Service
+            OsCommand('sudo service AutoWaterWeb restart')
+            return
         elif (t_cnt > 10) and not (rebt or shdn):
             # Shut Down System
             OsCommand('sudo shutdown')
