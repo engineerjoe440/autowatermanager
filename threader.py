@@ -39,7 +39,7 @@ class RepeatedThread():
 class OsCommand():
     def __init__(self,message,threaded=True,delay=5,shell=False):
         if shell:
-            shell.command = message
+            self.command = message
         else:
             self.command = message.split()
         self.dly_time = delay
