@@ -40,7 +40,6 @@ class OsCommand():
     def __init__(self,message,threaded=True,delay=5):
         self.command = message.split()
         self.dly_time = delay
-        self.shell = shell
         if threaded:
             t = Thread(target=self.run)
             t.start()
