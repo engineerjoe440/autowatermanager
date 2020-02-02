@@ -334,6 +334,8 @@ class system_model():
             # Determine Number to Be Enabled
             if min(c_temps) > self.turn_on:
                 # All Water Temperatures are Above Minimum Threshold
+                if n_cycles != 0:
+                    n_cycles = 1 # Catch Before Divide By Zero Error
                 n_contr = int(len(models)/(n_cycles))
                 # Split into Active and Not Active Groups
                 active = models[:n_contr]
