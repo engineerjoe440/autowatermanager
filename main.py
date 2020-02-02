@@ -278,7 +278,7 @@ def modelUpdate():
             if enerrmsg:
                 errcont = emailtemplate(error_notice,
                                         bodycontext={'notice':
-                                        "Model Has Been Nullified."})
+                                        "Model Has Been Nullified. "+str(e)})
                 send_email([emailadd1,emailadd2,emailadd3],errcont)
             modelUpdate.stop()
     except Exception as e:
@@ -305,7 +305,7 @@ def modelUpdate():
             if enerrmsg:
                 errcont = emailtemplate(error_notice,
                                         bodycontext={'notice':
-                                        "Exception in Temperature Model Update."})
+                                        "Exception in Temperature Model Update. "+str(e)})
                 send_email([emailadd1,emailadd2,emailadd3],errcont)
 ####################################################################################
 
