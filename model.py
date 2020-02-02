@@ -161,7 +161,7 @@ class unit_model():
         k = self._k
         ambient = mintemp
         # Iteratively Calculate Baseline Number of Cycles
-        while ambient <= maxtemp:
+        while ambient <= maxtemp + step_size:
             recovery = 0
             rest = 0
             temp_rest = temp_recovr
