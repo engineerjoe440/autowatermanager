@@ -18,6 +18,8 @@ import os
 import time
 import git
 import csv
+import traceback
+import logging
 from bottle import route, run, template, static_file, error
 from bottle import request, redirect, Bottle, auth_basic, abort
 import configparser
@@ -242,9 +244,12 @@ def modelUpdate():
                                       "Pole6A","Pole6B","StockPole",
                                       "PowerConsumption(kW-min)","HTTP-ERR","HOST-IP"])
             file_writer.writerow(csv_list)
-    except:
+    except Exception as e:
         hardware.set_led(red=True)
         hardware.set_lcd("ERROR:Model","")
+        print("Unhandled Error in Update.")
+        print(e)
+        logging.error(traceback.format_exc())
         # If Error Messages Are Enabled, Send Email Message
         if enerrmsg:
             errcont = emailtemplate(error_notice,
