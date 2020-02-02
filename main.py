@@ -658,7 +658,7 @@ def upgrade_server():
     cmd = OsCommand('sudo apt-get update && sudo apt-get upgrade -y',False,0,True)
     response = cmd.run()
     # Reboot System
-    OsCommand('sudo reboot')
+    OsCommand('sudo reboot',shell=True)
     return(response)
 ####################################################################################
 
