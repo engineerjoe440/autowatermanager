@@ -35,7 +35,9 @@ from threader import RepeatedThread, OsCommand, CallThread
 # Instantiate Objects
 Webapp = Bottle()
 hardware = BarnHardware()
-model = system_model(hardware.get_temp())
+t0 = hardware.get_temp()
+if t0 < 32: t0 = t0 - 5
+model = system_model(t0)
 
 # Indicate Boot on LCD
 hardware.set_lcd("Auto-Water-Manager","BOOT...")
