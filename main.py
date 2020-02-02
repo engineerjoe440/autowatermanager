@@ -25,6 +25,7 @@ from bottle import request, redirect, Bottle, auth_basic, abort
 import configparser
 import outletoperate as outlet
 from datetime import datetime
+from pyping import ping
 from model import unit_model, system_model
 import pam # Authentication Engine
 from barnhardware import BarnHardware
@@ -97,8 +98,14 @@ def grn_callback(channel):
             rebt = True
             return
         elif (t_cnt > 3) and not (rebt or shdn):
+            # Ping Resource for Testing
+            ok = ping('192.168.254.254').ret_code
+            if ok == 0:
+                png_resp = "OK"
+            else:
+                png_resp = "FAIL"
             # Display Device IP Address
-            hardware.set_lcd("IP: "+hardware.get_ip_adr())
+            hardware.set_lcd("IP: "+hardware.get_ip_adr(),"Ping: "+png_resp)
             return
         elif (t_cnt > 10) and not (rebt or shdn):
             # Reboot System
@@ -660,7 +667,6 @@ def confirm_user(user, password):
 @Webapp.route('/deletelogs')
 @Webapp.route('/deletelog')
 @Webapp.route('/delete')
-@auth_basic(confirm_user)
 def delete_log_files():
     # Attempt Deleting Files that May (or may not) be Present
     # Logfile
@@ -677,7 +683,6 @@ def delete_log_files():
 # Define Refresh Code Functional Operation
 @Webapp.route('/gitpull')
 @Webapp.route('/git')
-@auth_basic(confirm_user)
 def upgrade_code(servicerestart=True):
     # Passed Credentials, Perform Update
     repo = git.Git()
