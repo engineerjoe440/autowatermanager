@@ -270,7 +270,7 @@ def modelUpdate():
                 sys_ok_cnt +=1
         else: # Model is None... That's a Problem
             hardware.set_led(red=True)
-            hardware.set_lcd("ERROR:Model","")
+            hardware.set_lcd("ERROR:Model-is-Null","")
             print("Unhandled Error in Update.")
             print(e)
             logging.error(traceback.format_exc())
@@ -286,6 +286,7 @@ def modelUpdate():
         if sys_err_cnt > 5:
             sys_err_cnt = 0
             red_callback()
+            hardware.set_lcd("Auto-Disabled:Model-Error")
             print("Unhandled Error in Update. Disabling System")
             print(e)
             logging.error(traceback.format_exc())
@@ -297,7 +298,7 @@ def modelUpdate():
                 send_email([emailadd1,emailadd2,emailadd3],errcont)
         else:
             hardware.set_led(red=True)
-            hardware.set_lcd("ERROR:Model","")
+            hardware.set_lcd("ERROR:Model")
             print("Unhandled Error in Update.")
             print(e)
             logging.error(traceback.format_exc())

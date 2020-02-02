@@ -148,7 +148,7 @@ class unit_model():
         self._temp = newTemp
         return(self._heater_en)
     
-    def cycle_baseline(self,lut_fmt=True,mintemp=22,maxtemp=31.9,units=12):
+    def cycle_baseline(self,lut_fmt=True,mintemp=22,maxtemp=32.0,units=12):
         # Method to Calculate the Baseline Number of Operating Cycles Allowed
         step_size = 0.1
         baseline = [] # Empty List to Begin
@@ -238,7 +238,7 @@ class system_model():
         self.shutoff = shutoff
         self.turn_on = turn_on
         self.basemintemp=22
-        self.basemaxtemp=31.9
+        self.basemaxtemp=32.0
         self.num_units = 12
         # Start Configuration Parser Object
         configfile = 'config.ini'
