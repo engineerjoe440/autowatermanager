@@ -172,101 +172,115 @@ def modelUpdate():
     # Use Try/Except to Catch Any Errors in Thread
     try:
         global http_err, http_err_host, cur_heater_states, sys_err_cnt, sys_ok_cnt
-        # Update LCD with Time and Temperature
-        hardware.set_lcd(datetime.now().strftime("%d/%m/%Y-%H:%M"),
-                         hardware.get_temp(fmt="{:.2f}'F"))
-        # Set Force Off When Power Source Absent
-        if not hardware.get_pwr_src()[0]:
-            model.set_force("all",False,5)
-        # Update Model
-        model.update(hardware.get_temp())
-        status = model.get_state()
-        http_err = False
-        http_err_host = ""
-        # Send Message to Smart Plugs
-        for ind,cur in enumerate(status):
-            # Identify Current Heater State
-            try:
-                prv = outlet.tasmota_status(ind)
-            except:
-                prv = None
-            cur_heater_states[ind] = prv # Update Global State Monitor
-            # Status Change and Not Invalid Heater Control Object
-            if (cur != prv) and (prv != None):
-                # Attempt Control
+        if model != None
+            # Update LCD with Time and Temperature
+            hardware.set_lcd(datetime.now().strftime("%d/%m/%Y-%H:%M"),
+                             hardware.get_temp(fmt="{:.2f}'F"))
+            # Set Force Off When Power Source Absent
+            if not hardware.get_pwr_src()[0]:
+                model.set_force("all",False,5)
+            # Update Model
+            model.update(hardware.get_temp())
+            status = model.get_state()
+            http_err = False
+            http_err_host = ""
+            # Send Message to Smart Plugs
+            for ind,cur in enumerate(status):
+                # Identify Current Heater State
                 try:
-                    # Send Message to Smart Plug
-                    rsp = outlet.tasmota_set(ind,cur)
+                    prv = outlet.tasmota_status(ind)
                 except:
-                    rsp = False
-                http_err = http_err or (not rsp)
-                if not rsp:
-                    # Control Error has Occurred
-                    hid = outlet.heater_lut[ind]
-                    http_err_host += '-'+hid # Append Heater ID
-                    model.set_fail(ind) # Reset Model to Account for Failure
-                    if enerrmsg:
-                        errcont = emailtemplate(error_notice,
-                                                bodycontext={'notice':
-                                                "Control Failure for Heater ["+hid+"]."})
-                        send_email([emailadd1,emailadd2,emailadd3],errcont)
-            # Invalid Heater Control Object
-            elif prv == None:
-                http_err_host += '-'+outlet.heater_lut[ind] # Append Heater ID
-        # Collect Date Time
-        dt_str = datetime.now().strftime("%d/%m/%Y-%H:%M:%S")
-        # Generate Full CSV List for new Row
-        csv_list = [dt_str, hardware.get_temp()]
-        csv_list.extend(status)
-        csv_list.extend([model.get_consumption(),http_err,http_err_host])
-        # Count Rows in File
-        try:
-            with open(logfile, 'r') as file:
-                # Count Number of Rows in File, Calculate Power and Avg Temp
-                row_count = 0
-                t_power = 0
-                t_temp = 0
-                # Iterate over each row
-                for row in csv.reader(file, delimiter=','):
-                    row_count += 1
-                    # Skip the header, then sum the power and temp
-                    if row_count > 1:
-                        t_power += float(row[15])
-                        t_temp += float(row[1])
-                # Check for Over-Full File
-                if row_count == 43200:
-                    # Rename File, so New File Can Be Generated
-                    os.rename(logfile, logfileold)
-                    # Evaluate Average Temperature and Total Power
-                    tot_power = t_power/60
-                    avg_temp = t_temp/(row_count-1)
-                    # If Log Messages are Enabled, Send Email Messages
-                    if enlogmsg:
-                        c_dict = {'power_kw':tot_power, 'avg_temp':avg_temp}
-                        content = emailtemplate(new_log_notice,
-                                                bodycontext=c_dict)
-                        send_email([emailadd1,emailadd2,emailadd3],content,logfileold)
-                    # Reset Row Count
+                    prv = None
+                cur_heater_states[ind] = prv # Update Global State Monitor
+                # Status Change and Not Invalid Heater Control Object
+                if (cur != prv) and (prv != None):
+                    # Attempt Control
+                    try:
+                        # Send Message to Smart Plug
+                        rsp = outlet.tasmota_set(ind,cur)
+                    except:
+                        rsp = False
+                    http_err = http_err or (not rsp)
+                    if not rsp:
+                        # Control Error has Occurred
+                        hid = outlet.heater_lut[ind]
+                        http_err_host += '-'+hid # Append Heater ID
+                        model.set_fail(ind) # Reset Model to Account for Failure
+                        if enerrmsg:
+                            errcont = emailtemplate(error_notice,
+                                                    bodycontext={'notice':
+                                                    "Control Failure for Heater ["+hid+"]."})
+                            send_email([emailadd1,emailadd2,emailadd3],errcont)
+                # Invalid Heater Control Object
+                elif prv == None:
+                    http_err_host += '-'+outlet.heater_lut[ind] # Append Heater ID
+            # Collect Date Time
+            dt_str = datetime.now().strftime("%d/%m/%Y-%H:%M:%S")
+            # Generate Full CSV List for new Row
+            csv_list = [dt_str, hardware.get_temp()]
+            csv_list.extend(status)
+            csv_list.extend([model.get_consumption(),http_err,http_err_host])
+            # Count Rows in File
+            try:
+                with open(logfile, 'r') as file:
+                    # Count Number of Rows in File, Calculate Power and Avg Temp
                     row_count = 0
-        except FileNotFoundError:
-            row_count = 0
-        # Write to File as Necessary
-        with open(logfile, 'a') as file:
-            # Generate Reader/Writer Objects
-            file_writer = csv.writer(file, delimiter=',')
-            # Perform Special Operations for First Row
-            if row_count < 1:
-                file_writer.writerow(["DateTime","Temperature","Pole1A","Pole1B",
-                                      "Pole2A","Pole2B","Pole3A","Pole3B",
-                                      "Pole4A","Pole4B","Pole5A","Pole5B",
-                                      "Pole6A","Pole6B","StockPole",
-                                      "PowerConsumption(kW-min)","HTTP-ERR","HOST-IP"])
-            file_writer.writerow(csv_list)
-        if sys_ok_cnt > 5:
-            sys_err_cnt -= 1
-            sys_ok_cnt = 0
-        else:
-            sys_ok_cnt +=1
+                    t_power = 0
+                    t_temp = 0
+                    # Iterate over each row
+                    for row in csv.reader(file, delimiter=','):
+                        row_count += 1
+                        # Skip the header, then sum the power and temp
+                        if row_count > 1:
+                            t_power += float(row[15])
+                            t_temp += float(row[1])
+                    # Check for Over-Full File
+                    if row_count == 43200:
+                        # Rename File, so New File Can Be Generated
+                        os.rename(logfile, logfileold)
+                        # Evaluate Average Temperature and Total Power
+                        tot_power = t_power/60
+                        avg_temp = t_temp/(row_count-1)
+                        # If Log Messages are Enabled, Send Email Messages
+                        if enlogmsg:
+                            c_dict = {'power_kw':tot_power, 'avg_temp':avg_temp}
+                            content = emailtemplate(new_log_notice,
+                                                    bodycontext=c_dict)
+                            send_email([emailadd1,emailadd2,emailadd3],content,logfileold)
+                        # Reset Row Count
+                        row_count = 0
+            except FileNotFoundError:
+                row_count = 0
+            # Write to File as Necessary
+            with open(logfile, 'a') as file:
+                # Generate Reader/Writer Objects
+                file_writer = csv.writer(file, delimiter=',')
+                # Perform Special Operations for First Row
+                if row_count < 1:
+                    file_writer.writerow(["DateTime","Temperature","Pole1A","Pole1B",
+                                          "Pole2A","Pole2B","Pole3A","Pole3B",
+                                          "Pole4A","Pole4B","Pole5A","Pole5B",
+                                          "Pole6A","Pole6B","StockPole",
+                                          "PowerConsumption(kW-min)","HTTP-ERR","HOST-IP"])
+                file_writer.writerow(csv_list)
+            if sys_ok_cnt > 5:
+                sys_err_cnt -= 1
+                sys_ok_cnt = 0
+            else:
+                sys_ok_cnt +=1
+        else: # Model is None... That's a Problem
+            hardware.set_led(red=True)
+            hardware.set_lcd("ERROR:Model","")
+            print("Unhandled Error in Update.")
+            print(e)
+            logging.error(traceback.format_exc())
+            # If Error Messages Are Enabled, Send Email Message
+            if enerrmsg:
+                errcont = emailtemplate(error_notice,
+                                        bodycontext={'notice':
+                                        "Model Has Been Nullified."})
+                send_email([emailadd1,emailadd2,emailadd3],errcont)
+            modelUpdate.stop()
     except Exception as e:
         sys_err_cnt += 1
         if sys_err_cnt > 5:
@@ -646,7 +660,7 @@ def update_email():
 def control_barn_light():
     # Toggle the Barn Light
     rStatus = hardware.get_rly()[lightRelay]
-    if rStatus:
+    if rStatus and model != None:
         CallThread(grn_callback,1,None)
     hardware.set_rly(lightRelay,(not rStatus))
     redirect('/index.html')
