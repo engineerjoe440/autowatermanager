@@ -233,6 +233,8 @@ def modelUpdate():
                     prv = outlet.tasmota_status(ind)
                 except:
                     prv = None
+                    # Attempt Resolving
+                    outlet.resolve(outlet.hostname_lut[ind])
                 cur_heater_states[ind] = prv # Update Global State Monitor
                 # Status Change and Not Invalid Heater Control Object
                 if (cur != prv) and (prv != None):
