@@ -2,6 +2,7 @@
 <html lang="en-GB" dir="ltr">
 	<head>
 		<title>AutoWaterManager</title>
+        <meta http-equiv="refresh" content="180">
 		<meta charset="utf-8" />
 		<meta name="author" content="JoeStanley" />
 		<meta name="viewport" content="width=1150" />
@@ -84,6 +85,7 @@ Settings		</a>
 						<div class="text-inner">
 							
                             <table style="width:100%">
+                                <tr><th> {{PAGE['lastupdate']}} </th></tr>
                                 <tr>
                                     <th colspan="2">Ambient Air Temperature: &nbsp &nbsp {{PAGE['temp']}}&#176F <br> Daylight: &nbsp {{PAGE['daylight']}} </th>
                                     <th> &nbsp </th>

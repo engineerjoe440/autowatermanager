@@ -91,6 +91,7 @@ http_err_host = ""
 cur_heater_states = [False]*13
 sys_err_cnt = 0
 sys_ok_cnt = 0
+lastupdate = ''
 ####################################################################################
 
 
@@ -214,6 +215,7 @@ def modelUpdate():
         if model != None:
             # Collect Date Time
             dt_str = datetime.now().strftime("%d/%m/%Y-%H:%M:%S")
+            lastupdate = dt_str
             # Update LCD with Time and Temperature
             hardware.set_lcd(dt_str, hardware.get_temp(fmt="{:.2f}'F"))
             # Set Force Off When Power Source Absent
@@ -499,6 +501,7 @@ def index():
         'batlevel':hardware.get_bat_chg(),'batvolt':round(hardware.get_voltage(),2),
         'hosterrors':http_err,'activesrc':hardware.get_pwr_src()[0],
         'modelSta':str(hardware.get_led()[0]),'oldlog':oldlog,
+        'lastupdate':lastupdate,
         'pole1a': tristatus(0), 'nam1a':animal1a,
         'pole1b': tristatus(1), 'nam1b':animal1b,
         'pole2a': tristatus(2), 'nam2a':animal2a,
@@ -666,7 +669,7 @@ def force_heaters(force,state,heaterind):
     heater_ind = int(heaterind)
     # Do Force with Model
     try:
-        outlet.tasmota_set(heater_ind,option):
+        outlet.tasmota_set(heater_ind,option)
         model.set_force(heater_ind,option,time_set)
         CallThread(modelUpdate,0) # Update Model (will inherently cause some minor inaccuracy)
     except:
