@@ -85,7 +85,7 @@ Settings		</a>
 						<div class="text-inner">
 							
                             <table style="width:100%">
-                                <tr><th> {{PAGE['lastupdate']}} </th></tr>
+                                <tr><th colspan="6"> {{PAGE['lastupdate']}} </th></tr>
                                 <tr>
                                     <th colspan="2">Ambient Air Temperature: &nbsp &nbsp {{PAGE['temp']}}&#176F <br> Daylight: &nbsp {{PAGE['daylight']}} </th>
                                     <th> &nbsp </th>
