@@ -54,7 +54,7 @@ emaildir   = base+"/email/"
 logfile    = filedir+"historiclog.csv"
 logfileold = filedir+"historiclog_old.csv"
 systemlog  = filedir+"{}_autowatermanager.log".format(
-                      datetime.now().strftime("%d/%m/%Y-%H:%M"))
+                      datetime.now().strftime("%d-%m-%Y-%H:%M"))
 
 # Define Logging System
 logging.basicConfig(filename=systemlog, level=logging.DEBUG,
