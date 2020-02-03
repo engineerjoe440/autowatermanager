@@ -59,3 +59,50 @@ function input_to_redirect(prompt_string, default_string='',
         location.replace(url)
     }
 }
+
+// Define standard confirmation prompt function
+function confirm_to_redirect(prompt_string, uri='', domain=null){
+    // Confirm redirect with user
+    var userinput = confirm(prompt_string);
+    if (userinput == true){
+        // Capture Domain if Needed
+        if (domain == null){
+            var arr = window.location.href.split("/");
+            domain = arr[0] + "//" + arr[2];
+        }
+        // Construct URL to Redirect to
+        var url = '';
+        url = domain + '/' + uri;
+        // Redirect
+        location.replace(url);
+    }
+}
+
+// Define Internal Countdown Redirect
+function decrement_redirect(id, uri='', domain=null){
+    var i = document.getElementById(id);
+    // Redirect When Timer Expires
+    if (parseInt(i.innerHTML)<=0) {
+        // Capture Domain if Needed
+        if (domain == null){
+            var arr = window.location.href.split("/");
+            domain = arr[0] + "//" + arr[2];
+        }
+        // Construct URL to Redirect to
+        var url = '';
+        url = domain + '/' + uri;
+        // Redirect
+        location.replace(url);
+    }
+    // Count Down
+    if (parseInt(i.innerHTML)!=0) {
+        i.innerHTML = parseInt(i.innerHTML)-1;
+    }
+}
+// Define Countdown Redirect Call
+function countdown_redirect(id, uri='', domain=null){
+    // Set Interval
+    setInterval(function(){decrement_redirect(id, uri, domain);},1000);
+}
+
+// END

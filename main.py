@@ -9,9 +9,10 @@ hostname = '0.0.0.0'
 port = 80
 lightRelay = 2 # 0-indexed
 
-# Define Static Parameters
+# Define Template Views
 index_page = 'index.tpl'
 settings_page = 'settings.tpl'
+update_page = 'update.tpl'
 
 # Import Dependencies
 import os
@@ -52,7 +53,23 @@ emaildir   = base+"/email/"
 # Define Log Files and Error Log File
 logfile    = filedir+"historiclog.csv"
 logfileold = filedir+"historiclog_old.csv"
-errlog     = filedir+"errorlog.txt"
+systemlog  = filedir+"{}_autowatermanager.log".format(
+                      datetime.now().strftime("%d/%m/%Y-%H:%M"))
+
+# Define Logging System
+logging.basicConfig(filename=systemlog, level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(name)s %(message)s')
+logger = logging.getLogger(__name__)
+logger.info("AutoWaterManager Booting.")
+
+# Delete "Old" Log Files
+files = [f for f in os.listdir(filedir) if os.path.isfile(os.path.join(filedir, f))]
+files = [os.path.join(filedir, f) for f in files if f.endswith('.log')] # add path to each file
+files.sort(key=os.path.getmtime)
+if len(files) > 5:
+    del_files = files[:len(files)-5]
+    for f in del_files:
+        os.remove(f)
 
 # Define Email Template Files
 new_log_notice  = emaildir+"newreport.emlx"
@@ -79,12 +96,34 @@ sys_ok_cnt = 0
 
 
 ####################################################################################
+# Define System-Enable/Disable Functions
+def sys_enable():
+    model = system_model(hardware.get_temp()) # Activate Model
+    modelTimer.start()
+    hardware.set_lcd("System-Enabled")
+    CallThread(hardware.set_lcd,3,"System-OK",hardware.get_temp(fmt="{:.2f}'F"))
+    hardware.set_led(grn=True,red=False)
+def sys_disable():
+    model = None # Deactivate the Model
+    modelTimer.stop()
+    hardware.set_lcd("System-Disabled")
+    hardware.set_led(grn=False,red=True)
+####################################################################################
+
+
+
+####################################################################################
 # Define Push-Button Call-Back Functions
 step = 0.01
+dbnc = 0.1
 rebt = False
 shdn = False
 def grn_callback(channel):
     global model, rebt, shdn
+    # Debounce
+    time.sleep(dbnc)
+    if not hardware.get_btn()[0]:
+        return
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
     while hardware.get_btn()[0]:
@@ -119,14 +158,14 @@ def grn_callback(channel):
             return
     # Start Control Model Updates
     if not (rebt or shdn):
-        model = system_model(hardware.get_temp()) # Re-Activate Model
-        modelTimer.start()
-        hardware.set_lcd("System-Enabled")
-        CallThread(hardware.set_lcd,3,"System-OK",hardware.get_temp(fmt="{:.2f}'F"))
-        hardware.set_led(grn=True,red=False)
+        sys_enable()
 
 def red_callback(channel):
     global model, rebt, shdn
+    # Debounce
+    time.sleep(dbnc)
+    if not hardware.get_btn()[1]:
+        return
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
     while hardware.get_btn()[1]:
@@ -143,10 +182,11 @@ def red_callback(channel):
             return
         elif (t_cnt > 3) and not (rebt or shdn):
             # Use GIT to Pull Updated Source Code
-            hardware.set_lcd("Source-Code-Update...")
+            hardware.set_lcd("Pulling-Source-Code...")
             modelTimer.stop()
             repo = git.Git()
             status = repo.pull()
+            hardware.set_lcd("Restarting-Service...")
             # Restart Service
             OsCommand('sudo service AutoWaterWeb restart')
             return
@@ -160,10 +200,7 @@ def red_callback(channel):
             return
     # Stop Control Model Updates
     if not (rebt or shdn):
-        model = None # Deactivate the Model
-        modelTimer.stop()
-        hardware.set_lcd("System-Disabled")
-        hardware.set_led(grn=False,red=True)
+        sys_disable()
 ####################################################################################
 
 
@@ -175,9 +212,10 @@ def modelUpdate():
     try:
         global http_err, http_err_host, cur_heater_states, sys_err_cnt, sys_ok_cnt
         if model != None:
+            # Collect Date Time
+            dt_str = datetime.now().strftime("%d/%m/%Y-%H:%M:%S")
             # Update LCD with Time and Temperature
-            hardware.set_lcd(datetime.now().strftime("%d/%m/%Y-%H:%M"),
-                             hardware.get_temp(fmt="{:.2f}'F"))
+            hardware.set_lcd(dt_str, hardware.get_temp(fmt="{:.2f}'F"))
             # Set Force Off When Power Source Absent
             if not hardware.get_pwr_src()[0]:
                 model.set_force("all",False,5)
@@ -216,8 +254,6 @@ def modelUpdate():
                 # Invalid Heater Control Object
                 elif prv == None:
                     http_err_host += '-'+outlet.heater_lut[ind] # Append Heater ID
-            # Collect Date Time
-            dt_str = datetime.now().strftime("%d/%m/%Y-%H:%M:%S")
             # Generate Full CSV List for new Row
             csv_list = [dt_str, hardware.get_temp()]
             csv_list.extend(status)
@@ -281,40 +317,48 @@ def modelUpdate():
                 errcont = emailtemplate(error_notice,
                                         bodycontext={'notice':
                                         "Model Has Been Nullified. "+str(e)})
-                send_email([emailadd1,emailadd2,emailadd3],errcont)
+                send_email([emailadd1,emailadd2,emailadd3],errcont,systemlog)
             modelUpdate.stop()
     except Exception as e:
         sys_err_cnt += 1
         if sys_err_cnt > 5:
             sys_err_cnt = 0
-            red_callback()
-            hardware.set_lcd("Auto-Disabled:Model-Error")
+            sys_disable()
+            hardware.set_lcd("AutoDisabled:Model-ERR")
             print("Unhandled Error in Update. Disabling System")
             print(e)
-            logging.error(traceback.format_exc())
+            logging.exception("DISABLING SYSTEM!"+traceback.format_exc())
             # If Error Messages Are Enabled, Send Email Message
             if enerrmsg:
                 errcont = emailtemplate(error_notice,
                                         bodycontext={'notice':
                 "More than 5 errors have occurred, the system is disabling itself."})
-                send_email([emailadd1,emailadd2,emailadd3],errcont)
+                send_email([emailadd1,emailadd2,emailadd3],errcont,systemlog)
         else:
             hardware.set_led(red=True)
             hardware.set_lcd("ERROR:Model")
             print("Unhandled Error in Update.")
             print(e)
-            logging.error(traceback.format_exc())
+            logging.exception(traceback.format_exc())
             # If Error Messages Are Enabled, Send Email Message
             if enerrmsg:
                 errcont = emailtemplate(error_notice,
                                         bodycontext={'notice':
                                         "Exception in Temperature Model Update. "+str(e)})
-                send_email([emailadd1,emailadd2,emailadd3],errcont)
+                send_email([emailadd1,emailadd2,emailadd3],errcont,systemlog)
 ####################################################################################
 
 
 
 ####################################################################################
+# Define Code Update Function
+def upgrade_code():
+    # Passed Credentials, Perform Update
+    repo = git.Git()
+    status = repo.pull()
+    OsCommand('sudo service AutoWaterWeb restart')
+    return(status)
+
 # Define Temperature Retrieval Function
 def get_temp():
     temp = round(hardware.get_temp(),2)
@@ -664,23 +708,10 @@ def update_email():
 def control_barn_light():
     # Toggle the Barn Light
     rStatus = hardware.get_rly()[lightRelay]
-    if rStatus and model != None:
-        CallThread(grn_callback,1,None)
     hardware.set_rly(lightRelay,(not rStatus))
     redirect('/index.html')
     return
 
-# Define Authenticator Function Using PAM
-def confirm_user(user, password):
-    try:
-        auth = pam.pam()
-        if not (auth.authenticate(user, password)):
-            print("Unauthorized Control Attempt!")
-            abort(code=403)
-        else:
-            return(True)
-    except:
-        abort(code=403)
 # Define Delete Log Files Page
 @Webapp.route('/deletelogs')
 @Webapp.route('/deletelog')
@@ -701,13 +732,12 @@ def delete_log_files():
 # Define Refresh Code Functional Operation
 @Webapp.route('/gitpull')
 @Webapp.route('/git')
-def upgrade_code(servicerestart=True):
-    # Passed Credentials, Perform Update
-    repo = git.Git()
-    status = repo.pull()
-    if servicerestart:
-        OsCommand('sudo service AutoWaterWeb restart')
-        return(status)
+def web_upgrade_code():
+    # Perform Update
+    tags = {'response': upgrade_code()}
+    # Respond with Friendly Webpage
+    html = serve_template( tags, update_page )
+    return( html )
 ####################################################################################
 
 
@@ -738,17 +768,20 @@ try:
             # Heater Control Not Defined
             print("WARNING:",deviceId,'Is Not Available.')
             hardware.set_lcd(deviceId+"NotAvail")
+            logger.warning("HTTP Comm. Warning: {} is not available.".format(deviceId))
             time.sleep(2)
         if sta == False:
             # Heater Not Responding
             print("ERROR:",deviceId,'Is Not Responsive.')
             hardware.set_lcd(deviceId+"NoResponse")
+            logger.warning("HTTP Comm. Error: {} is not responsive.".format(deviceId))
             time.sleep(2)
     # Start Model Timer to Manage Updates, Load Temperature Each Time
     modelTimer = RepeatedThread(60, modelUpdate)
     # Update LCD with System OK Notice
     hardware.set_led(grn=True) # Set Green LED to Indicate Active Status
     hardware.set_lcd("System-OK",hardware.get_temp(fmt="{:.2f}'F")) # Update LCD
+    logger.info("AutoWaterManager Web Application Launch.")
     # Start Web-App
     Webapp.run(host=hostname, port=port)
 except:
@@ -756,15 +789,17 @@ except:
     hardware.set_lcd("SERVER-CRASHED!")
     hardware.set_led(True,True)
     modelTimer.stop()
+    logger.error("AutoWaterManager Web Application Crashed. Manual Restart Required.")
     # If Error Messages Are Enabled, Send Email Message
     if enerrmsg:
         errcont = emailtemplate(error_notice,
                                 bodycontext={'notice':
                                 "Web Server Crashed! Manual Restart Required"})
-        send_email([emailadd1,emailadd2,emailadd3],errcont)
+        send_email([emailadd1,emailadd2,emailadd3],errcont,systemlog)
 finally:
     # Regardless of Error or Quit, Stop Timer for Model Operation
     modelTimer.stop()
+    logger.warning("AutoWaterManager Service Shutting Down.")
     # Display Failure
     hardware.set_lcd("AutoWaterWeb-Service","DOWN")
 ####################################################################################

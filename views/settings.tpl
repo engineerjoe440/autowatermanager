@@ -395,6 +395,19 @@ Settings		</a>
                                 </tr>
                             </table>
                             </form>
+                            
+                            </br>
+                            </br>
+                            </br>
+                            
+                            <table style="width:100%">
+                                <tr>
+                                    <th><input type="button" value="Update System" onclick="confirm_to_redirect('Are you sure you wish to update?','gitpull');"/></th>
+                                    <th> &nbsp </th>
+                                    <th><input type="button" value="Update System" onclick="confirm_to_redirect('Are you sure you wish to enable the system?','enable_system');"/></th>
+                                    <th><input type="button" value="Update System" onclick="confirm_to_redirect('Are you sure you wish to disable the system?','disable_system');"/></th>
+                                </tr>
+                            </table>
 						</div>
 					</div>
 				

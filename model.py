@@ -170,7 +170,7 @@ class unit_model():
             # Iteratively Process the Heating/Cooling Performance
             while state != 0:
                 if temp_recv < temp_recovr:
-                    heatC = (temp_recv-32)*5/9 + (60*Pkw)/(4.2*liters(volume))
+                    heatC = (temp_recv-32)*5/9 + (60*Pkw)/(4.2*liters(volume)+1E-12)
                     heat = (heatC*9/5) + 32
                     dt_heat = heat-temp_recv
                     temp_recv = ambient + (temp_recv-ambient)*m.exp(-k) + dt_heat
@@ -334,7 +334,7 @@ class system_model():
             # Determine Number to Be Enabled
             if min(c_temps) > self.turn_on:
                 # All Water Temperatures are Above Minimum Threshold
-                if n_cycles != 0:
+                if n_cycles == 0:
                     n_cycles = 1 # Catch Before Divide By Zero Error
                 n_contr = int(len(models)/(n_cycles))
                 # Split into Active and Not Active Groups
