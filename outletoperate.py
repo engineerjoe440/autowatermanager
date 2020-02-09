@@ -1,5 +1,7 @@
 # Barn Automation Outlet Operation Script
 # WiFi Dongle Support: https://www.raspberrypi.org/forums/viewtopic.php?p=462982#p462982
+# WiFi SSID: BarnNet
+# WiFi PASS: $t@nl3yt3ch
 
 # Import Required Libraries
 import requests
@@ -23,7 +25,7 @@ h5A = '2343'
 h5B = ''
 h6A = ''
 h6B = '7377'
-hstock = '3419'
+hstock = '3419' # '4072'
 
 # Define Look-Up-Tables
 state_lut = {False:'OFF', True:'ON'}

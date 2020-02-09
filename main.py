@@ -92,6 +92,7 @@ cur_heater_states = [False]*13
 sys_err_cnt = 0
 sys_ok_cnt = 0
 lastupdate = ''
+block_fp = False
 ####################################################################################
 
 
@@ -121,6 +122,9 @@ rebt = False
 shdn = False
 def grn_callback(channel):
     global model, rebt, shdn
+    # Block from Interference
+    if block_fp:
+        return
     # Debounce
     time.sleep(dbnc)
     if not hardware.get_btn()[0]:
@@ -163,6 +167,9 @@ def grn_callback(channel):
 
 def red_callback(channel):
     global model, rebt, shdn
+    # Block from Interference
+    if block_fp:
+        return
     # Debounce
     time.sleep(dbnc)
     if not hardware.get_btn()[1]:
@@ -325,7 +332,7 @@ def modelUpdate():
             modelUpdate.stop()
     except Exception as e:
         sys_err_cnt += 1
-        if sys_err_cnt > 5:
+        if sys_err_cnt > 10:
             sys_err_cnt = 0
             sys_disable()
             hardware.set_lcd("AutoDisabled:Model-ERR")
@@ -711,6 +718,14 @@ def update_email():
 
 @Webapp.route('/set_light', method='get')
 def control_barn_light():
+    global block_fp
+    # Block Surge Interference
+    def reset_fp_block():
+        global block_fp
+        block_fp = False # Reset to non-blocked status
+    block_fp = True # Assign Blocking Variable
+    # Set Thread to Clear Block after Period
+    CallThread(reset_fp_block, 10)
     # Toggle the Barn Light
     rStatus = hardware.get_rly()[lightRelay]
     hardware.set_rly(lightRelay,(not rStatus))
