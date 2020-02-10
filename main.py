@@ -164,6 +164,7 @@ def grn_callback(channel):
                 png_resp = "OK"
             else:
                 png_resp = "FAIL"
+                logging.error("PING Failed. Unable to communicate with router.")
             # Display Device IP Address
             hardware.set_lcd("IP: "+hardware.get_ip_adr(),"Ping: "+png_resp)
             return
