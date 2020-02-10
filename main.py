@@ -72,9 +72,10 @@ if len(files) > 5:
         os.remove(f)
 
 # Define Email Template Files
-new_log_notice  = emaildir+"newreport.emlx"
-error_notice    = emaildir+"errnotice.emlx"
-settings_notice = emaildir+"setnotice.emlx"
+new_log_notice   = emaildir+"newreport.emlx"
+error_notice     = emaildir+"errnotice.emlx"
+settings_notice  = emaildir+"setnotice.emlx"
+disenable_notice = emaildir+"disenable.emlx"
 
 # Start Configuration Parser Object
 configfile = 'config.ini'
@@ -99,15 +100,29 @@ block_fp = False
 
 ####################################################################################
 # Define System-Enable/Disable Functions
-def sys_enable():
+def sys_enable(src=None):
+    logging.info("System Has Been Enabled; Control Source Description: "+str(src))
     model = system_model(hardware.get_temp()) # Activate Model
     modelTimer.start()
+    # Send Email If Needed
+    if enerrmsg:
+        message = emailtemplate(disenable_notice,
+                                bodycontext={'state':"Enabled",
+                                             'source':str(src)})
+        CallThread(send_email,0,[emailadd1,emailadd2,emailadd3],message)
     hardware.set_lcd("System-Enabled")
     CallThread(hardware.set_lcd,3,"System-OK",hardware.get_temp(fmt="{:.2f}'F"))
     hardware.set_led(grn=True,red=False)
-def sys_disable():
+def sys_disable(src=None):
+    logging.info("System Has Been Disabled; Control Source Description: "+str(src))
     model = None # Deactivate the Model
     modelTimer.stop()
+    # Send Email If Needed
+    if enerrmsg:
+        message = emailtemplate(disenable_notice,
+                                bodycontext={'state':"Disabled",
+                                             'source':str(src)})
+        CallThread(send_email,0,[emailadd1,emailadd2,emailadd3],message)
     hardware.set_lcd("System-Disabled")
     hardware.set_led(grn=False,red=True)
 ####################################################################################
@@ -122,12 +137,10 @@ rebt = False
 shdn = False
 def grn_callback(channel):
     global model, rebt, shdn
-    # Block from Interference
-    if block_fp:
-        return
-    # Debounce
+    # Debounce and Block Interference
     time.sleep(dbnc)
-    if not hardware.get_btn()[0]:
+    if (not hardware.get_btn()[0]) or block_fp:
+        logging.warning("Green Button Callback Blocked")
         return
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
@@ -140,6 +153,7 @@ def grn_callback(channel):
             OsCommand('sudo reboot now')
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
+            logging.info("System Reboot.")
             modelTimer.stop()
             rebt = True
             return
@@ -158,21 +172,20 @@ def grn_callback(channel):
             OsCommand('sudo reboot now')
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
+            logging.info("System Reboot.")
             modelTimer.stop()
             rebt = True
             return
     # Start Control Model Updates
     if not (rebt or shdn):
-        sys_enable()
+        sys_enable(src="Green Button Callback")
 
 def red_callback(channel):
     global model, rebt, shdn
-    # Block from Interference
-    if block_fp:
-        return
-    # Debounce
+    # Debounce and Block Interference
     time.sleep(dbnc)
-    if not hardware.get_btn()[1]:
+    if (not hardware.get_btn()[1]) or block_fp:
+        logging.warning("Red Button Callback Blocked")
         return
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
@@ -185,6 +198,7 @@ def red_callback(channel):
             OsCommand('sudo reboot')
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
+            logging.info("System Reboot.")
             modelTimer.stop()
             rebt = True
             return
@@ -195,6 +209,7 @@ def red_callback(channel):
             repo = git.Git()
             status = repo.pull()
             hardware.set_lcd("Restarting-Service...")
+            logging.info("System Source Code Update. Restarting Service.")
             # Restart Service
             OsCommand('sudo service AutoWaterWeb restart')
             return
@@ -203,12 +218,13 @@ def red_callback(channel):
             OsCommand('sudo shutdown')
             hardware.set_led(grn=False,red=True)
             hardware.set_lcd("Shutting-Down...")
+            logging.info("System Shutdown.")
             modelTimer.stop()
             shdn = True
             return
     # Stop Control Model Updates
     if not (rebt or shdn):
-        sys_disable()
+        sys_disable(src="Red Button Callback")
 ####################################################################################
 
 
@@ -257,6 +273,7 @@ def modelUpdate():
                         hid = outlet.heater_lut[ind]
                         http_err_host += '-'+hid # Append Heater ID
                         model.set_fail(ind) # Reset Model to Account for Failure
+                        logging.warning("Control Failure for Heater ["+hid+"].")
                         if enerrmsg:
                             errcont = emailtemplate(error_notice,
                                                     bodycontext={'notice':
@@ -290,6 +307,10 @@ def modelUpdate():
                         # Evaluate Average Temperature and Total Power
                         tot_power = t_power/60
                         avg_temp = t_temp/(row_count-1)
+                        # Log "Rollover"
+                        logging.info("30-Day Period Rollover; AVG-TEMP: {}°F; TOT-POWER: {}kW".format(
+                            str(avg_temp),
+                            str(tot_power)))
                         # If Log Messages are Enabled, Send Email Messages
                         if enlogmsg:
                             c_dict = {'power_kw':tot_power, 'avg_temp':avg_temp}
@@ -364,9 +385,10 @@ def modelUpdate():
 ####################################################################################
 # Define Code Update Function
 def upgrade_code():
-    # Passed Credentials, Perform Update
+    # Perform Update
     repo = git.Git()
     status = repo.pull()
+    logging.info("System Source Code Update. Restarting Service.")
     OsCommand('sudo service AutoWaterWeb restart')
     return(status)
 
@@ -404,6 +426,7 @@ def tristatus(trough):
         return("OFF")
     # Catch All
     # If Error Messages Are Enabled, Send Email Message
+    logging.error("Error in Status Retrieval; Device Unresponsive; Index: "+str(trough))
     if enerrmsg:
         errcont = emailtemplate(error_notice,
                                 bodycontext={'notice':
@@ -548,7 +571,7 @@ def setpage():
         'p6bcheck':p6bserv, '6bpower':power6b, 'size6b':size6b, 'animal6b':animal6b,
         'stockcheck':stockserv, 'stockpower':stockpower, 'sizestock':sizestock, 'animalstock':animalstock,
         'emailadd1':emailadd1, 'emailadd2':emailadd2, 'emailadd3':emailadd3,
-        'enlogmsg':enlogmsg, 'enerrmsg':enerrmsg, 'ensetmsg':ensetmsg,
+        'enlogmsg':enlogmsg, 'enerrmsg':enerrmsg, 'ensetmsg':ensetmsg, 'awm_log':systemlog,
     }
     html = serve_template( tags, settings_page )
     return( html )
@@ -632,6 +655,8 @@ def update_settings():
     # Write File
     with open( configfile, 'w' ) as file:
                 parser.write( file )
+    # Log Settings Change
+    logging.info("System Settings Updated.")
     if ensetmsg:
         # Configure List of Tags for Email Update
         tags = {
@@ -713,8 +738,9 @@ def update_email():
     # Write File
     with open( configfile, 'w' ) as file:
                 parser.write( file )
+    # Log Update
+    logging.info("Updated Email Settings.")
     redirect('/settings')
-    return
 
 @Webapp.route('/set_light', method='get')
 def control_barn_light():
@@ -739,15 +765,11 @@ def control_barn_light():
 def delete_log_files():
     # Attempt Deleting Files that May (or may not) be Present
     # Logfile
-    try:
-        os.remove(logfile)
-    except:
-        pass
+    try:    os.remove(logfile)
+    except: pass
     # Previous Period Log File
-    try:
-        os.remove(logfileold)
-    except:
-        pass
+    try:    os.remove(logfileold)
+    except: pass
     redirect('/') # Return to Index
 # Define Refresh Code Functional Operation
 @Webapp.route('/gitpull')
@@ -758,6 +780,12 @@ def web_upgrade_code():
     # Respond with Friendly Webpage
     html = serve_template( tags, update_page )
     return( html )
+@Webapp.route('/enable_system')
+def web_enable_sys():
+    sys_enable(src="Web Interface")
+@Webapp.route('/disable_system')
+def web_disable_sys():
+    sys_disable(src="Web Interface")
 ####################################################################################
 
 
@@ -794,7 +822,7 @@ try:
             # Heater Not Responding
             print("ERROR:",deviceId,'Is Not Responsive.')
             hardware.set_lcd(deviceId+"NoResponse")
-            logger.warning("HTTP Comm. Error: {} is not responsive.".format(deviceId))
+            logger.error("HTTP Comm. Error: {} is not responsive.".format(deviceId))
             time.sleep(2)
     # Start Model Timer to Manage Updates, Load Temperature Each Time
     modelTimer = RepeatedThread(60, modelUpdate)

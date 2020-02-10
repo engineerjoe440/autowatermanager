@@ -404,8 +404,14 @@ Settings		</a>
                                 <tr>
                                     <th><input type="button" value="Update System" onclick="confirm_to_redirect('Are you sure you wish to update?','gitpull');"/></th>
                                     <th> &nbsp </th>
-                                    <th><input type="button" value="Update System" onclick="confirm_to_redirect('Are you sure you wish to enable the system?','enable_system');"/></th>
-                                    <th><input type="button" value="Update System" onclick="confirm_to_redirect('Are you sure you wish to disable the system?','disable_system');"/></th>
+                                    <th><input type="button" value="Enable System" onclick="confirm_to_redirect('Are you sure you wish to enable the system?','enable_system');"/></th>
+                                    <th><input type="button" value="Disable System" onclick="confirm_to_redirect('Are you sure you wish to disable the system?','disable_system');"/></th>
+                                </tr>
+                                <tr>
+                                    <th><a href="{{PAGE['awm_log']}}" download="AWM_LOG.log">
+                                            <p><img src="/static/log.png" alt="Download" width="50"></p>
+                                            <p>AutoWaterManager System Log File</p>
+                                    </a></th>
                                 </tr>
                             </table>
 						</div>

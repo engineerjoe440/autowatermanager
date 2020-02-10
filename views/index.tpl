@@ -141,7 +141,7 @@ Settings		</a>
                             
                             <a href="/files/historiclog.csv" download="log.csv">
                               <p><img src="/static/log.png" alt="Download" width="50"></p>
-                              <p>Log File</p>
+                              <p>Data Log File</p>
                             </a>
                             
                             &nbsp; &nbsp; &nbsp;
