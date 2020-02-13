@@ -13,19 +13,19 @@ domain = "192.168.220."
 
 # Define Hosts
 host_prefix = 'tasmota-'
-h1A = '6602'
-h1B = '7236'
-h2A = ''
-h2B = '3199'
-h3A = '6259'
-h3B = ''
-h4A = ''
-h4B = '4426'
-h5A = '2343'
-h5B = ''
-h6A = ''
-h6B = '7377'
-hstock = '3419' # '4072'
+h1A = '0331'
+h1B = '0057'
+h2A = '5706'
+h2B = '1138'
+h3A = '2766'
+h3B = '5317'
+h4A = '4076'
+h4B = '5729'
+h5A = '7039'
+h5B = '1488'
+h6A = '5521'
+h6B = '3537'
+hstock = '4072'
 
 # Define Look-Up-Tables
 state_lut = {False:'OFF', True:'ON'}
