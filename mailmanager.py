@@ -26,6 +26,9 @@ def send_email(recipient_list, content, files=None):
     if html != '':
         message = MIMEMultipart("alternative", None, 
                                 [MIMEText(body), MIMEText(html,'html')])
+    elif files != None:
+        message = MIMEMultipart("alternative", None, 
+                                [MIMEText(body), MIMEText(body,'html')])
     else:
         message = MIMEText(body)
     message['From'] = address
@@ -109,11 +112,10 @@ def emailtemplate(path,subjectcontext=None,bodycontext=None,htmlcontext=None):
 # Define Builtin Test Aparatus
 if __name__ == '__main__' :
     recipients = [  'stan3926@vandals.uidaho.edu',
-                    'engineerjoe440@yahoo.com',
-                    'engineerjoe440@gmail.com']
+                    'engineerjoe440@yahoo.com']
     files = "mailmanager.py"
     # Evaluate Template
-    x=emailtemplate("D:\\Files\\Stanley Solutions\\Auto (Horse) Water Manager\\email\\errnotice.emlx",
+    x=emailtemplate("email\\errnotice.emlx",
                     None,{'notice':'some test notice'})
     # Send Email
     send_email( recipients, x, files )
