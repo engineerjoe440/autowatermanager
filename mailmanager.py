@@ -113,9 +113,9 @@ def emailtemplate(path,subjectcontext=None,bodycontext=None,htmlcontext=None):
 if __name__ == '__main__' :
     recipients = [  'stan3926@vandals.uidaho.edu',
                     'engineerjoe440@yahoo.com']
-    files = "mailmanager.py"
+    files = "files/02-02-2020-20:46_autowatermanager.log"
     # Evaluate Template
-    x=emailtemplate("email\\errnotice.emlx",
+    x=emailtemplate("/home/tech/BarnAuto/email/errnotice.emlx",
                     None,{'notice':'some test notice'})
     # Send Email
     send_email( recipients, x, files )

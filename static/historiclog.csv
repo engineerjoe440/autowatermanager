@@ -1,0 +1,2 @@
+DateTime,Temperature,Pole1A,Pole1B,Pole2A,Pole2B,Pole3A,Pole3B,Pole4A,Pole4B,Pole5A,Pole5B,Pole6A,Pole6B,PowerConsumption(kW-min),HTTP-ERR,HOST-IP
+26/01/2020T17:02:01,69.6866,False,False,False,False,False,False,False,False,False,False,False,False,False,0,None,
