@@ -33,16 +33,6 @@ from barnhardware import BarnHardware
 from mailmanager import send_email, emailtemplate
 from threader import RepeatedThread, OsCommand, CallThread
 
-# Instantiate Objects
-Webapp = Bottle()
-hardware = BarnHardware()
-t0 = hardware.get_temp()
-if t0 < 32: t0 = t0 - 5
-model = system_model(t0)
-
-# Indicate Boot on LCD
-hardware.set_lcd("Auto-Water-Manager","BOOT...")
-
 # Define Working Directory and Static Directory
 base = os.getcwd()
 staticdir  = base+"/static/"
@@ -57,7 +47,7 @@ systemlog  = filedir+"{}_autowatermanager.log".format(
                       datetime.now().strftime("%d-%m-%Y-%H:%M"))
 
 # Define Logging System
-logging.basicConfig(filename=systemlog, level=logging.DEBUG,
+logging.basicConfig(filename=systemlog, level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(name)s %(message)s')
 logger = logging.getLogger(__name__)
 logger.info("AutoWaterManager Booting.")
@@ -70,6 +60,20 @@ if len(files) > 5:
     del_files = files[:len(files)-5]
     for f in del_files:
         os.remove(f)
+
+# Instantiate Objects
+Webapp = Bottle()
+hardware = BarnHardware()
+try:
+    t0 = hardware.get_temp()
+except:
+    logger.error("Unable to Access DS18B20 Sensor. Shutting Down.")
+    raise SystemExit("Unable to access temperature sensor. Aborting.")
+if t0 < 32: t0 = t0 - 5
+model = system_model(t0)
+
+# Indicate Boot on LCD
+hardware.set_lcd("Auto-Water-Manager","BOOT...")
 
 # Define Email Template Files
 new_log_notice   = emaildir+"newreport.emlx"
@@ -114,7 +118,7 @@ def sys_enable(src=None):
     CallThread(hardware.set_lcd,3,"System-OK",hardware.get_temp(fmt="{:.2f}'F"))
     hardware.set_led(grn=True,red=False)
 def sys_disable(src=None):
-    logging.info("System Has Been Disabled; Control Source Description: "+str(src))
+    logger.info("System Has Been Disabled; Control Source Description: "+str(src))
     model = None # Deactivate the Model
     modelTimer.stop()
     # Send Email If Needed
@@ -140,7 +144,7 @@ def grn_callback(channel):
     # Debounce and Block Interference
     time.sleep(dbnc)
     if (not hardware.get_btn()[0]) or block_fp:
-        logging.warning("Green Button Callback Blocked")
+        logger.warning("Green Button Callback Blocked")
         return
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
@@ -153,7 +157,7 @@ def grn_callback(channel):
             OsCommand('sudo reboot now')
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
-            logging.info("System Reboot.")
+            logger.info("System Reboot.")
             modelTimer.stop()
             rebt = True
             return
@@ -164,7 +168,7 @@ def grn_callback(channel):
                 png_resp = "OK"
             else:
                 png_resp = "FAIL"
-                logging.error("PING Failed. Unable to communicate with router.")
+                logger.error("PING Failed. Unable to communicate with router.")
             # Display Device IP Address
             hardware.set_lcd("IP: "+hardware.get_ip_adr(),"Ping: "+png_resp)
             return
@@ -173,7 +177,7 @@ def grn_callback(channel):
             OsCommand('sudo reboot now')
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
-            logging.info("System Reboot.")
+            logger.info("System Reboot.")
             modelTimer.stop()
             rebt = True
             return
@@ -186,7 +190,7 @@ def red_callback(channel):
     # Debounce and Block Interference
     time.sleep(dbnc)
     if (not hardware.get_btn()[1]) or block_fp:
-        logging.warning("Red Button Callback Blocked")
+        logger.warning("Red Button Callback Blocked")
         return
     # Count the Length of Time that the Button is Being Pressed
     t_cnt = 0
@@ -199,7 +203,7 @@ def red_callback(channel):
             OsCommand('sudo reboot')
             hardware.set_led(grn=True,red=True)
             hardware.set_lcd("Rebooting...")
-            logging.info("System Reboot.")
+            logger.info("System Reboot.")
             modelTimer.stop()
             rebt = True
             return
@@ -210,7 +214,7 @@ def red_callback(channel):
             repo = git.Git()
             status = repo.pull()
             hardware.set_lcd("Restarting-Service...")
-            logging.info("System Source Code Update. Restarting Service.")
+            logger.info("System Source Code Update. Restarting Service.")
             # Restart Service
             OsCommand('sudo service AutoWaterWeb restart')
             return
@@ -219,7 +223,7 @@ def red_callback(channel):
             OsCommand('sudo shutdown')
             hardware.set_led(grn=False,red=True)
             hardware.set_lcd("Shutting-Down...")
-            logging.info("System Shutdown.")
+            logger.info("System Shutdown.")
             modelTimer.stop()
             shdn = True
             return
@@ -274,7 +278,7 @@ def modelUpdate():
                         hid = outlet.heater_lut[ind]
                         http_err_host += '-'+hid # Append Heater ID
                         model.set_fail(ind) # Reset Model to Account for Failure
-                        logging.warning("Control Failure for Heater ["+hid+"].")
+                        logger.warning("Control Failure for Heater ["+hid+"].")
                         if enerrmsg:
                             errcont = emailtemplate(error_notice,
                                                     bodycontext={'notice':
@@ -309,7 +313,7 @@ def modelUpdate():
                         tot_power = t_power/60
                         avg_temp = t_temp/(row_count-1)
                         # Log "Rollover"
-                        logging.info("30-Day Period Rollover; AVG-TEMP: {}°F; TOT-POWER: {}kW".format(
+                        logger.info("30-Day Period Rollover; AVG-TEMP: {}°F; TOT-POWER: {}kW".format(
                             str(avg_temp),
                             str(tot_power)))
                         # If Log Messages are Enabled, Send Email Messages
@@ -344,7 +348,7 @@ def modelUpdate():
             hardware.set_lcd("ERROR:Model-is-Null","")
             print("Unhandled Error in Update.")
             print(e)
-            logging.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             # If Error Messages Are Enabled, Send Email Message
             if enerrmsg:
                 errcont = emailtemplate(error_notice,
@@ -360,7 +364,7 @@ def modelUpdate():
             hardware.set_lcd("AutoDisabled:Model-ERR")
             print("Unhandled Error in Update. Disabling System")
             print(e)
-            logging.exception("DISABLING SYSTEM!"+traceback.format_exc())
+            logger.exception("DISABLING SYSTEM!"+traceback.format_exc())
             # If Error Messages Are Enabled, Send Email Message
             if enerrmsg:
                 errcont = emailtemplate(error_notice,
@@ -372,7 +376,7 @@ def modelUpdate():
             hardware.set_lcd("ERROR:Model")
             print("Unhandled Error in Update.")
             print(e)
-            logging.exception(traceback.format_exc())
+            logger.exception(traceback.format_exc())
             # If Error Messages Are Enabled, Send Email Message
             if enerrmsg:
                 errcont = emailtemplate(error_notice,
@@ -389,7 +393,7 @@ def upgrade_code():
     # Perform Update
     repo = git.Git()
     status = repo.pull()
-    logging.info("System Source Code Update. Restarting Service.")
+    logger.info("System Source Code Update. Restarting Service.")
     OsCommand('sudo service AutoWaterWeb restart')
     return(status)
 
@@ -427,7 +431,7 @@ def tristatus(trough):
         return("OFF")
     # Catch All
     # If Error Messages Are Enabled, Send Email Message
-    logging.error("Error in Status Retrieval; Device Unresponsive; Index: "+str(trough))
+    logger.error("Error in Status Retrieval; Device Unresponsive; Index: "+str(trough))
     if enerrmsg:
         errcont = emailtemplate(error_notice,
                                 bodycontext={'notice':
@@ -657,7 +661,7 @@ def update_settings():
     with open( configfile, 'w' ) as file:
                 parser.write( file )
     # Log Settings Change
-    logging.info("System Settings Updated.")
+    logger.info("System Settings Updated.")
     if ensetmsg:
         # Configure List of Tags for Email Update
         tags = {
@@ -740,7 +744,7 @@ def update_email():
     with open( configfile, 'w' ) as file:
                 parser.write( file )
     # Log Update
-    logging.info("Updated Email Settings.")
+    logger.info("Updated Email Settings.")
     redirect('/settings')
 
 @Webapp.route('/set_light', method='get')
