@@ -43,15 +43,22 @@ phto = 12
 start_time = 0.01
 
 # Define Temperature Probe Parameters
-base_dir = '/sys/bus/w1/devices/'
-device_folder = glob.glob(base_dir + '28*')[0]
-device_file = device_folder + '/w1_slave'
+try:
+    base_dir = '/sys/bus/w1/devices/'
+    device_folder = glob.glob(base_dir + '28*')[0]
+    device_file = device_folder + '/w1_slave'
+except:
+    nosensor = True
 
 # Define Functions Required to Read Ambient Temperature
 def read_temp_raw():
-    with open(device_file, 'r') as f:
-        lines = f.readlines()
-    return lines
+    try:
+        if nosensor:
+            raise ValueError("No Avaliable DS18B20 Sensor.")
+    except NameError:
+        with open(device_file, 'r') as f:
+            lines = f.readlines()
+        return lines
 def read_temp(scale='f'):
     lines = read_temp_raw()
     while lines[0].strip()[-3:] != 'YES':
