@@ -12,7 +12,7 @@ from email.utils import COMMASPACE, formatdate
 smtp_server = 'smtp.gmail.com'
 smtp_port = 587
 
-# Define Credentials
+# Define Credentials - YES, I Know this is not best practice, but for now, it's a must.
 address = "stanleyembeddedtech@gmail.com"
 passset = "St@nl3ys0lut!0n$t3ch"
 
