@@ -53,7 +53,7 @@ except:
 # Define Functions Required to Read Ambient Temperature
 def read_temp_raw():
     if device_file == '':
-        raise ValueError("No Avaliable DS18B20 Sensor.")
+        raise ValueError("No Available DS18B20 Sensor.")
     with open(device_file, 'r') as f:
         lines = f.readlines()
     return lines
