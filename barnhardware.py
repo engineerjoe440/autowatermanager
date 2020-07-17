@@ -48,31 +48,38 @@ try:
     device_folder = glob.glob(base_dir + '28*')[0]
     device_file = device_folder + '/w1_slave'
 except:
-    nosensor = True
+    device_file = ''
 
 # Define Functions Required to Read Ambient Temperature
 def read_temp_raw():
-    try:
-        if nosensor:
-            raise ValueError("No Avaliable DS18B20 Sensor.")
-    except NameError:
-        with open(device_file, 'r') as f:
-            lines = f.readlines()
-        return lines
+    if device_file == '':
+        raise ValueError("No Avaliable DS18B20 Sensor.")
+    with open(device_file, 'r') as f:
+        lines = f.readlines()
+    return lines
 def read_temp(scale='f'):
-    lines = read_temp_raw()
-    while lines[0].strip()[-3:] != 'YES':
-        time.sleep(0.2)
+    # Wrap Temperature Reading in try/except
+    try:
         lines = read_temp_raw()
-    equals_pos = lines[1].find('t=')
-    if equals_pos != -1:
-        temp_string = lines[1][equals_pos+2:]
-        temp_c = float(temp_string) / 1000.0
-        temp_f = temp_c * 9.0 / 5.0 + 32.0
+        while lines[0].strip()[-3:] != 'YES':
+            time.sleep(0.2)
+            lines = read_temp_raw()
+        equals_pos = lines[1].find('t=')
+        if equals_pos != -1:
+            temp_string = lines[1][equals_pos+2:]
+            temp_c = float(temp_string) / 1000.0
+            temp_f = temp_c * 9.0 / 5.0 + 32.0
+            if scale.upper() == 'F':
+                return( temp_f )
+            elif scale.upper() == 'C':
+                return( temp_c )
+            else:
+                return
+    except:
         if scale.upper() == 'F':
-            return( temp_f )
+            return( 0 ) # default to 0-degrees-F
         elif scale.upper() == 'C':
-            return( temp_c )
+            return( -20 ) # default to -20-degrees-C
         else:
             return
 
